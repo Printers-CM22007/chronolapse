@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  const MethodChannel platform = MethodChannel('com.example.chronolapse/channel');
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Example invocation of native method
+  const MethodChannel platform = MethodChannel('com.example.chronolapse/channel');
   platform.invokeMethod("testFunction", {"count": 3}).then((c) {
     print("Test: $c");
   });

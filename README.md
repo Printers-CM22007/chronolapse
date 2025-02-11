@@ -1,16 +1,12 @@
-# chronolapse
+# Chronolapse
 
-A new Flutter project.
+## Requirements
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Install Dart
+- Install Flutter
+- Install Android Studio
+- At some point when prompted go through the Android Studio setup wizard to get Android SDKs and Emulators
+- Install the Flutter plugin in Android Studio
+- Open the project in Android Studio
+- To work on the Android native Kotlin/Java, open the `android` folder as a project (the same way you opened `chronolapse` - you can open both at once in separate windows)
+- DO NOT CLICK ON ANY PROMPTS TO UPGRADE THE PROJECT / GRADLE / ETC.
