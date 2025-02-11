@@ -27,3 +27,7 @@ flutter.buildMode=debug
 flutter.versionName=1.0.0
 flutter.versionCode=1
 ```
+
+---
+
+- DM Robert if issues
