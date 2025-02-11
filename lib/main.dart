@@ -1,4 +1,5 @@
 import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/scratch_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
+      // home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
+      home: const ScratchPage(),
     );
   }
 }

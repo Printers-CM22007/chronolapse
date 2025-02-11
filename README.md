@@ -31,3 +31,22 @@ flutter.versionCode=1
 ---
 
 - DM Robert if issues
+
+## Commands
+
+### Building an Apk
+> Using an emulator / phone attached by USB is way easier for testing
+```
+flutter build apk --release
+```
+
+### Regenerating Icons
+```
+ dart run flutter_launcher_icons
+```
+
+> Note: You may need to comment out the following to get the command to work. Be sure to uncomment after command is run
+```
+  flutter:
+    sdk: flutter
+```
