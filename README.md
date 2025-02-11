@@ -9,7 +9,9 @@
 - Install the Flutter plugin in Android Studio
 
 
+
 - Run `flutter doctor --verbose` to make sure you didn't do anything stupid
+
 
 
 - Open the project in Android Studio
