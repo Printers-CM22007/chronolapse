@@ -17,7 +17,7 @@
 - Open the project in Android Studio
 - To work on the Android native Kotlin/Java, open the `android` folder as a project (the same way you opened `chronolapse` - you can open both at once in separate windows)
 - DO NOT CLICK ON ANY PROMPTS TO UPGRADE THE PROJECT / GRADLE / ETC.
-- For some reason the IDE doesn't like me git pushing through the IDE so I commit/pull/merge through the IDE and `git push` through the console
+- For some reason the IDE doesn't like me git pushing through the IDE so I commit/merge through the IDE and `git pull`/`git push` through the console
 - You may need to modify your `android/local.properties` - mine looks like this:
 
 ```
@@ -50,3 +50,7 @@ flutter build apk --release
   flutter:
     sdk: flutter
 ```
+
+## Useful Links
+
+https://flutter.github.io/samples/web/material_3_demo/
