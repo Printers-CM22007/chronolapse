@@ -3,7 +3,8 @@
 ## Getting Started
 
 - Install Dart
-- Install Flutter (Installing Flutter via vscode will automatically install the Dart SDK)
+- Install Flutter
+- Installing Flutter via vscode will automatically install the Dart SDK; https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter
 - Install Android Studio
 - At some point when prompted go through the Android Studio setup wizard to get Android SDKs and Emulators
 - Install the Flutter plugin in Android Studio
