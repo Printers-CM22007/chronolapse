@@ -1,8 +1,6 @@
 import 'package:chronolapse/ui/example_page_two.dart';
 import 'package:flutter/material.dart';
 
-
-
 class ExamplePageOne extends StatefulWidget {
   const ExamplePageOne({super.key, required this.title});
 
@@ -77,8 +75,8 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               title: const Text('Go to other page'),
               subtitle: const Text('Goes to example page 2'),
               onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const ExamplePageTwo()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const ExamplePageTwo()));
               },
             ),
             const Divider(),

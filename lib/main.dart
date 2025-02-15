@@ -1,5 +1,4 @@
 import 'package:chronolapse/ui/example_page_one.dart';
-import 'package:chronolapse/ui/scratch_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,11 +6,11 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Example invocation of native method
-  const MethodChannel platform = MethodChannel('com.example.chronolapse/channel');
+  const MethodChannel platform =
+      MethodChannel('com.example.chronolapse/channel');
   platform.invokeMethod("testFunction", {"count": 3}).then((c) {
     print("Test: $c");
   });
-
 
   runApp(const MyApp());
 }
@@ -43,8 +42,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
-      home: const ScratchPage(),
+      home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
+      // home: const ScratchPage(),
     );
   }
 }

@@ -21,7 +21,7 @@
 - For some reason the IDE doesn't like me git pushing through the IDE so I commit/merge through the IDE and `git pull`/`git push` through the console
 - You may need to modify your `android/local.properties` - mine looks like this:
 
-```
+```properties
 sdk.dir=/home/robert/Android/Sdk
 flutter.sdk=/home/robert/flutter
 flutter.buildMode=debug
@@ -37,19 +37,24 @@ flutter.versionCode=1
 
 ### Building an Apk
 > Using an emulator / phone attached by USB is way easier for testing
-```
+```bash
 flutter build apk --release
 ```
 
 ### Regenerating Icons
-```
- dart run flutter_launcher_icons
+```bash
+flutter pub run flutter_launcher_icons
 ```
 
 > Note: You may need to comment out the following to get the command to work. Be sure to uncomment after command is run
 ```
   flutter:
     sdk: flutter
+```
+
+### Regenerating Splash Screen
+```bash
+flutter pub run flutter_native_splash:create
 ```
 
 ## Useful Links

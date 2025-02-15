@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-
-
 class ExamplePageTwo extends StatefulWidget {
   const ExamplePageTwo({super.key});
-
 
   @override
   State<ExamplePageTwo> createState() => _ExamplePageTwoState();
@@ -33,7 +30,8 @@ class _ExamplePageTwoState extends State<ExamplePageTwo> {
             ListTile(
               leading: const Icon(Icons.arrow_back),
               title: const Text('Go to back'),
-              subtitle: const Text('You can also use the normal Android back button/gesture'),
+              subtitle: const Text(
+                  'You can also use the normal Android back button/gesture'),
               onTap: () {
                 Navigator.of(context).pop();
               },
