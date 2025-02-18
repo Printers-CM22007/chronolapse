@@ -1,46 +1,36 @@
 import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
 import 'package:flutter/material.dart';
 
-class ProjectPrefix {
-  final String _prefix;
-  String prefix() => _prefix;
 
-  const ProjectPrefix(this._prefix);
-  const ProjectPrefix.none() : _prefix = "";
-}
 
-abstract class PersistentSetting {
-  const PersistentSetting();
 
-  Widget getWidget();
-}
 
-class DividerNoSetting extends PersistentSetting {
-  const DividerNoSetting();
+
+class ToggleSetting extends FullSettings<bool> {
+  const ToggleSetting(super._key, super._defaultVal);
 
   @override
-  Widget getWidget() {
-    return const Divider();
-  }
-}
-
-class ToggleSetting extends PersistentSetting {
-  final String _key;
-  final bool _default;
-
-  const ToggleSetting(this._key, this._default);
-
-  bool getValue() {
-    return SharedStorage.sp().getBool(_key) ?? _default;
-  }
-
-  Future<void> setValue(bool value) async {
-    await SharedStorage.sp().setBool(_key, value);
+  bool getValue(String projectPrefix) {
+    return SharedStorage.sp().getBool(projectPrefix + _key) ?? _defaultVal;
   }
 
   @override
-  Widget getWidget() {
+  Future<void> setValue(String projectPrefix, bool value) async {
+    await SharedStorage.sp().setBool(projectPrefix + _key, value);
+  }
+
+  @override
+  Widget getWidget(String projectPrefix) {
     // TODO: implement getWidget
     throw UnimplementedError();
+  }
+}
+
+class DividerNoSetting extends WidgetOnlySetting<void> {
+  DividerNoSetting(super.key, super.defaultVal);
+  
+  @override
+  Widget getWidget(String projectPrefix) {
+    return const Divider();
   }
 }
