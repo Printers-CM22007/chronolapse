@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,8 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SharedStorage.initialise();
 
   print("Test: ${await testFunction(5)}");
 
