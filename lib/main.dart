@@ -1,16 +1,12 @@
+import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Example invocation of native method
-  const MethodChannel platform =
-      MethodChannel('com.example.chronolapse/channel');
-  platform.invokeMethod("testFunction", {"count": 3}).then((c) {
-    print("Test: $c");
-  });
+  print("Test: ${await testFunction(5)}");
 
   runApp(const MyApp());
 }

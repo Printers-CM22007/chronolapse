@@ -57,6 +57,33 @@ flutter pub run flutter_launcher_icons
 flutter pub run flutter_native_splash:create
 ```
 
+## Testing
+### Unit Tests
+Unit tests in `test` run without Android and can generate coverage reports:
+```bash
+flutter test --coverage
+```
+The coverage report needs to be converted to html with this command from the `lcov` tool:
+```bash
+genhtml coverage/lcov.info -o coverage/html
+```
+The report can then be opened:
+```bash
+open coverage/html/index.html
+```
+
+
+As these tests run without Android, they cannot test native code (i.e. code in the `android` folder)
+
+### Integration Tests
+Integration tests in `integration_tests` run with Android and cannot generate coverage reports
+however can run native code.
+Start an emulator normally and run:
+```
+flutter run integration_test/[TEST TO RUN]
+```
+
 ## Useful Links
 
 [Material UI Components](https://flutter.github.io/samples/web/material_3_demo/) [Dart/Flutter Source Code](https://github.com/flutter/samples/tree/main/material_3_demo/lib)
+    
