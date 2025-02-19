@@ -11,7 +11,9 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
   const WidgetSettingRequiresProject(DividerNoSetting()),
 ];
 
+// Global Settings
 const exampleToggleSetting = Global(ToggleSetting("exampleToggle", false));
 
+// Project Settings
 const exampleToggleSettingTwo =
     RequiresProject(ToggleSetting("exampleToggleTwo", true));
