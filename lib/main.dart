@@ -1,7 +1,6 @@
 import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
-import 'package:chronolapse/backend/settings_storage/settings_storage_content.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
-import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/settings_page.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
@@ -12,24 +11,24 @@ void main() async {
   await SharedStorage.initialise();
 
   // Setters and getters accessible and intellisensed
-  await exampleToggleSetting.setValue(true);
-  print(exampleToggleSetting.getValue());
-  await exampleToggleSetting.setValue(false);
-  print(exampleToggleSetting.getValue());
+  // await exampleToggleSetting.setValue(true);
+  // print(exampleToggleSetting.getValue());
+  // await exampleToggleSetting.setValue(false);
+  // print(exampleToggleSetting.getValue());
 
   // Projects must be specified for non-global settings
   // [X] await exampleToggleSettingTwo.setValue(true);
-  await exampleToggleSettingTwo.withProject("sampleProject").setValue(true);
-  await exampleToggleSettingTwo.withCurrentProject().setValue(true);
+  // await exampleToggleSettingTwo.withProject("sampleProject").setValue(true);
+  // await exampleToggleSettingTwo.withCurrentProject().setValue(true);
 
   // Setters and getters inaccessible through widget lists:
   // [X] await availableGlobalSettings[1].getValue();
   // Widget only available
-  availableGlobalSettings[1].getWidget();
+  // availableGlobalSettings[1].getWidget();
 
   // Similarly with widgets that require projects
-  availableProjectSettings[1].withProject("sampleProject").getWidget();
-  availableProjectSettings[1].withCurrentProject().getWidget();
+  // availableProjectSettings[1].withProject("sampleProject").getWidget();
+  // availableProjectSettings[1].withCurrentProject().getWidget();
 
   print("Test: ${await testFunction(5)}");
 
@@ -63,7 +62,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
+      home: const SettingsPage("sampleProject"),
       // home: const ScratchPage(),
     );
   }
