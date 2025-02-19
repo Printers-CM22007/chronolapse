@@ -3,7 +3,8 @@ import 'package:chronolapse/backend/settings_storage/settings_storage_content.da
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+String? currentProject = "sampleProject";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
   // Projects must be specified for non-global settings
   // [X] await exampleToggleSettingTwo.setValue(true);
   await exampleToggleSettingTwo.withProject("sampleProject").setValue(true);
+  await exampleToggleSettingTwo.withCurrentProject().setValue(true);
 
   // Setters and getters inaccessible through widget lists:
   // [X] await availableGlobalSettings[1].getValue();
@@ -27,6 +29,7 @@ void main() async {
 
   // Similarly with widgets that require projects
   availableProjectSettings[1].withProject("sampleProject").getWidget();
+  availableProjectSettings[1].withCurrentProject().getWidget();
 
   print("Test: ${await testFunction(5)}");
 

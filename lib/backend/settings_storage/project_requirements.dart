@@ -1,6 +1,6 @@
 import 'package:chronolapse/backend/settings_storage/project_setting.dart';
+import 'package:chronolapse/main.dart';
 import 'package:flutter/material.dart';
-
 
 class PersistentSettingWithProject<T> {
   final String _project;
@@ -65,6 +65,10 @@ class RequiresProject<T> {
     return PersistentSettingWithProject(project, _setting);
   }
 
+  PersistentSettingWithProject<T> withCurrentProject() {
+    return PersistentSettingWithProject(currentProject!, _setting);
+  }
+
   WidgetSettingRequiresProject<T> asWidgetOnly() {
     return WidgetSettingRequiresProject(_setting);
   }
@@ -74,6 +78,10 @@ class WidgetSettingRequiresProject<T> {
   final SettingWidget<T> _setting;
 
   const WidgetSettingRequiresProject(this._setting);
+
+  WidgetSettingWithProject<T> withCurrentProject() {
+    return WidgetSettingWithProject(currentProject!, _setting);
+  }
 
   WidgetSettingWithProject<T> withProject(String project) {
     return WidgetSettingWithProject(project, _setting);
