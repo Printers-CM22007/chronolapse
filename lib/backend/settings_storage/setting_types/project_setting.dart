@@ -5,6 +5,7 @@ import '../../../util/util.dart';
 
 part './toggle_setting.dart';
 part './divider_no_setting.dart';
+part './title_no_setting.dart';
 
 abstract class APersistentSetting<T> {
   final String _key;

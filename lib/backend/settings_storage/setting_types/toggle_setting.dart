@@ -1,10 +1,37 @@
 part of 'project_setting.dart';
 
+class ToggleSetting extends PersistentSetting<bool> {
+  final String _title;
+  final String _subtitle;
+  const ToggleSetting(
+      super._key, super._defaultVal, this._title, this._subtitle);
+
+  @override
+  bool getValue(String projectPrefix) {
+    return SharedStorage.sp().getBool(projectPrefix + super._key) ??
+        super._defaultVal;
+  }
+
+  @override
+  Future<void> setValue(String projectPrefix, bool value) async {
+    await SharedStorage.sp().setBool(projectPrefix + super._key, value);
+  }
+
+  @override
+  Widget getWidget(String projectPrefix) {
+    return ToggleSettingWidget(this, projectPrefix, _title, _subtitle);
+  }
+}
+
 class ToggleSettingWidget extends StatefulWidget {
   final ToggleSetting _setting;
   final String _projectPrefix;
+  final String _title;
+  final String _subtitle;
 
-  const ToggleSettingWidget(this._setting, this._projectPrefix, {super.key});
+  const ToggleSettingWidget(
+      this._setting, this._projectPrefix, this._title, this._subtitle,
+      {super.key});
 
   @override
   State<ToggleSettingWidget> createState() => _ToggleSettingWidgetState();
@@ -30,10 +57,9 @@ class _ToggleSettingWidgetState extends State<ToggleSettingWidget> {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      title: const Text('Upload Over Other Networks'),
+      title: Text(widget._title),
       thumbIcon: _thumbIcon,
-      subtitle:
-          const Text('Images will be uploaded through other WiFi networks'),
+      subtitle: Text(widget._subtitle),
       value: _value,
       onChanged: (bool value) async {
         await widget._setting.setValue(widget._projectPrefix, value);
@@ -42,25 +68,5 @@ class _ToggleSettingWidgetState extends State<ToggleSettingWidget> {
         });
       },
     );
-  }
-}
-
-class ToggleSetting extends PersistentSetting<bool> {
-  const ToggleSetting(super._key, super._defaultVal);
-
-  @override
-  bool getValue(String projectPrefix) {
-    return SharedStorage.sp().getBool(projectPrefix + super._key) ??
-        super._defaultVal;
-  }
-
-  @override
-  Future<void> setValue(String projectPrefix, bool value) async {
-    await SharedStorage.sp().setBool(projectPrefix + super._key, value);
-  }
-
-  @override
-  Widget getWidget(String projectPrefix) {
-    return ToggleSettingWidget(this, projectPrefix);
   }
 }

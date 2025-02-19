@@ -2,7 +2,7 @@ import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
-  final String _project;
+  final String? _project;
 
   const SettingsPage(this._project, {super.key});
 
@@ -13,6 +13,14 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final globalWidgets =
+        availableGlobalSettings.map((e) => e.getWidget()).toList();
+    final projectWidgets = widget._project == null
+        ? <Widget>[]
+        : availableProjectSettings
+            .map((e) => e.withProject(widget._project!).getWidget())
+            .toList();
+
     return Scaffold(
         appBar: AppBar(
           // TRY THIS: Try changing the color here to a specific color (to
@@ -21,13 +29,12 @@ class _SettingsPageState extends State<SettingsPage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text("Settings - ${widget._project}"),
+          title: Text(widget._project == null
+              ? "Settings"
+              : "Settings - ${widget._project}"),
         ),
         body: ListView(
-          children: availableProjectSettings
-                  .map((e) => e.withProject(widget._project).getWidget())
-                  .toList() +
-              availableGlobalSettings.map((e) => e.getWidget()).toList(),
+          children: projectWidgets + globalWidgets,
         ));
   }
 }
