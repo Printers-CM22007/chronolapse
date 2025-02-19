@@ -1,15 +1,16 @@
+import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
+import 'package:chronolapse/backend/settings_storage/project_setting.dart';
 
-import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
-import 'package:chronolapse/backend/settings_storage/settings_storage_types.dart';
-import 'package:flutter/material.dart';
-
-const List<PersistentSetting> availableGlobalSettings = [
-  exampleToggleSetting
+List<WidgetSettingGlobal> availableGlobalSettings = [
+  exampleToggleSetting.asWidgetOnly(),
+  const WidgetSettingGlobal(DividerNoSetting()),
 ];
 
-const List<PersistentSetting> availableProjectSettings = [
-  exampleToggleSettingTwo
+List<WidgetSettingRequiresProject> availableProjectSettings = [
+  exampleToggleSettingTwo.asWidgetOnly(),
+  const WidgetSettingRequiresProject(DividerNoSetting()),
 ];
 
-const exampleToggleSetting = ToggleSetting("exampleToggle", false);
-const exampleToggleSettingTwo = ToggleSetting("exampleToggleTwo", true);
+const exampleToggleSetting = Global(ToggleSetting("exampleToggle", false));
+
+const exampleToggleSettingTwo = RequiresProject(ToggleSetting("exampleToggleTwo", true));
