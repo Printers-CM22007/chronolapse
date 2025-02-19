@@ -10,12 +10,12 @@ class TitleNoSetting extends SettingWidget<None> {
       padding: const EdgeInsets.all(8.0),
       child: Center(
           child: Text(
-            _title,
-            style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 100, 100, 100)),
-          )),
+        _title,
+        style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 100, 100, 100)),
+      )),
     );
   }
 }
