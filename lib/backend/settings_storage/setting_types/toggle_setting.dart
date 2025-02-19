@@ -14,36 +14,36 @@ class _ToggleSettingWidgetState extends State<ToggleSettingWidget> {
   bool _value = false;
 
   final WidgetStateProperty<Icon?> _thumbIcon =
-  WidgetStateProperty.resolveWith<Icon?>((states) {
+      WidgetStateProperty.resolveWith<Icon?>((states) {
     if (states.contains(WidgetState.selected)) {
       return const Icon(Icons.check);
     }
     return const Icon(Icons.close);
   });
 
-  @override void initState() {
+  @override
+  void initState() {
     _value = widget._setting.getValue(widget._projectPrefix);
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
       title: const Text('Upload Over Other Networks'),
       thumbIcon: _thumbIcon,
       subtitle:
-      const Text('Images will be uploaded through other WiFi networks'),
+          const Text('Images will be uploaded through other WiFi networks'),
       value: _value,
       onChanged: (bool value) async {
         await widget._setting.setValue(widget._projectPrefix, value);
-        setState(()  {
+        setState(() {
           _value = value;
         });
       },
     );
   }
 }
-
 
 class ToggleSetting extends PersistentSetting<bool> {
   const ToggleSetting(super._key, super._defaultVal);

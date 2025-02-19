@@ -1,4 +1,4 @@
-import 'package:chronolapse/backend/settings_storage/settings_storage_content.dart';
+import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
