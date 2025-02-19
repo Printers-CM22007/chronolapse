@@ -1,5 +1,5 @@
 import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
-import 'package:chronolapse/backend/settings_storage/project_setting.dart';
+import 'package:chronolapse/backend/settings_storage/setting_types/project_setting.dart';
 
 List<WidgetSettingGlobal> availableGlobalSettings = [
   exampleToggleSetting.asWidgetOnly(),

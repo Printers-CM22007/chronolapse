@@ -1,9 +1,10 @@
 import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
 import 'package:flutter/material.dart';
 
-import '../../util/util.dart';
+import '../../../util/util.dart';
 
-part 'settings_storage_types.dart';
+part './toggle_setting.dart';
+part './divider_no_setting.dart';
 
 abstract class APersistentSetting<T> {
   final String _key;

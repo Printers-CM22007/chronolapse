@@ -1,5 +1,13 @@
 part of 'project_setting.dart';
 
+final WidgetStateProperty<Icon?> _thumbIcon =
+    WidgetStateProperty.resolveWith<Icon?>((states) {
+  if (states.contains(WidgetState.selected)) {
+    return const Icon(Icons.check);
+  }
+  return const Icon(Icons.close);
+});
+
 class ToggleSetting extends PersistentSetting<bool> {
   const ToggleSetting(super._key, super._defaultVal);
 
@@ -16,16 +24,13 @@ class ToggleSetting extends PersistentSetting<bool> {
 
   @override
   Widget getWidget(String projectPrefix) {
-    // TODO: implement getWidget
-    throw UnimplementedError();
-  }
-}
-
-class DividerNoSetting extends SettingWidget<None> {
-  const DividerNoSetting() : super("", const None());
-
-  @override
-  Widget getWidget(String projectPrefix) {
-    return const Divider();
+    return SwitchListTile(
+      title: const Text('Upload Over Other Networks'),
+      thumbIcon: _thumbIcon,
+      subtitle:
+          const Text('Images will be uploaded through other WiFi networks'),
+      value: false,
+      onChanged: (bool value) {},
+    );
   }
 }
