@@ -25,4 +25,3 @@ abstract class PersistentSetting<T> extends SettingWidget<T> {
 
   Future<void> setValue(String projectPrefix, T value);
 }
-

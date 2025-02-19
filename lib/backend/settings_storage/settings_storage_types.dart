@@ -5,7 +5,8 @@ class ToggleSetting extends PersistentSetting<bool> {
 
   @override
   bool getValue(String projectPrefix) {
-    return SharedStorage.sp().getBool(projectPrefix + super._key) ?? super._defaultVal;
+    return SharedStorage.sp().getBool(projectPrefix + super._key) ??
+        super._defaultVal;
   }
 
   @override
@@ -21,8 +22,8 @@ class ToggleSetting extends PersistentSetting<bool> {
 }
 
 class DividerNoSetting extends SettingWidget<None> {
-  const DividerNoSetting(): super("", const None());
-  
+  const DividerNoSetting() : super("", const None());
+
   @override
   Widget getWidget(String projectPrefix) {
     return const Divider();

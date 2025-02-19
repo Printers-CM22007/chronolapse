@@ -13,4 +13,5 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
 
 const exampleToggleSetting = Global(ToggleSetting("exampleToggle", false));
 
-const exampleToggleSettingTwo = RequiresProject(ToggleSetting("exampleToggleTwo", true));
+const exampleToggleSettingTwo =
+    RequiresProject(ToggleSetting("exampleToggleTwo", true));

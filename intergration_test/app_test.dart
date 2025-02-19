@@ -1,7 +1,4 @@
-
 import 'package:chronolapse/main.dart';
-import 'package:chronolapse/ui/example_page_two.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -11,25 +8,25 @@ void main() {
 
   group('end-to-end test', () {
     testWidgets('tap on the floating action button, verify counter', (
-        tester,
-        ) async {
+      tester,
+    ) async {
       // Load app widget.
       await tester.pumpWidget(const MyApp());
 
       const MethodChannel platform =
-      MethodChannel('com.example.chronolapse/channel');
+          MethodChannel('com.example.chronolapse/channel');
 
       expect(await platform.invokeMethod("testFunction", {"count": 4}), 5);
     });
 
     testWidgets('tap on the floating action button, verify counter 2', (
-        tester,
-        ) async {
+      tester,
+    ) async {
       // Load app widget.
       await tester.pumpWidget(const MyApp());
 
       const MethodChannel platform =
-      MethodChannel('com.example.chronolapse/channel');
+          MethodChannel('com.example.chronolapse/channel');
 
       expect(await platform.invokeMethod("testFunction", {"count": 3}), 4);
     });
