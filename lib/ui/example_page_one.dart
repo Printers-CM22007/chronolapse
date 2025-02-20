@@ -56,7 +56,7 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
+        child: ListView(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -70,7 +70,8 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.arrow_forward),
@@ -82,12 +83,16 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               },
             ),
             const Divider(),
-            const Text(
-              'You have pushed the button this many times:',
+            const Center(
+              child: Text(
+                'You have pushed the button this many times:',
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Center(
+              child: Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
             const Divider(),
             VideoPlayerWidget(
