@@ -10,26 +10,6 @@ void main() async {
 
   await SharedStorage.initialise();
 
-  // Setters and getters accessible and intellisensed
-  // await exampleToggleSetting.setValue(true);
-  // print(exampleToggleSetting.getValue());
-  // await exampleToggleSetting.setValue(false);
-  // print(exampleToggleSetting.getValue());
-
-  // Projects must be specified for non-global settings
-  // [X] await exampleToggleSettingTwo.setValue(true);
-  // await exampleToggleSettingTwo.withProject("sampleProject").setValue(true);
-  // await exampleToggleSettingTwo.withCurrentProject().setValue(true);
-
-  // Setters and getters inaccessible through widget lists:
-  // [X] await availableGlobalSettings[1].getValue();
-  // Widget only available
-  // availableGlobalSettings[1].getWidget();
-
-  // Similarly with widgets that require projects
-  // availableProjectSettings[1].withProject("sampleProject").getWidget();
-  // availableProjectSettings[1].withCurrentProject().getWidget();
-
   print("Test: ${await testFunction(5)}");
 
   runApp(const MyApp());
