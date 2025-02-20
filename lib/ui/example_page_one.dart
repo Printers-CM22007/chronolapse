@@ -90,8 +90,10 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const Divider(),
-            VideoPlayerWidget(VideoPlayerController.networkUrl(Uri.parse(
-                'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4')))
+            VideoPlayerWidget(
+                VideoPlayerController.networkUrl(Uri.parse(
+                    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4')),
+                forcedAspectRatio: 2.0 / 1.0)
           ],
         ),
       ),
