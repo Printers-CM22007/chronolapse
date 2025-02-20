@@ -1,8 +1,10 @@
 import 'package:chronolapse/ui/example_page_two.dart';
+import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class ExamplePageOne extends StatefulWidget {
-  const ExamplePageOne({super.key, required this.title});
+  const ExamplePageOne(this.title, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -87,6 +89,9 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const Divider(),
+            VideoPlayerWidget(VideoPlayerController.networkUrl(Uri.parse(
+                'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4')))
           ],
         ),
       ),
