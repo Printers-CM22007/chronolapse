@@ -17,6 +17,8 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
   const WidgetSettingRequiresProject(DividerNoSetting()),
 ];
 
+// ! Do not use '/' in the setting keys!
+
 // Global Settings
 const exampleToggleSetting = Global(
     ToggleSetting("exampleToggle", false, "Example Toggle", "Does nothing"));
