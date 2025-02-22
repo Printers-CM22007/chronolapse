@@ -10,11 +10,13 @@ Color redColour = const Color(0xff3A0101);
 class ProjectCard {
   String projectName;
   String previewPicturePath;
+  String lastEdited;
   Color boxColor = blackColour;
 
   ProjectCard({
     required this.projectName,
     required this.previewPicturePath,
+    required this.lastEdited,
   });
 
   static List<ProjectCard> getProjects() {
@@ -26,14 +28,16 @@ class ProjectCard {
     projects.add(
       ProjectCard(
         projectName: "MyLittlePony",
-        previewPicturePath: "assets/images/pretty_filler_image.png"
+        previewPicturePath: "assets/images/pretty_filler_image.png",
+        lastEdited: '10d'
       )
     );
 
     projects.add(
         ProjectCard(
             projectName: "MyBigPony",
-            previewPicturePath: "assets/images/pretty_filler_image.png"
+            previewPicturePath: "assets/images/pretty_filler_image.png",
+            lastEdited: '30s'
         )
     );
 

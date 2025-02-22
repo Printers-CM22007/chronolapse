@@ -1,5 +1,6 @@
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/models/project_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
       // home: const ScratchPage(),
+
     );
   }
 }
