@@ -1,3 +1,4 @@
+import 'package:chronolapse/ui/camera_test_page.dart';
 import 'package:chronolapse/ui/example_page_two.dart';
 import 'package:flutter/material.dart';
 
@@ -78,6 +79,14 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const ExamplePageTwo()));
               },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera),
+              title: const Text("Camera test page"),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const CameraTestPage()));
+              }
             ),
             const Divider(),
             const Text(

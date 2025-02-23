@@ -1,12 +1,17 @@
+import 'package:camera/camera.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+late List<CameraDescription> cameras;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   print("Test: ${await testFunction(5)}");
+
+  cameras = await availableCameras();
 
   runApp(const MyApp());
 }

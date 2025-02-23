@@ -1,0 +1,2 @@
+/home/me/Uni/Coursework/swe/chronolapse/android/app/.cxx/RelWithDebInfo/46g185g5/x86/CMakeFiles/edit_cache.dir
+/home/me/Uni/Coursework/swe/chronolapse/android/app/.cxx/RelWithDebInfo/46g185g5/x86/CMakeFiles/rebuild_cache.dir
