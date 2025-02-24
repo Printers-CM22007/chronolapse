@@ -191,7 +191,7 @@ class _DashboardPageState extends State<DashboardPage>{
                     borderRadius: BorderRadius.circular(18)
                   ),
                   child: LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constraints) {
+                    builder: (BuildContext bContext, BoxConstraints constraints) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -228,9 +228,9 @@ class _DashboardPageState extends State<DashboardPage>{
                                 child: Text(
                                   "Last edited ${projects[index].lastEdited} ago",
                                   textAlign: TextAlign.left,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 13,
-                                    color: blueColour2,
+                                    color: Colors.white38,
                                   ),
                                 ),
                               ),
@@ -246,16 +246,16 @@ class _DashboardPageState extends State<DashboardPage>{
                                 height: constraints.maxHeight * 0.125,
                                 padding: EdgeInsets.only(left: constraints.maxWidth * 0.1),
                                 child: TextButton(
-
+                                  onPressed: (){
+                                    //Open the project to be edited here
+                                  },
                                   style: TextButton.styleFrom(backgroundColor: blueColour1),
-                                  onPressed: (){},
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Icon(DashboardPageIcons.edit, color: whiteColour,),
                                       Text("Edit", style: TextStyle(
                                         color: whiteColour,
-
                                       ),)
                                     ],
                                   ),
@@ -266,9 +266,76 @@ class _DashboardPageState extends State<DashboardPage>{
                                 width: constraints.maxWidth * 0.4,
                                 height: constraints.maxHeight * 0.1,
                                 alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {  },
-                                  child: Icon(DashboardPageIcons.dots, color: whiteColour,),
+                                child: MenuAnchor(
+                                  style: MenuStyle(
+                                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                                    //maximumSize: WidgetStatePropertyAll(Size.fromHeight(40)),
+                                    fixedSize: const WidgetStatePropertyAll(Size(100,80)),
+                                    backgroundColor: WidgetStatePropertyAll(whiteColour),
+                                  ),
+                                  alignmentOffset: const Offset(-60,-100),
+                                  builder: (_, MenuController controller, Widget? child){
+                                    return IconButton(
+                                      onPressed: (){
+                                        if(controller.isOpen){
+                                          controller.close();
+                                        } else {
+                                          controller.open();
+                                        }
+                                      },
+                                      icon: Icon(DashboardPageIcons.dots, color: whiteColour,),
+                                    );
+                                  },
+                                  menuChildren: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      height: 30,
+                                      child: MenuItemButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStatePropertyAll(whiteColour),
+                                          fixedSize: const WidgetStatePropertyAll(Size(100,40)),
+                                        ),
+                                        onPressed: (){
+                                          //Add Export Functionality here
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Icon(DashboardPageIcons.export, color: blackColour,),
+                                            Text("Export", style: TextStyle(
+                                              color: blackColour,
+                                            ),),
+
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 100,
+                                      height: 30,
+                                      child: MenuItemButton(
+                                        style: ButtonStyle(
+                                          backgroundColor: WidgetStatePropertyAll(whiteColour),
+                                          fixedSize: const WidgetStatePropertyAll(Size(100,40)),
+
+                                        ),
+                                        onPressed: (){
+                                          //Add delete functionality here
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Icon(DashboardPageIcons.bin, color: redColour,),
+                                            Text("Delete", style: TextStyle(
+                                              color: blackColour,
+
+                                            ),),
+
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ]
                                 ),
                               ),
                             ],
