@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
@@ -5,12 +6,22 @@ import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
 
+late List<CameraDescription> cameras;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SharedStorage.initialise();
 
   print("Test: ${await testFunction(5)}");
+
+  // List available cameras
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    // TODO: work out how to best report error
+    debugPrint("Error listing available cameras: ${e.toString()}");
+  }
 
   runApp(const MyApp());
 }

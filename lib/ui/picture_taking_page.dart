@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:camera/camera.dart';
+import 'package:chronolapse/main.dart';
 import 'package:flutter/material.dart';
 
 class PictureTakingPage extends StatefulWidget {
@@ -17,21 +18,21 @@ class PictureTakingPageState extends State<PictureTakingPage>
   static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
   static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
 
-  late List<CameraDescription> _cameras;
-  CameraController? _cameraController;
+  late CameraController _cameraController;
 
   @override
   void initState() {
     super.initState();
+
+    // Create camera controller using first available camera
+    _cameraController = CameraController(cameras.first, _resolutionPreset);
 
     _initializeCameraController();
   }
 
   @override
   void dispose() {
-    if (_cameraController != null) {
-      _cameraController!.dispose();
-    }
+    _cameraController.dispose();
 
     super.dispose();
   }
@@ -41,9 +42,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.inactive) {
-      if (_cameraController != null) {
-        _cameraController!.dispose();
-      }
+      _cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
       _initializeCameraController();
     }
@@ -51,7 +50,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
 
   @override
   Widget build(BuildContext context) {
-    if (_cameraController?.value.isInitialized != true) {
+    if (!_cameraController.value.isInitialized) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -63,7 +62,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
       ),
       body: Stack(children: [
         // Camera preview
-        Center(child: CameraPreview(_cameraController!)),
+        Center(child: CameraPreview(_cameraController)),
         // Take photo button
         Container(
             alignment: Alignment.bottomCenter,
@@ -96,20 +95,9 @@ class PictureTakingPageState extends State<PictureTakingPage>
   }
 
   Future<void> _initializeCameraController() async {
-    // List available cameras
-    try {
-      _cameras = await availableCameras();
-    } on CameraException catch (e) {
-      // TODO: work out how to best report error
-      debugPrint("Error listing available cameras: ${e.toString()}");
-    }
-
-    // Create camera controller using first available camera
-    _cameraController = CameraController(_cameras.first, _resolutionPreset);
-
     // Initialize camera controller
     try {
-      _cameraController!.initialize();
+      await _cameraController.initialize();
     } on CameraException catch (e) {
       // TODO: work out how to best report error
       debugPrint("Error initializing camera controller: ${e.toString()}");
@@ -122,15 +110,15 @@ class PictureTakingPageState extends State<PictureTakingPage>
   }
 
   Future<void> _takePhoto() async {
-    if (_cameraController?.value.isInitialized != true) {
+    if (!_cameraController.value.isInitialized) {
       debugPrint(
           "Error: _takePhoto called before camera controller is initialized");
       return;
     }
 
     try {
-      await _cameraController!.pausePreview();
-      final imageFile = await _cameraController!
+      await _cameraController.pausePreview();
+      final imageFile = await _cameraController
           .takePicture()
           .timeout(_pictureTakingTimeoutDuration);
 
@@ -140,7 +128,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
     } on TimeoutException catch (e) {
       debugPrint("Timed out taking picture");
     } finally {
-      _cameraController!.resumePreview();
+      await _cameraController.resumePreview();
     }
   }
 }
