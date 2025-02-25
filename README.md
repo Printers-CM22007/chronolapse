@@ -33,6 +33,28 @@ flutter.versionCode=1
 
 - DM Robert if issues
 
+## Installing Dependencies for OpenCV
+
+### Windows
+
+- You'll need to have dartcv.dll somewhere in your path for OpenCV to work.
+- Either you can download a precompiled one I made here:
+https://drive.google.com/file/d/1DbJWUd8MjKP7tKTwIl7uPLqDBiW4GXYT/view?usp=sharing
+
+- Or compile the library yourself (you'll need a c compiler and cmake):
+https://github.com/rainyl/dartcv
+
+- Create a folder somewhere e.g C:/dev/dartcv and put dartcv.dll in there
+- Go to edit environment variables and add the folder to path
+
+### Linux or Mac
+
+- idfk your cooked
+
+---
+
+- DM Alec if shit doesnt work
+
 ## Commands
 
 ### Building an Apk
