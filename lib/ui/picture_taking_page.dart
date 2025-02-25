@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:chronolapse/main.dart';
+import 'package:chronolapse/ui/picture_preview_page.dart';
 import 'package:flutter/material.dart';
 
 class PictureTakingPage extends StatefulWidget {
@@ -100,7 +101,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
       await _cameraController.initialize();
     } on CameraException catch (e) {
       // TODO: work out how to best report error
-      debugPrint("Error initializing camera controller: ${e.toString()}");
+      print("Error initializing camera controller: ${e.toString()}");
     }
 
     // Notify state change
@@ -111,22 +112,30 @@ class PictureTakingPageState extends State<PictureTakingPage>
 
   Future<void> _takePhoto() async {
     if (!_cameraController.value.isInitialized) {
-      debugPrint(
-          "Error: _takePhoto called before camera controller is initialized");
+      print("Error: _takePhoto called before camera controller is initialized");
       return;
     }
 
     try {
+      // Take picture
       await _cameraController.pausePreview();
       final imageFile = await _cameraController
           .takePicture()
           .timeout(_pictureTakingTimeoutDuration);
 
-      debugPrint("Took picture ${imageFile.path}");
+      await _cameraController.resumePreview();
+
+      print("Took picture ${imageFile.path}");
+
+      // Transition to PicturePreviewPage
+      if (mounted) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => PicturePreviewPage(imageFile.path)));
+      }
     } on CameraException catch (e) {
-      debugPrint("Error taking picture: ${e.toString()}");
+      print("Error taking picture: ${e.toString()}");
     } on TimeoutException catch (e) {
-      debugPrint("Timed out taking picture");
+      print("Timed out taking picture");
     } finally {
       await _cameraController.resumePreview();
     }
