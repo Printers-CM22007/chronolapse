@@ -1,8 +1,10 @@
 import 'package:chronolapse/ui/example_page_two.dart';
+import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class ExamplePageOne extends StatefulWidget {
-  const ExamplePageOne({super.key, required this.title});
+  const ExamplePageOne(this.title, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -54,7 +56,7 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
+        child: ListView(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -68,7 +70,8 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.arrow_forward),
@@ -80,13 +83,22 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               },
             ),
             const Divider(),
-            const Text(
-              'You have pushed the button this many times:',
+            const Center(
+              child: Text(
+                'You have pushed the button this many times:',
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            Center(
+              child: Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
+            const Divider(),
+            VideoPlayerWidget(
+                VideoPlayerController.networkUrl(Uri.parse(
+                    'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4')),
+                forcedAspectRatio: 2.0 / 1.0)
           ],
         ),
       ),

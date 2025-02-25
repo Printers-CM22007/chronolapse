@@ -1,6 +1,6 @@
 import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
-import 'package:chronolapse/ui/settings_page.dart';
+import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SettingsPage("sampleProject"),
+      home: const ExamplePageOne("Title"),
       // home: const ScratchPage(),
     );
   }

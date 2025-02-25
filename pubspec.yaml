@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  chewie: ^1.10.0
   flutter:
     sdk: flutter
 
@@ -38,6 +39,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
 #  cupertino_icons: ^1.0.8
   shared_preferences: ^2.5.1
+  video_player: ^2.9.2
 
 dev_dependencies:
   flutter_test:
