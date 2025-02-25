@@ -50,6 +50,7 @@ class TimelapseBuffer {
       await beginProcessing.future;
 
       for(int i = 0; i < nFrames; i++) {
+
         var img = await cv2.imreadAsync(timelapsePath + i.toString() + ".png");
         var encoded = cv2.imencode('.png', img);
 
