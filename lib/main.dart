@@ -1,4 +1,5 @@
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_storage.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,10 @@ String? currentProject = "sampleProject";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  print("Initialising SettingsStore");
   await SettingsStore.initialise();
+  print("Intialising TimelaspeStore");
+  await TimelapseStore.initialise();
 
   print("Test: ${await testFunction(5)}");
 

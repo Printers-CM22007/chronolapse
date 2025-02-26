@@ -3,37 +3,42 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// An interface to `SharedPreferences` - persistent storage of settings
 class SettingsStore {
   static SettingsStore? _instance;
+
+  static SettingsStore instance() {
+    if (_instance == null) {
+      throw Exception(
+          "SettingsStore.initialise() has not been called (must be awaited)");
+    }
+    return _instance!;
+  }
   
   final SharedPreferences _sp;
-  SettingsStore._(this._sp);
+  const SettingsStore._(this._sp);
 
   static Future<void> initialise() async {
     _instance = SettingsStore._(await SharedPreferences.getInstance());
   }
 
   /// Returns a reference to the singleton. `SettingsStore.initialise()` must have
-  /// been called (and awaited) before this can be used
+  /// been called (and awaited) before this can be used. Do not use this without
+  /// a wrapper!
   static SharedPreferences sp() {
-    if (_instance == null) {
-      throw Exception(
-          "SettingsStore.initialise() has not been called (must be awaited)");
-    }
-    return _instance!._sp;
+    return instance()._sp;
   }
 
   /// Deletes all settings including project settings!
   /// `SettingsStore.initialise()` must have been called (and awaited) before
   /// this can be used
   static Future<bool> deleteAllSettings() {
-    return _instance!._sp.clear();
+    return instance()._sp.clear();
   }
 
   /// `SettingsStore.initialise()` must have been called (and awaited) before
   /// this can be used
   static Future<void> deleteAllGlobalSettings() async {
-    final sp = _instance!._sp;
+    final sp = instance()._sp;
     for (final key in sp.getKeys()) {
-      if (!key.contains('/')) {
+      if (key.startsWith('global/')) {
         await sp.remove(key);
       }
     }
@@ -43,9 +48,9 @@ class SettingsStore {
   /// `SettingsStore.initialise()` must have been called (and awaited) before
   /// this can be used
   static Future<void> deleteAllProjectSettings(String project) async {
-    final sp = _instance!._sp;
+    final sp = instance()._sp;
     for (final key in sp.getKeys()) {
-      if (!key.startsWith("$project/")) {
+      if (key.startsWith("project/$project/")) {
         await sp.remove(key);
       }
     }
