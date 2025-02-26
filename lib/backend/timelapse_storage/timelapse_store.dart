@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 
-const String timelapseDirectory = "timelapses";
+const String timelapseDirName = "timelapses";
 
 const String timelapseProjectListKey = "timelapse_store/project_list";
 
@@ -26,15 +27,24 @@ class TimelapseStore {
   /// `SettingsStore.initialise()` must have been called (and awaited) before
   /// this can be used.
   static Future<void> initialise() async {
-    // Initialise project list setting value
-    if (!SettingsStore.sp().containsKey(timelapseProjectListKey)) {
-      SettingsStore.sp().setStringList(timelapseProjectListKey, []);
+    final baseDir = await getApplicationDocumentsDirectory();
+    final timelapseDir = Directory("${baseDir.path}/$timelapseDirName");
+
+    if (!await timelapseDir.exists()) {
+      await timelapseDir.create();
     }
 
-    Directory baseDir = await getApplicationDocumentsDirectory();
-    final timelapseDir = baseDir.uri;
+    final contents = timelapseDir.list();
+    final projects = <String>[];
+    await for (final f in contents) {
+      if (await Directory(f.path).exists()) {
+        projects.add(f.path.split("/").last);
+      }
+    }
 
-    _instance = TimelapseStore._(baseDir, baseDir);
+    SettingsStore.sp().setStringList(timelapseProjectListKey, projects);
+
+    _instance = TimelapseStore._(baseDir, timelapseDir);
   }
 
   static List<String> getProjectList() {
