@@ -8,13 +8,13 @@ class ToggleSetting extends PersistentSetting<bool> {
 
   @override
   bool getValue(String projectPrefix) {
-    return SharedStorage.sp().getBool(projectPrefix + super._key) ??
+    return SettingsStore.sp().getBool(projectPrefix + super._key) ??
         super._defaultVal;
   }
 
   @override
   Future<void> setValue(String projectPrefix, bool value) async {
-    await SharedStorage.sp().setBool(projectPrefix + super._key, value);
+    await SettingsStore.sp().setBool(projectPrefix + super._key, value);
   }
 
   @override
