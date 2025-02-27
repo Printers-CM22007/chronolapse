@@ -9,7 +9,8 @@ class PersistentSettingWithProject<T> {
 
   const PersistentSettingWithProject(this._project, this._setting);
 
-  String _projectPrefix() => _project.isEmpty ? "global/" : "project/$_project/";
+  String _projectPrefix() =>
+      _project.isEmpty ? "global/" : "project/$_project/";
 
   String project() => _project;
   PersistentSetting<T> setting() => _setting;
@@ -53,7 +54,8 @@ class WidgetSettingWithProject<T> {
 
   const WidgetSettingWithProject(this._project, this._setting);
 
-  String _projectPrefix() => _project.isEmpty ? "global/" : "project/$_project/";
+  String _projectPrefix() =>
+      _project.isEmpty ? "global/" : "project/$_project/";
 
   /// Gets the widget for the settings page for this setting
   Widget getWidget() {

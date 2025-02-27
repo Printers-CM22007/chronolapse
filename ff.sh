@@ -1,1 +1,1 @@
-dart format . && dart fix --apply
+flutter pub run build_runner build && dart format . && dart fix --apply

@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:chronolapse/backend/timelapse_storage/timelapse_data.dart';
-import 'package:chronolapse/backend/timelapse_storage/timelapse_metadata.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
+import 'package:uuid/uuid.dart';
 
 const String timelapseDirName = "timelapses";
 
@@ -63,19 +61,20 @@ class TimelapseStore {
   }
 
   static File getProjectDataFile(String projectName) {
-    return File("${TimelapseStore.getProjectDir(projectName).path}/timelapse_data.json");
+    return File(
+        "${TimelapseStore.getProjectDir(projectName).path}/timelapse_data.json");
   }
 
   static Future<ProjectTimelapseData?> createProject(String projectName) async {
-    if (getProjectList().contains(projectName) || !projectNameRegex.hasMatch(projectName)) {
+    if (getProjectList().contains(projectName) ||
+        !projectNameRegex.hasMatch(projectName)) {
       return null;
     }
 
-    final t = instance();
+    await getProjectDir(projectName).create();
 
-    final projectDir = await getProjectDir(projectName).create();
-
-    final data = ProjectTimelapseData(TimelapseData.initial(projectName), projectName);
+    final data =
+        ProjectTimelapseData(TimelapseData.initial(projectName), projectName);
 
     data.saveChanges();
 
@@ -89,5 +88,40 @@ class TimelapseStore {
     final jsonData = jsonDecode(jsonString);
 
     return ProjectTimelapseData(TimelapseData.fromJson(jsonData), projectName);
+  }
+
+  static String _getNewUuid(ProjectTimelapseData data) {
+    var uuid = const Uuid().v4();
+    while (data.data.metaData.frames.contains(uuid)) {
+      uuid = const Uuid().v4();
+    }
+    return uuid;
+  }
+
+  static Future<String> getAndAppendFrameUuid(String projectName) async {
+    final data = await getProjectData(projectName);
+    final uuid = _getNewUuid(data);
+
+    data.data.metaData.frames.add(uuid);
+    await data.saveChanges();
+
+    return uuid;
+  }
+
+  static Future<String> getAndInsertFrameUuid(
+      String projectName, int position) async {
+    final data = await getProjectData(projectName);
+    final uuid = _getNewUuid(data);
+
+    data.data.metaData.frames.insert(position, uuid);
+    await data.saveChanges();
+
+    return uuid;
+  }
+
+  static Future<void> deleteFrameUuid(String projectName, String uuid) async {
+    final data = await getProjectData(projectName);
+    data.data.metaData.frames.remove(uuid);
+    await data.saveChanges();
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:chronolapse/backend/timelapse_storage/timelapse_metadata.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
@@ -21,17 +20,19 @@ class ProjectTimelapseData {
 }
 
 @JsonSerializable()
+
+/// Holds data about a timelapse. !! Only modify the data you added - e.g. don't
+/// modify `TimelapseMetaData` from outside `timelapse_storage` code !!
 class TimelapseData {
   TimelapseMetaData metaData;
 
   TimelapseData({required this.metaData});
 
   factory TimelapseData.initial(String projectName) {
-    return TimelapseData(
-        metaData: TimelapseMetaData(projectName: projectName)
-    );
+    return TimelapseData(metaData: TimelapseMetaData.initial(projectName));
   }
 
-  factory TimelapseData.fromJson(Map<String, dynamic> json) => _$TimelapseDataFromJson(json);
+  factory TimelapseData.fromJson(Map<String, dynamic> json) =>
+      _$TimelapseDataFromJson(json);
   Map<String, dynamic> toJson() => _$TimelapseDataToJson(this);
 }

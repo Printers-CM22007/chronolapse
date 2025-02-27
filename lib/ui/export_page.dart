@@ -11,7 +11,6 @@ class ExportPage extends StatefulWidget {
 }
 
 class _ExportPageState extends State<ExportPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +45,8 @@ class _ExportPageState extends State<ExportPage> {
             ListTile(
               leading: const Icon(Icons.share),
               title: const Text('Share timelapse'),
-              subtitle: const Text('Send your timelapse to someone or upload it to social media'),
+              subtitle: const Text(
+                  'Send your timelapse to someone or upload it to social media'),
               onTap: () {
                 // share video with built in OS functionality
               },
@@ -55,7 +55,8 @@ class _ExportPageState extends State<ExportPage> {
             ListTile(
               leading: const Icon(Icons.image),
               title: const Text('Download Frames'),
-              subtitle: const Text('Download a folder containing all the individual frames of the timelapse'),
+              subtitle: const Text(
+                  'Download a folder containing all the individual frames of the timelapse'),
               onTap: () {
                 // download all frames individually
               },
@@ -65,9 +66,9 @@ class _ExportPageState extends State<ExportPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(
-        // placeholder below for home page!!!!!!!!!!!!!!!!!!!
-        builder: (context) => const ExamplePageTwo()));
+          Navigator.of(context).push(MaterialPageRoute(
+              // placeholder below for home page!!!!!!!!!!!!!!!!!!!
+              builder: (context) => const ExamplePageTwo()));
         },
         tooltip: 'Increment',
         child: const Icon(Icons.home),

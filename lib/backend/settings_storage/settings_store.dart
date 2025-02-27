@@ -11,7 +11,7 @@ class SettingsStore {
     }
     return _instance!;
   }
-  
+
   final SharedPreferences _sp;
   const SettingsStore._(this._sp);
 
