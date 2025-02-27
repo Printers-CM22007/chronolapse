@@ -79,6 +79,11 @@ flutter pub run flutter_launcher_icons
 flutter pub run flutter_native_splash:create
 ```
 
+### Regenerate JSON Code
+```bash
+flutter pub run build_runner build
+```
+
 ## Testing
 ### Unit Tests
 Unit tests in `test` run without Android and can generate coverage reports:
