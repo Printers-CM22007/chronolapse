@@ -49,12 +49,6 @@ class DashboardPageIcons {
 
 
 class _DashboardPageState extends State<DashboardPage>{
-  Color blackColour = const Color(0xff08070B);
-  Color greyColour = const Color(0xff131316);
-  Color whiteColour = const Color(0xffCCCCCC);
-  Color blueColour1 = const Color(0xff11373B);
-  Color blueColour2 = const Color(0xff384547);
-  Color redColour = const Color(0xff3A0101);
 
   List<ProjectCard> projects = [];
   void _getProjects(){
@@ -64,13 +58,14 @@ class _DashboardPageState extends State<DashboardPage>{
   Widget build(BuildContext context){
     _getProjects();
     return Scaffold(
-      backgroundColor: greyColour,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
 
-      backgroundColor: greyColour,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text("Project Dashboard", style: TextStyle(fontWeight: FontWeight.bold),),
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
       ),
@@ -85,9 +80,9 @@ class _DashboardPageState extends State<DashboardPage>{
               importButton()
           ],),
           SizedBox(height: 15,),
-          Divider(thickness: 1.2, color: whiteColour, indent: 20, endIndent: 20,),
+          Divider(thickness: 1.2, color: Theme.of(context).colorScheme.onPrimary, indent: 20, endIndent: 20,),
           SizedBox(height: 15,),
-          projectsContainer(),
+          Expanded(child: projectsContainer(),),
 
         ],
       ),
@@ -113,19 +108,19 @@ class _DashboardPageState extends State<DashboardPage>{
         ]
       ),
       child: NavigationBar(
-        shadowColor: whiteColour,
+        shadowColor: Theme.of(context).colorScheme.onPrimary,
         height: 60,
-        backgroundColor: blueColour2,
+        backgroundColor: Theme.of(context).colorScheme.onSurface,
         elevation: 0,
         selectedIndex: 0,
-        indicatorColor: greyColour,
+        indicatorColor: Theme.of(context).colorScheme.surface,
         labelTextStyle: WidgetStatePropertyAll(TextStyle(
-            color: whiteColour
+            color: Theme.of(context).colorScheme.onPrimary
         )),
         //onDestinationSelected: (index) =>   ,
         destinations: [
-          NavigationDestination(icon: Icon(DashboardPageIcons.projects, color: whiteColour,), label: "Projects"),
-          NavigationDestination(icon: Icon(DashboardPageIcons.settings, color: whiteColour,), label: "Settings")
+          NavigationDestination(icon: Icon(DashboardPageIcons.projects, color: Theme.of(context).colorScheme.onPrimary,), label: "Projects"),
+          NavigationDestination(icon: Icon(DashboardPageIcons.settings, color: Theme.of(context).colorScheme.onPrimary,), label: "Settings")
         ]
       ),
     );
@@ -136,14 +131,14 @@ class _DashboardPageState extends State<DashboardPage>{
                 width: 120,
                 padding: EdgeInsets.only(right:25),
                 child: TextButton(
-                  style: TextButton.styleFrom(backgroundColor: blueColour2),
+                  style: TextButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.onSurface),
                   onPressed: (){},
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(DashboardPageIcons.import, color: whiteColour,),
+                      Icon(DashboardPageIcons.import, color: Theme.of(context).colorScheme.onPrimary,),
                       Text("Import", style: TextStyle(
-                        color: whiteColour,
+                        color: Theme.of(context).colorScheme.onPrimary,
 
                       ),)
                     ],
@@ -158,14 +153,14 @@ class _DashboardPageState extends State<DashboardPage>{
                 child: Padding(
                   padding: const EdgeInsets.only(left: 18),
                   child: TextButton(
-                    style: TextButton.styleFrom(backgroundColor: blueColour1),
+                    style: TextButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.secondary),
                     onPressed: (){},
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(DashboardPageIcons.add, color: whiteColour,),
+                        Icon(DashboardPageIcons.add, color: Theme.of(context).colorScheme.onPrimary,),
                         Text("Create New", style: TextStyle(
-                          color: whiteColour,
+                          color: Theme.of(context).colorScheme.onPrimary,
 
                         ),)
                       ],
@@ -178,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage>{
   Container projectsContainer() {
     return Container(
             padding: EdgeInsets.only(left: 20, right: 20),
-            height: 445,
+            //height: 445,
             child: ListView.separated(
               separatorBuilder: (context, index) => SizedBox(height: 10,),
               scrollDirection: Axis.vertical,
@@ -215,7 +210,7 @@ class _DashboardPageState extends State<DashboardPage>{
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: blueColour1,
+                                    color: Theme.of(context).colorScheme.secondary,
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
@@ -249,13 +244,13 @@ class _DashboardPageState extends State<DashboardPage>{
                                   onPressed: (){
                                     //Open the project to be edited here
                                   },
-                                  style: TextButton.styleFrom(backgroundColor: blueColour1),
+                                  style: TextButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.secondary),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(DashboardPageIcons.edit, color: whiteColour,),
+                                      Icon(DashboardPageIcons.edit, color: Theme.of(context).colorScheme.onPrimary,),
                                       Text("Edit", style: TextStyle(
-                                        color: whiteColour,
+                                        color: Theme.of(context).colorScheme.onPrimary,
                                       ),)
                                     ],
                                   ),
@@ -271,7 +266,7 @@ class _DashboardPageState extends State<DashboardPage>{
                                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                                     //maximumSize: WidgetStatePropertyAll(Size.fromHeight(40)),
                                     fixedSize: const WidgetStatePropertyAll(Size(100,80)),
-                                    backgroundColor: WidgetStatePropertyAll(whiteColour),
+                                    backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary),
                                   ),
                                   alignmentOffset: const Offset(-60,-100),
                                   builder: (_, MenuController controller, Widget? child){
@@ -283,7 +278,7 @@ class _DashboardPageState extends State<DashboardPage>{
                                           controller.open();
                                         }
                                       },
-                                      icon: Icon(DashboardPageIcons.dots, color: whiteColour,),
+                                      icon: Icon(DashboardPageIcons.dots, color: Theme.of(context).colorScheme.onPrimary,),
                                     );
                                   },
                                   menuChildren: <Widget>[
@@ -292,7 +287,7 @@ class _DashboardPageState extends State<DashboardPage>{
                                       height: 30,
                                       child: MenuItemButton(
                                         style: ButtonStyle(
-                                          backgroundColor: WidgetStatePropertyAll(whiteColour),
+                                          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary),
                                           fixedSize: const WidgetStatePropertyAll(Size(100,40)),
                                         ),
                                         onPressed: (){
@@ -301,9 +296,9 @@ class _DashboardPageState extends State<DashboardPage>{
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Icon(DashboardPageIcons.export, color: blackColour,),
+                                            Icon(DashboardPageIcons.export, color: Theme.of(context).colorScheme.primary,),
                                             Text("Export", style: TextStyle(
-                                              color: blackColour,
+                                              color: Theme.of(context).colorScheme.primary,
                                             ),),
 
                                           ],
@@ -315,7 +310,7 @@ class _DashboardPageState extends State<DashboardPage>{
                                       height: 30,
                                       child: MenuItemButton(
                                         style: ButtonStyle(
-                                          backgroundColor: WidgetStatePropertyAll(whiteColour),
+                                          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary),
                                           fixedSize: const WidgetStatePropertyAll(Size(100,40)),
 
                                         ),
@@ -325,9 +320,9 @@ class _DashboardPageState extends State<DashboardPage>{
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Icon(DashboardPageIcons.bin, color: redColour,),
+                                            Icon(DashboardPageIcons.bin, color: Theme.of(context).colorScheme.error,),
                                             Text("Delete", style: TextStyle(
-                                              color: blackColour,
+                                              color: Theme.of(context).colorScheme.primary,
 
                                             ),),
 
@@ -355,20 +350,20 @@ class _DashboardPageState extends State<DashboardPage>{
             margin: EdgeInsets.only(top:20,left: 20,right: 20),
             child: TextField(
               style: TextStyle(
-                color: whiteColour
+                color: Theme.of(context).colorScheme.onPrimary
               ),
-              cursorColor: whiteColour,
+              cursorColor: Theme.of(context).colorScheme.onPrimary,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: blackColour,
                 hintText: "Search Project",
-                hintStyle: TextStyle(color: whiteColour),
-                hoverColor: whiteColour,
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                hoverColor: Theme.of(context).colorScheme.onPrimary,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Icon(
                     DashboardPageIcons.search,
-                    color: whiteColour,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   )
                 ),
                 contentPadding: EdgeInsets.all(15),
