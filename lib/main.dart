@@ -1,11 +1,15 @@
+import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+String? currentProject = "sampleProject";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SettingsStore.initialise();
 
   print("Test: ${await testFunction(5)}");
 
@@ -55,7 +59,7 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: const ExamplePageOne(title: 'Flutter Demo Home Page'),
+      home: const ExamplePageOne("Title"),
       // home: const ScratchPage(),
 
     );
