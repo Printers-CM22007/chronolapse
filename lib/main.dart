@@ -1,6 +1,7 @@
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/models/project_card.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
@@ -17,7 +18,12 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  // Color blackColour = const Color(0xff08070B);
+  // Color greyColour = const Color(0xff131316);
+  // Color whiteColour = const Color(0xffCCCCCC);
+  // Color blueColour1 = const Color(0xff11373B);
+  // Color blueColour2 = const Color(0xff384547);
+  // Color redColour = const Color(0xff3A0101);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -39,11 +45,23 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme(
+          primary: Color(0xff08070B),
+          onPrimary: Color(0xffCCCCCC),
+          secondary: Color(0xff11373B),
+          onSecondary: Color(0xffCCCCCC),
+          surface: Color(0xff131316),
+          onSurface: Color(0xff384547),
+          error: Color(0xff3A0101),
+          onError: Color(0xffCCCCCC),
+          brightness: Brightness.dark,
+        ),
+
         useMaterial3: true,
       ),
       home: const ExamplePageOne("Title"),
       // home: const ScratchPage(),
+
     );
   }
 }
