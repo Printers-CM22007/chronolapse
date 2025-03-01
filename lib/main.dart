@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
@@ -10,6 +11,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SettingsStore.initialise();
+
+  //initialize notifications
+  NotificationService().initNotification();
 
   print("Test: ${await testFunction(5)}");
 
