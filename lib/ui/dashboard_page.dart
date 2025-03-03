@@ -95,7 +95,7 @@ class _DashboardPageState extends State<DashboardPage> {
       margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(40)),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
           // borderRadius: BorderRadius.only(
           //   topLeft: Radius.circular(35),
           //   topRight: Radius.circular(35)
