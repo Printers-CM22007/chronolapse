@@ -27,7 +27,7 @@ class TimelapseFrame {
   /// Loads an existing frame from disk
   static Future<TimelapseFrame> fromExisting(
       String projectName, String uuid) async {
-    final file = getFrameDataFile(projectName, uuid);
+    final file = _getFrameDataFile(projectName, uuid);
 
     final jsonString = await file.readAsString();
     final jsonData = jsonDecode(jsonString);
@@ -52,13 +52,20 @@ class TimelapseFrame {
       : _projectName = projectName,
         data = pData;
 
+  /// Returns a file handle for the actual image of the frame. Will throw an
+  /// exception if this frame hasn't been saved to disk yet (and thus the image
+  /// file does not exist).
+  File getFramePng() {
+    return _getFrameImageFile(_projectName, _getUuid());
+  }
+
   /// Saves frame data and the frame (the `file` parameter) to disk
   Future<void> saveFrameFromPngFile(File file) async {
     _uuid ??= await TimelapseStore.getAndAppendFrameUuid(_projectName);
 
     await Future.wait([
       saveFrameDataOnly(),
-      file.copy(getFrameImageFile(_projectName, _getUuid()).path)
+      file.copy(_getFrameImageFile(_projectName, _getUuid()).path)
     ]);
   }
 
@@ -68,7 +75,7 @@ class TimelapseFrame {
 
     await Future.wait([
       saveFrameDataOnly(),
-      getFrameImageFile(_projectName, _getUuid()).writeAsBytes(pngData)
+      _getFrameImageFile(_projectName, _getUuid()).writeAsBytes(pngData)
     ]);
   }
 
@@ -81,13 +88,13 @@ class TimelapseFrame {
     }
 
     final jsonString = jsonEncode(data.toJson());
-    final file = getFrameDataFile(_projectName, _getUuid());
+    final file = _getFrameDataFile(_projectName, _getUuid());
     await file.writeAsString(jsonString);
   }
 
   /// Updates the `FrameData` with data from disk
   Future<void> updateDataFromDisk() async {
-    final file = getFrameDataFile(_projectName, _getUuid());
+    final file = _getFrameDataFile(_projectName, _getUuid());
 
     final jsonString = await file.readAsString();
     final jsonData = jsonDecode(jsonString);
@@ -98,16 +105,16 @@ class TimelapseFrame {
   Future<void> deleteFrame() async {
     await TimelapseStore.deleteFrameUuid(_projectName, _getUuid());
     _uuid = null;
-    await getFrameImageFile(_projectName, _getUuid()).delete();
+    await _getFrameImageFile(_projectName, _getUuid()).delete();
   }
 
   /// Returns the frame data file
-  static File getFrameDataFile(String projectName, String uuid) {
+  static File _getFrameDataFile(String projectName, String uuid) {
     return File("${TimelapseStore.getProjectDir(projectName).path}/$uuid.json");
   }
 
   /// Returns the frame file
-  static File getFrameImageFile(String projectName, String uuid) {
+  static File _getFrameImageFile(String projectName, String uuid) {
     return File("${TimelapseStore.getProjectDir(projectName).path}/$uuid.png");
   }
 }
