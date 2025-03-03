@@ -16,7 +16,7 @@ RegExp projectNameRegex = RegExp(r'^[a-zA-Z0-9 ]*$');
 class TimelapseStore {
   static TimelapseStore? _instance;
 
-  static TimelapseStore instance() {
+  static TimelapseStore _getInstance() {
     if (_instance == null) {
       throw Exception(
           "TimelapseStore.initialise() has not been called (must be awaited)");
@@ -52,12 +52,12 @@ class TimelapseStore {
   }
 
   static List<String> getProjectList() {
-    instance();
+    _getInstance();
     return SettingsStore.sp().getStringList(timelapseProjectListKey) ?? [];
   }
 
   static Directory getProjectDir(String projectName) {
-    return Directory("${instance()._timelapseDir.path}/$projectName");
+    return Directory("${_getInstance()._timelapseDir.path}/$projectName");
   }
 
   static File getProjectDataFile(String projectName) {
