@@ -1,3 +1,4 @@
+
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
@@ -13,25 +14,6 @@ void main() async {
   await SettingsStore.initialise();
   print("Intialising TimelaspeStore");
   await TimelapseStore.initialise();
-
-  // print("Deleting all projects");
-  // await TimelapseStore.deleteAllProjects();
-  //
-  // print("Creating project");
-  // final project = (await TimelapseStore.createProject("myProjectName"))!;
-  //
-  // print("Frames before:");
-  // print(project.data.metaData.frames);
-  //
-  // final testFrame = project.createNewFrame();
-  // await testFrame.saveFrameFromFile(File("/test/test"));
-  //
-  // await project.reloadFromDisk();
-  // print("Frames after:");
-  // print(project.data.metaData.frames);
-  //
-  // print("Directory:");
-  // print(TimelapseStore.getProjectDir("myProjectName").listSync());
 
   print("Test: ${await testFunction(5)}");
 

@@ -71,7 +71,8 @@ class TimelapseStore {
   }
 
   /// Creates a new project. The name must be unique and alpha-numeric (with
-  /// spaces).
+  /// spaces) - the function will return null if an invalid project name is
+  /// used.
   /// `TimelapseStore.initialise()` must have been called (and awaited) before
   /// this can be used.
   static Future<ProjectTimelapseData?> createProject(String projectName) async {

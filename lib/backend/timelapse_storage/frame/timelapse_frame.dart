@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 
@@ -52,12 +53,22 @@ class TimelapseFrame {
         data = pData;
 
   /// Saves frame data and the frame (the `file` parameter) to disk
-  Future<void> saveFrameFromFile(File file) async {
+  Future<void> saveFrameFromPngFile(File file) async {
     _uuid ??= await TimelapseStore.getAndAppendFrameUuid(_projectName);
 
     await Future.wait([
       saveFrameDataOnly(),
       file.copy(getFrameImageFile(_projectName, _getUuid()).path)
+    ]);
+  }
+
+  /// Saves frame data and the frame (the `pngData` parameter) to disk
+  Future<void> saveFrameFromPngBytes(Uint8List pngData) async {
+    _uuid ??= await TimelapseStore.getAndAppendFrameUuid(_projectName);
+
+    await Future.wait([
+      saveFrameDataOnly(),
+      getFrameImageFile(_projectName, _getUuid()).writeAsBytes(pngData)
     ]);
   }
 
@@ -72,6 +83,15 @@ class TimelapseFrame {
     final jsonString = jsonEncode(data.toJson());
     final file = getFrameDataFile(_projectName, _getUuid());
     await file.writeAsString(jsonString);
+  }
+
+  /// Updates the `FrameData` with data from disk
+  Future<void> updateDataFromDisk() async {
+    final file = getFrameDataFile(_projectName, _getUuid());
+
+    final jsonString = await file.readAsString();
+    final jsonData = jsonDecode(jsonString);
+    data = FrameData.fromJson(jsonData);
   }
 
   /// Deletes the frame
