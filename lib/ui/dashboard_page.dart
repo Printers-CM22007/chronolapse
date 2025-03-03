@@ -157,7 +157,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Container createNewButton() {
+  SizedBox createNewButton() {
     return SizedBox(
       width: 150,
       child: Padding(
