@@ -1,5 +1,8 @@
 
+import 'dart:typed_data';
+
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
+import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
@@ -15,7 +18,14 @@ void main() async {
   print("Intialising TimelapseStore");
   await TimelapseStore.initialise();
 
+  await TimelapseStore.deleteAllProjects();
+  const projectName = "testProject";
+  await TimelapseStore.createProject(projectName);
+  final frame = TimelapseFrame.createNew(projectName);
+  await frame.saveFrameFromPngBytes(Uint8List(12));
+
   print("Test: ${await testFunction(5)}");
+
 
   runApp(const MyApp());
 }
