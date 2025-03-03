@@ -109,9 +109,10 @@ class _DashboardPageState extends State<DashboardPage> {
           selectedIndex: 0,
           indicatorColor: Theme.of(context).colorScheme.surface,
           // Commented out because this parameter doesn't exist - Robert
-          // labelTextStyle: WidgetStatePropertyAll(TextStyle(
-          //     color: Theme.of(context).colorScheme.onPrimary
-          // )),
+          // I think it does since it does make a change for me for the labels - Kaan
+          labelTextStyle: WidgetStatePropertyAll(TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary
+          )),
           //onDestinationSelected: (index) =>   ,
           destinations: [
             NavigationDestination(
@@ -157,7 +158,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Container createNewButton() {
+  SizedBox createNewButton() {
     return SizedBox(
       width: 150,
       child: Padding(
@@ -301,119 +302,127 @@ class _DashboardPageState extends State<DashboardPage> {
                               width: constraints.maxWidth * 0.4,
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerRight,
-                              child: MenuAnchor(
-                                  style: MenuStyle(
-                                    shape: WidgetStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15))),
-                                    //maximumSize: WidgetStatePropertyAll(Size.fromHeight(40)),
-                                    fixedSize: const WidgetStatePropertyAll(
-                                        Size(100, 80)),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  alignmentOffset: const Offset(-60, -100),
-                                  builder: (_, MenuController controller,
-                                      Widget? child) {
-                                    return IconButton(
-                                      onPressed: () {
-                                        if (controller.isOpen) {
-                                          controller.close();
-                                        } else {
-                                          controller.open();
-                                        }
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                      onPressed: (){},
+                                      icon: Icon(DashboardPageIcons.settings, color: Theme.of(context).colorScheme.onPrimary,)),
+                                  MenuAnchor(
+                                      style: MenuStyle(
+                                        shape: WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15))),
+                                        //maximumSize: WidgetStatePropertyAll(Size.fromHeight(40)),
+                                        fixedSize: const WidgetStatePropertyAll(
+                                            Size(100, 80)),
+                                        backgroundColor: WidgetStatePropertyAll(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary),
+                                      ),
+                                      alignmentOffset: const Offset(-60, -100),
+                                      builder: (_, MenuController controller,
+                                          Widget? child) {
+                                        return IconButton(
+                                          onPressed: () {
+                                            if (controller.isOpen) {
+                                              controller.close();
+                                            } else {
+                                              controller.open();
+                                            }
+                                          },
+                                          icon: Icon(
+                                            DashboardPageIcons.dots,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                          ),
+                                        );
                                       },
-                                      icon: Icon(
-                                        DashboardPageIcons.dots,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                      ),
-                                    );
-                                  },
-                                  menuChildren: <Widget>[
-                                    SizedBox(
-                                      width: 100,
-                                      height: 30,
-                                      child: MenuItemButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  Theme.of(context)
+                                      menuChildren: <Widget>[
+                                        SizedBox(
+                                          width: 100,
+                                          height: 30,
+                                          child: MenuItemButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStatePropertyAll(
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                              fixedSize:
+                                                  const WidgetStatePropertyAll(
+                                                      Size(100, 40)),
+                                            ),
+                                            onPressed: () {
+                                              //Add Export Functionality here
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Icon(
+                                                  DashboardPageIcons.export,
+                                                  color: Theme.of(context)
                                                       .colorScheme
-                                                      .onPrimary),
-                                          fixedSize:
-                                              const WidgetStatePropertyAll(
-                                                  Size(100, 40)),
-                                        ),
-                                        onPressed: () {
-                                          //Add Export Functionality here
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Icon(
-                                              DashboardPageIcons.export,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
+                                                      .primary,
+                                                ),
+                                                Text(
+                                                  "Export",
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              "Export",
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      height: 30,
-                                      child: MenuItemButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  Theme.of(context)
+                                        SizedBox(
+                                          width: 100,
+                                          height: 30,
+                                          child: MenuItemButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStatePropertyAll(
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                              fixedSize:
+                                                  const WidgetStatePropertyAll(
+                                                      Size(100, 40)),
+                                            ),
+                                            onPressed: () {
+                                              //Add delete functionality here
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Icon(
+                                                  DashboardPageIcons.bin,
+                                                  color: Theme.of(context)
                                                       .colorScheme
-                                                      .onPrimary),
-                                          fixedSize:
-                                              const WidgetStatePropertyAll(
-                                                  Size(100, 40)),
-                                        ),
-                                        onPressed: () {
-                                          //Add delete functionality here
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Icon(
-                                              DashboardPageIcons.bin,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
+                                                      .error,
+                                                ),
+                                                Text(
+                                                  "Delete",
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              "Delete",
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ]),
+                                      ]),
+                                ],
+                              ),
                             ),
                           ],
                         ),
