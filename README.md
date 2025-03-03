@@ -49,7 +49,7 @@ https://github.com/rainyl/dartcv
 
 ### Linux or Mac
 
-- idfk your cooked
+- idfk you're cooked
 
 ---
 
@@ -109,6 +109,20 @@ Start an emulator normally and run:
 ```
 flutter run integration_test/[TEST TO RUN]
 ```
+## Editing the presentation
+### Downloading fonts
+There is a file called "computer-modern" which contains all of the fonts used in the presentation in the repository (somewhere, edit this)
+
+Please download this.
+
+####Windows:
+You can open the zip and download them by:
+Editing the BAT file attached to change the directory to a folder containing the extracted fonts
+
+Opening the fonts section in settings to drag and drop the selected fonts.
+
+####Linux or Mac
+Good luck soldier, idk.
 
 ## Useful Links
 
