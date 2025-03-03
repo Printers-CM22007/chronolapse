@@ -49,9 +49,8 @@ class TimelapseBuffer {
     Future(() async {
       await beginProcessing.future;
 
-      for(int i = 0; i < nFrames; i++) {
-
-        var img = await cv2.imreadAsync(timelapsePath + i.toString() + ".png");
+      for (int i = 0; i < nFrames; i++) {
+        var img = await cv2.imreadAsync("$timelapsePath$i.png");
         var encoded = cv2.imencode('.png', img);
 
         port.send(encoded);
@@ -76,7 +75,7 @@ class TimelapseBuffer {
     await _isolateReady.future;
 
     while (frames.length <= frame) {
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 10));
     }
 
     return frames[frame];
