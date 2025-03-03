@@ -25,21 +25,15 @@ class ProjectCard {
     // Get projects here from the backend
 
     //These are filler projects
-    projects.add(
-      ProjectCard(
+    projects.add(ProjectCard(
         projectName: "MyLittlePony",
         previewPicturePath: "assets/images/pretty_filler_image.png",
-        lastEdited: '10d'
-      )
-    );
+        lastEdited: '10d'));
 
-    projects.add(
-        ProjectCard(
-            projectName: "MyBigPony",
-            previewPicturePath: "assets/images/pretty_filler_image.png",
-            lastEdited: '30s'
-        )
-    );
+    projects.add(ProjectCard(
+        projectName: "MyBigPony",
+        previewPicturePath: "assets/images/pretty_filler_image.png",
+        lastEdited: '30s'));
 
     return projects;
   }
