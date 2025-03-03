@@ -8,7 +8,5 @@ class VideoStitcher {
   VideoStitcher(StitcherOptions opt)
       : options = opt,
         isRunning = false,
-        framesProcessed = 0 {
-      
-  }
+        framesProcessed = 0;
 }

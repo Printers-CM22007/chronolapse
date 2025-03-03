@@ -1,8 +1,13 @@
+
 import 'package:chronolapse/backend/notification_service.dart';
+
+import 'dart:typed_data';
+
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
+import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
-import 'package:chronolapse/ui/models/project_card.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
@@ -10,7 +15,16 @@ String? currentProject = "sampleProject";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  print("Initialising SettingsStore");
   await SettingsStore.initialise();
+  print("Intialising TimelapseStore");
+  await TimelapseStore.initialise();
+
+  await TimelapseStore.deleteAllProjects();
+  const projectName = "testProject";
+  await TimelapseStore.createProject(projectName);
+  final frame = TimelapseFrame.createNew(projectName);
+  await frame.saveFrameFromPngBytes(Uint8List(12));
 
   //initialize notifications
   NotificationService().initNotification();
@@ -49,7 +63,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme(
+        colorScheme: const ColorScheme(
           primary: Color(0xff08070B),
           onPrimary: Color(0xffCCCCCC),
           secondary: Color(0xff11373B),
@@ -65,7 +79,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const ExamplePageOne("Title"),
       // home: const ScratchPage(),
-
     );
   }
 }
