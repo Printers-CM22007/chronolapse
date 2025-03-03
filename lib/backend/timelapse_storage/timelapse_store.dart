@@ -28,8 +28,8 @@ class TimelapseStore {
   final Directory _timelapseDir;
   TimelapseStore._(this._baseDir, this._timelapseDir);
 
-  /// `SettingsStore.initialise()` must have been called (and awaited) before
-  /// this can be used.
+  /// Initialised `TimelapseStore`. `SettingsStore.initialise()` must have been
+  /// called (and awaited) before this can be used.
   static Future<void> initialise() async {
     final baseDir = await getApplicationDocumentsDirectory();
     final timelapseDir = Directory("${baseDir.path}/$timelapseDirName");
@@ -51,20 +51,29 @@ class TimelapseStore {
     _instance = TimelapseStore._(baseDir, timelapseDir);
   }
 
+  /// Returns a list of all the projects.
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static List<String> getProjectList() {
     _getInstance();
     return SettingsStore.sp().getStringList(timelapseProjectListKey) ?? [];
   }
 
+  /// Returns the directory for a given project.
   static Directory getProjectDir(String projectName) {
     return Directory("${_getInstance()._timelapseDir.path}/$projectName");
   }
 
+  /// Returns the data file for a given project.
   static File getProjectDataFile(String projectName) {
     return File(
         "${TimelapseStore.getProjectDir(projectName).path}/timelapse_data.json");
   }
 
+  /// Creates a new project. The name must be unique and alpha-numeric (with
+  /// spaces).
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<ProjectTimelapseData?> createProject(String projectName) async {
     if (getProjectList().contains(projectName) ||
         !projectNameRegex.hasMatch(projectName)) {
@@ -85,6 +94,9 @@ class TimelapseStore {
     return data;
   }
 
+  /// Returns a given project (`ProjectTimelapseData`).
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<ProjectTimelapseData> getProject(String projectName) async {
     final file = getProjectDataFile(projectName);
 
@@ -94,21 +106,33 @@ class TimelapseStore {
     return ProjectTimelapseData(TimelapseData.fromJson(jsonData), projectName);
   }
 
+  /// Deletes a given project and its settings.
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<void> deleteProject(String projectName) async {
     final projects = getProjectList();
     projects.remove(projectName);
     await SettingsStore.sp().setStringList(timelapseProjectListKey, projects);
+    await SettingsStore.deleteAllProjectSettings(projectName);
     await getProjectDir(projectName).delete(recursive: true);
   }
 
+  /// Deletes all projects and their settings!
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<void> deleteAllProjects() async {
     final projects = getProjectList();
     await SettingsStore.sp().setStringList(timelapseProjectListKey, []);
 
-    await Future.wait(
-        projects.map((p) => getProjectDir(p).delete(recursive: true)));
+    await Future.wait(projects.map((p) {
+      return Future.wait([
+        getProjectDir(p).delete(recursive: true),
+        SettingsStore.deleteAllProjectSettings(p)
+      ]);
+    }));
   }
 
+  /// Returns a new unused uuid.
   static String _getNewUuid(ProjectTimelapseData data) {
     var uuid = const Uuid().v4();
     while (data.data.metaData.frames.contains(uuid)) {
@@ -117,6 +141,9 @@ class TimelapseStore {
     return uuid;
   }
 
+  /// Creates a new uuid, appends it to the frames list, and returns it.
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<String> getAndAppendFrameUuid(String projectName) async {
     final data = await getProject(projectName);
     final uuid = _getNewUuid(data);
@@ -127,6 +154,9 @@ class TimelapseStore {
     return uuid;
   }
 
+  /// Creates a new uuid, insets it into the frames list, and returns it.
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<String> getAndInsertFrameUuid(
       String projectName, int position) async {
     final data = await getProject(projectName);
@@ -138,6 +168,9 @@ class TimelapseStore {
     return uuid;
   }
 
+  /// Deletes a given frame
+  /// `TimelapseStore.initialise()` must have been called (and awaited) before
+  /// this can be used.
   static Future<void> deleteFrameUuid(String projectName, String uuid) async {
     final data = await getProject(projectName);
     data.data.metaData.frames.remove(uuid);

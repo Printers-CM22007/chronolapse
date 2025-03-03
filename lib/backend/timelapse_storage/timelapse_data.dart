@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_metadata.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'frame/frame_data.dart';
 
 part 'timelapse_data.g.dart';
 
+/// A wrapper around `TimelapseData` allowing for saving and reloading, as well
+/// as having a project specified
 class ProjectTimelapseData {
   TimelapseData data;
   final String _projectName;
@@ -17,12 +17,14 @@ class ProjectTimelapseData {
 
   ProjectTimelapseData(this.data, this._projectName);
 
+  /// Saves changes made to the `data` attribute to disk
   Future<void> saveChanges() async {
     final jsonString = jsonEncode(data.toJson());
     final file = TimelapseStore.getProjectDataFile(_projectName);
     await file.writeAsString(jsonString);
   }
 
+  /// Loads changes from disk
   Future<void> reloadFromDisk() async {
     final file = TimelapseStore.getProjectDataFile(_projectName);
 
@@ -32,9 +34,9 @@ class ProjectTimelapseData {
     data = TimelapseData.fromJson(jsonData);
   }
 
-  TimelapseFrame createNewFrame() => TimelapseFrame.createNew(_projectName);
-  TimelapseFrame createNewFrameWithData(FrameData data) =>
-      TimelapseFrame.createNewWithData(_projectName, data);
+  // TimelapseFrame createNewFrame() => TimelapseFrame.createNew(_projectName);
+  // TimelapseFrame createNewFrameWithData(FrameData data) =>
+  //     TimelapseFrame.createNewWithData(_projectName, data);
 }
 
 @JsonSerializable()

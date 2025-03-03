@@ -19,9 +19,9 @@ class SettingsStore {
     _instance = SettingsStore._(await SharedPreferences.getInstance());
   }
 
-  /// Returns a reference to the singleton. `SettingsStore.initialise()` must have
-  /// been called (and awaited) before this can be used. Do not use this without
-  /// a wrapper!
+  /// Returns a reference to `SharedPreferences`. `SettingsStore.initialise()`
+  /// must have been called (and awaited) before this can be used. Do not use
+  /// this without a wrapper!
   static SharedPreferences sp() {
     return _getInstance()._sp;
   }
