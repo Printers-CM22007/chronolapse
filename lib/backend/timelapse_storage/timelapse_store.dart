@@ -46,7 +46,7 @@ class TimelapseStore {
       }
     }
 
-    SettingsStore.sp().setStringList(timelapseProjectListKey, projects);
+    await SettingsStore.sp().setStringList(timelapseProjectListKey, projects);
 
     _instance = TimelapseStore._(baseDir, timelapseDir);
   }
@@ -73,6 +73,10 @@ class TimelapseStore {
 
     await getProjectDir(projectName).create();
 
+    final projects = getProjectList();
+    projects.add(projectName);
+    await SettingsStore.sp().setStringList(timelapseProjectListKey, projects);
+
     final data =
         ProjectTimelapseData(TimelapseData.initial(projectName), projectName);
 
@@ -81,13 +85,28 @@ class TimelapseStore {
     return data;
   }
 
-  static Future<ProjectTimelapseData> getProjectData(String projectName) async {
+  static Future<ProjectTimelapseData> getProject(String projectName) async {
     final file = getProjectDataFile(projectName);
 
     final jsonString = await file.readAsString();
     final jsonData = jsonDecode(jsonString);
 
     return ProjectTimelapseData(TimelapseData.fromJson(jsonData), projectName);
+  }
+
+  static Future<void> deleteProject(String projectName) async {
+    final projects = getProjectList();
+    projects.remove(projectName);
+    await SettingsStore.sp().setStringList(timelapseProjectListKey, projects);
+    await getProjectDir(projectName).delete(recursive: true);
+  }
+
+  static Future<void> deleteAllProjects() async {
+    final projects = getProjectList();
+    await SettingsStore.sp().setStringList(timelapseProjectListKey, []);
+
+    await Future.wait(
+        projects.map((p) => getProjectDir(p).delete(recursive: true)));
   }
 
   static String _getNewUuid(ProjectTimelapseData data) {
@@ -99,7 +118,7 @@ class TimelapseStore {
   }
 
   static Future<String> getAndAppendFrameUuid(String projectName) async {
-    final data = await getProjectData(projectName);
+    final data = await getProject(projectName);
     final uuid = _getNewUuid(data);
 
     data.data.metaData.frames.add(uuid);
@@ -110,7 +129,7 @@ class TimelapseStore {
 
   static Future<String> getAndInsertFrameUuid(
       String projectName, int position) async {
-    final data = await getProjectData(projectName);
+    final data = await getProject(projectName);
     final uuid = _getNewUuid(data);
 
     data.data.metaData.frames.insert(position, uuid);
@@ -120,7 +139,7 @@ class TimelapseStore {
   }
 
   static Future<void> deleteFrameUuid(String projectName, String uuid) async {
-    final data = await getProjectData(projectName);
+    final data = await getProject(projectName);
     data.data.metaData.frames.remove(uuid);
     await data.saveChanges();
   }

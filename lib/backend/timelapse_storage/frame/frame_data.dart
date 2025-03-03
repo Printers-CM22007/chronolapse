@@ -1,4 +1,3 @@
-
 import 'package:json_annotation/json_annotation.dart';
 
 import 'frame_metadata.dart';
@@ -7,8 +6,8 @@ part 'frame_data.g.dart';
 
 @JsonSerializable()
 
-/// Holds data about a timelapse. !! Only modify the data you added - e.g. don't
-/// modify `TimelapseMetaData` from outside `timelapse_storage` code !!
+/// Holds data about a frame. !! Only modify the data you added - e.g. don't
+/// modify `FrameMetaData` from outside `timelapse_storage/frame` code !!
 class FrameData {
   FrameMetaData metaData;
 

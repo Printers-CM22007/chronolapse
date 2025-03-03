@@ -4,7 +4,6 @@ part 'frame_metadata.g.dart';
 
 @JsonSerializable()
 class FrameMetaData {
-
   FrameMetaData();
 
   factory FrameMetaData.initial(String projectName) {
