@@ -1,3 +1,6 @@
+
+import 'package:chronolapse/backend/notification_service.dart';
+
 import 'dart:typed_data';
 
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
@@ -22,6 +25,9 @@ void main() async {
   await TimelapseStore.createProject(projectName);
   final frame = TimelapseFrame.createNew(projectName);
   await frame.saveFrameFromPngBytes(Uint8List(12));
+
+  //initialize notifications
+  NotificationService().initNotification();
 
   print("Test: ${await testFunction(5)}");
 
