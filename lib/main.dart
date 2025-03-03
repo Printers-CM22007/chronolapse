@@ -12,7 +12,7 @@ void main() async {
 
   print("Initialising SettingsStore");
   await SettingsStore.initialise();
-  print("Intialising TimelaspeStore");
+  print("Intialising TimelapseStore");
   await TimelapseStore.initialise();
 
   print("Test: ${await testFunction(5)}");
