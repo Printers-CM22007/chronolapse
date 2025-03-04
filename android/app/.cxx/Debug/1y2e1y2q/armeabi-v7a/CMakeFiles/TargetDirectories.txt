@@ -1,0 +1,2 @@
+/home/robert/Documents/Printers/chronolapse/android/app/.cxx/Debug/1y2e1y2q/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/robert/Documents/Printers/chronolapse/android/app/.cxx/Debug/1y2e1y2q/armeabi-v7a/CMakeFiles/rebuild_cache.dir
