@@ -1,7 +1,11 @@
 import 'package:chronolapse/ui/example_page_two.dart';
+import 'package:chronolapse/ui/picture_taking_page.dart';
+import 'package:chronolapse/ui/settings_page.dart';
 import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+
+import 'dashboard_page.dart';
 
 class ExamplePageOne extends StatefulWidget {
   const ExamplePageOne(this.title, {super.key});
@@ -104,7 +108,7 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               title: const Text('Go to settings page'),
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const SettingsPage(null)));
+                    builder: (context) => const SettingsPage("testProject")));
               },
             ),
             const Divider(),
