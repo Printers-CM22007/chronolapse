@@ -1,4 +1,3 @@
-
 import 'package:chronolapse/backend/notification_service.dart';
 
 import 'dart:typed_data';
@@ -25,7 +24,8 @@ void main() async {
 
   await TimelapseStore.deleteAllProjects();
   const projectName = "testProject";
-  await TimelapseStore.createProject(projectName);
+  final projectData = await TimelapseStore.createProject(projectName);
+
   final frame = TimelapseFrame.createNew(projectName);
   await frame.saveFrameFromPngBytes(Uint8List(12));
 
