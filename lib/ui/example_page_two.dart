@@ -20,7 +20,7 @@ class _ExamplePageTwoState extends State<ExamplePageTwo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: const Text("Example Page 2"),
       ),
       body: Center(

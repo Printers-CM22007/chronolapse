@@ -100,14 +100,17 @@ class _DashboardPageState extends State<DashboardPage> {
           //   topLeft: Radius.circular(35),
           //   topRight: Radius.circular(35)
           // ),
-          boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]),
+          // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
+      ),
       child: NavigationBar(
-          shadowColor: Theme.of(context).colorScheme.onPrimary,
+          shadowColor: Theme.of(context).colorScheme.onInverseSurface,
           height: 60,
-          backgroundColor: Theme.of(context).colorScheme.onSurface,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           elevation: 0,
           selectedIndex: 0,
-          indicatorColor: Theme.of(context).colorScheme.surface,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
+
+
           // Commented out because this parameter doesn't exist - Robert
           // labelTextStyle: WidgetStatePropertyAll(TextStyle(
           //     color: Theme.of(context).colorScheme.onPrimary
@@ -117,15 +120,15 @@ class _DashboardPageState extends State<DashboardPage> {
             NavigationDestination(
                 icon: Icon(
                   DashboardPageIcons.projects,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.inverseSurface,
                 ),
-                label: "Projects"),
+                label: "Projects",),
             NavigationDestination(
                 icon: Icon(
                   DashboardPageIcons.settings,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.inverseSurface,
                 ),
-                label: "Settings")
+                label: "Settings", )
           ]),
     );
   }
@@ -136,19 +139,19 @@ class _DashboardPageState extends State<DashboardPage> {
       padding: const EdgeInsets.only(right: 25),
       child: TextButton(
         style: TextButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.onSurface),
+            backgroundColor: Theme.of(context).colorScheme.inverseSurface),
         onPressed: () {},
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Icon(
               DashboardPageIcons.import,
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onInverseSurface,
             ),
             Text(
               "Import",
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onInverseSurface,
               ),
             )
           ],
@@ -313,7 +316,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     backgroundColor: WidgetStatePropertyAll(
                                         Theme.of(context)
                                             .colorScheme
-                                            .onPrimary),
+                                            .inverseSurface),
                                   ),
                                   alignmentOffset: const Offset(-60, -100),
                                   builder: (_, MenuController controller,
@@ -330,7 +333,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         DashboardPageIcons.dots,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onPrimary,
+                                            .inverseSurface,
                                       ),
                                     );
                                   },
@@ -344,7 +347,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                               WidgetStatePropertyAll(
                                                   Theme.of(context)
                                                       .colorScheme
-                                                      .onPrimary),
+                                                      .inverseSurface),
                                           fixedSize:
                                               const WidgetStatePropertyAll(
                                                   Size(100, 40)),
@@ -360,14 +363,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                               DashboardPageIcons.export,
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .primary,
+                                                  .onInverseSurface,
                                             ),
                                             Text(
                                               "Export",
                                               style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
-                                                    .primary,
+                                                    .onInverseSurface,
                                               ),
                                             ),
                                           ],
@@ -383,7 +386,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                               WidgetStatePropertyAll(
                                                   Theme.of(context)
                                                       .colorScheme
-                                                      .onPrimary),
+                                                      .inverseSurface),
                                           fixedSize:
                                               const WidgetStatePropertyAll(
                                                   Size(100, 40)),
@@ -406,7 +409,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                               style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
-                                                    .primary,
+                                                    .onInverseSurface,
                                               ),
                                             ),
                                           ],
