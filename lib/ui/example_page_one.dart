@@ -1,5 +1,4 @@
 import 'package:chronolapse/ui/example_page_two.dart';
-import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -49,7 +48,7 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -90,6 +89,22 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const DashboardPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.arrow_forward),
+              title: const Text('Go to picture taking page'),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const PictureTakingPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.arrow_forward),
+              title: const Text('Go to settings page'),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const SettingsPage(null)));
               },
             ),
             const Divider(),

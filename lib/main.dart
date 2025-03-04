@@ -6,11 +6,15 @@ import 'dart:typed_data';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:camera/camera.dart';
+import 'package:chronolapse/backend/settings_storage/settings_storage.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
+
+late List<CameraDescription> cameras;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,17 +35,20 @@ void main() async {
 
   print("Test: ${await testFunction(5)}");
 
+  // List available cameras
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    // TODO: work out how to best report error
+    debugPrint("Error listing available cameras: ${e.toString()}");
+  }
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // Color blackColour = const Color(0xff08070B);
-  // Color greyColour = const Color(0xff131316);
-  // Color whiteColour = const Color(0xffCCCCCC);
-  // Color blueColour1 = const Color(0xff11373B);
-  // Color blueColour2 = const Color(0xff384547);
-  // Color redColour = const Color(0xff3A0101);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
