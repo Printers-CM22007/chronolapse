@@ -24,7 +24,7 @@ class _ExamplePageTwoState extends State<ExamplePageTwo> {
         title: const Text("Example Page 2"),
       ),
       body: Center(
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             ListTile(

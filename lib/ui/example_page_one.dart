@@ -1,4 +1,4 @@
-import 'package:chronolapse/ui/example_page_two.dart';
+import 'package:chronolapse/ui/video_editor_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class ExamplePageOne extends StatefulWidget {
@@ -73,10 +73,10 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
             ListTile(
               leading: const Icon(Icons.arrow_forward),
               title: const Text('Go to other page'),
-              subtitle: const Text('Goes to example page 2'),
+              subtitle: const Text('This is the way to the video player'),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const ExamplePageTwo()));
+                Navigator.of(context).push( MaterialPageRoute(
+                    builder: (context) => const VideoEditor()));
               },
             ),
             const Divider(),

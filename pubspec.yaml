@@ -35,6 +35,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # The following is used for the video editor
+  video_player: ^2.2.19
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -44,7 +48,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.4
@@ -79,6 +83,8 @@ flutter_native_splash:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/landscape.jpeg
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
