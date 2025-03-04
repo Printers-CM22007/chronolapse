@@ -94,13 +94,13 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
       clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(40)),
-          // borderRadius: BorderRadius.only(
-          //   topLeft: Radius.circular(35),
-          //   topRight: Radius.circular(35)
-          // ),
-          // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(40)),
+        // borderRadius: BorderRadius.only(
+        //   topLeft: Radius.circular(35),
+        //   topRight: Radius.circular(35)
+        // ),
+        // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
       ),
       child: NavigationBar(
           shadowColor: Theme.of(context).colorScheme.onInverseSurface,
@@ -110,7 +110,6 @@ class _DashboardPageState extends State<DashboardPage> {
           selectedIndex: 0,
           indicatorColor: Theme.of(context).colorScheme.secondary,
 
-
           // Commented out because this parameter doesn't exist - Robert
           // labelTextStyle: WidgetStatePropertyAll(TextStyle(
           //     color: Theme.of(context).colorScheme.onPrimary
@@ -118,17 +117,19 @@ class _DashboardPageState extends State<DashboardPage> {
           //onDestinationSelected: (index) =>   ,
           destinations: [
             NavigationDestination(
-                icon: Icon(
-                  DashboardPageIcons.projects,
-                  color: Theme.of(context).colorScheme.inverseSurface,
-                ),
-                label: "Projects",),
+              icon: Icon(
+                DashboardPageIcons.projects,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
+              label: "Projects",
+            ),
             NavigationDestination(
-                icon: Icon(
-                  DashboardPageIcons.settings,
-                  color: Theme.of(context).colorScheme.inverseSurface,
-                ),
-                label: "Settings", )
+              icon: Icon(
+                DashboardPageIcons.settings,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
+              label: "Settings",
+            )
           ]),
     );
   }
