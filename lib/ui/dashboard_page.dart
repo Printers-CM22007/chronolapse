@@ -54,8 +54,16 @@ class _DashboardPageState extends State<DashboardPage> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text(
           "Project Dashboard",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.white,), // Settings cog icon
+            onPressed: () {
+
+            },
+          ),
+        ],
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
       ),
@@ -84,9 +92,12 @@ class _DashboardPageState extends State<DashboardPage> {
           Expanded(
             child: projectsContainer(),
           ),
+          const SizedBox(
+            height: 1,
+          )
         ],
       ),
-      bottomNavigationBar: bottomNavBar(),
+      // bottomNavigationBar: bottomNavBar(),
     );
   }
 
@@ -305,9 +316,6 @@ class _DashboardPageState extends State<DashboardPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  IconButton(
-                                      onPressed: (){},
-                                      icon: Icon(DashboardPageIcons.settings, color: Theme.of(context).colorScheme.onPrimary,)),
                                   MenuAnchor(
                                       style: MenuStyle(
                                         shape: WidgetStatePropertyAll(
