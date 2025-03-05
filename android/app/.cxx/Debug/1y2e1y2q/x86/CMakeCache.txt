@@ -395,7 +395,7 @@ CMAKE_SUPPRESS_DEVELOPER_ERRORS:INTERNAL=TRUE
 // files.
 CMAKE_SUPPRESS_DEVELOPER_WARNINGS:INTERNAL=TRUE
 //uname command
-CMAKE_UNAME:INTERNAL=/nix/store/6wgd8c9vq93mqxzc7jhkl86mv6qbc360-coreutils-9.5/bin/uname
+CMAKE_UNAME:INTERNAL=/nix/store/9m68vvhnsq5cpkskphgw84ikl9m6wjwp-coreutils-9.5/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Whether to issue warnings for deprecated functionality.

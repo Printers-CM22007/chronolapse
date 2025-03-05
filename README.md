@@ -115,13 +115,13 @@ There is a file called "computer-modern" which contains all of the fonts used in
 
 Please download this.
 
-####Windows:
+#### Windows:
 You can open the zip and download them by:
 Editing the BAT file attached to change the directory to a folder containing the extracted fonts
 
 Opening the fonts section in settings to drag and drop the selected fonts.
 
-####Linux or Mac
+#### Linux or Mac
 Good luck soldier, idk.
 
 ## Useful Links
