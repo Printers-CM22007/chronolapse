@@ -1,3 +1,4 @@
+import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class DashboardPageIcons {
   static const IconData dots = IconData(0xeaa3, fontFamily: fontFamily);
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage> with RouteAware {
   late List<ProjectCard> _projects;
   bool _projectsLoaded = false;
   String _projectsSearchString = "";
@@ -45,6 +46,28 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
 
+    _loadProjects();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // (benny) Example called routeObserver.subscribe() in this function rather than initState, I don't know why
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when this page is returned to via the back button
+    // In this situation we need to reload the projects in case a new project has
+    // been created
+    super.didPopNext();
     _loadProjects();
   }
 
