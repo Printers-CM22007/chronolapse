@@ -2,9 +2,9 @@ import 'package:chronolapse/ui/example_page_two.dart';
 import 'package:flutter/material.dart';
 
 class ExportPage extends StatefulWidget {
-  final String projectName;
+  final String _projectName;
 
-  const ExportPage(this.projectName, {super.key});
+  const ExportPage(this._projectName, {super.key});
 
   @override
   State<ExportPage> createState() => _ExportPageState();

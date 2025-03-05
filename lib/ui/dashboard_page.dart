@@ -375,7 +375,8 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       ExportPage(
-                                                          title: projects[index]
+                                                          projects[
+                                                                  index]
                                                               .projectName)))
                                         },
                                         child: Row(
