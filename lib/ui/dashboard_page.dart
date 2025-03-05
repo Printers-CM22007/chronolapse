@@ -37,16 +37,34 @@ class DashboardPageIcons {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  List<ProjectCard> projects = [];
+  late List<ProjectCard> _projects;
+  bool _projectsLoaded = false;
   String _projectsSearchString = "";
 
-  void _getProjects() {
-    projects = ProjectCard.getProjects();
+  @override
+  void initState() {
+    super.initState();
 
-    // Filter project using search string
-    if (_projectsSearchString != "") {
-      projects = projects.where((project) => project.projectName.toLowerCase().contains(_projectsSearchString.toLowerCase())).toList();
+    _loadProjects();
+  }
+
+  void _loadProjects() async {
+    _projects = await ProjectCard.getProjects();
+    _projectsLoaded = true;
+
+    if (mounted) {
+      setState(() {});
     }
+  }
+
+  List<ProjectCard> _getFilteredProjects() {
+    assert(_projectsLoaded);
+
+    return _projects
+        .where((project) => project.projectName
+            .toLowerCase()
+            .contains(_projectsSearchString.toLowerCase()))
+        .toList();
   }
 
   void _onSearchFieldChanged(String value) {
@@ -56,7 +74,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    _getProjects();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -66,7 +83,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
         backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text(
-          "Project Dashboard",
+          "Dashboard",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         // Here we take the value from the MyHomePage object that was created by
@@ -159,7 +176,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Container projectsContainer() {
+  Widget projectsContainer() {
+    if (!_projectsLoaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final projects = _getFilteredProjects();
+
     return Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
         //height: 445,
@@ -186,8 +209,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         SizedBox(
                           width: constraints.maxWidth * 0.9,
                           height: constraints.maxHeight * 0.65,
-                          child:
-                              Image.asset(projects[index].previewPicturePath),
+                          child: projects[index].previewPicturePath != null
+                              ? Image.asset(projects[index].previewPicturePath!)
+                              : const Icon(Icons.image),
                         ),
                         SizedBox(
                           height: constraints.maxHeight * 0.025,
