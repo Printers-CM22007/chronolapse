@@ -1,4 +1,7 @@
+import 'package:chronolapse/main.dart';
+import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
+import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -35,15 +38,66 @@ class DashboardPageIcons {
   static const IconData dots = IconData(0xeaa3, fontFamily: fontFamily);
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  List<ProjectCard> projects = [];
-  void _getProjects() {
-    projects = ProjectCard.getProjects();
+class _DashboardPageState extends State<DashboardPage> with RouteAware {
+  late List<ProjectCard> _projects;
+  bool _projectsLoaded = false;
+  String _projectsSearchString = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadProjects();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // (benny) Example called routeObserver.subscribe() in this function rather than initState, I don't know why
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when this page is returned to via the back button
+    // In this situation we need to reload the projects in case a new project has
+    // been created
+    super.didPopNext();
+    _loadProjects();
+  }
+
+  void _loadProjects() async {
+    _projects = await ProjectCard.getProjects();
+    _projectsLoaded = true;
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  List<ProjectCard> _getFilteredProjects() {
+    assert(_projectsLoaded);
+
+    return _projects
+        .where((project) => project.projectName
+            .toLowerCase()
+            .contains(_projectsSearchString.toLowerCase()))
+        .toList();
+  }
+
+  void _onSearchFieldChanged(String value) {
+    _projectsSearchString = value;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    _getProjects();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -53,7 +107,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
         backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text(
-          "Project Dashboard",
+          "Dashboard",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         // Here we take the value from the MyHomePage object that was created by
@@ -86,51 +140,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      bottomNavigationBar: bottomNavBar(),
-    );
-  }
-
-  Container bottomNavBar() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-      clipBehavior: Clip.hardEdge,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(40)),
-        // borderRadius: BorderRadius.only(
-        //   topLeft: Radius.circular(35),
-        //   topRight: Radius.circular(35)
-        // ),
-        // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
-      ),
-      child: NavigationBar(
-          shadowColor: Theme.of(context).colorScheme.onInverseSurface,
-          height: 60,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          elevation: 0,
-          selectedIndex: 0,
-          indicatorColor: Theme.of(context).colorScheme.secondary,
-
-          // Commented out because this parameter doesn't exist - Robert
-          // labelTextStyle: WidgetStatePropertyAll(TextStyle(
-          //     color: Theme.of(context).colorScheme.onPrimary
-          // )),
-          //onDestinationSelected: (index) =>   ,
-          destinations: [
-            NavigationDestination(
-              icon: Icon(
-                DashboardPageIcons.projects,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Projects",
-            ),
-            NavigationDestination(
-              icon: Icon(
-                DashboardPageIcons.settings,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Settings",
-            )
-          ]),
+      bottomNavigationBar: const DashboardNavigationBar(0),
     );
   }
 
@@ -190,7 +200,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Container projectsContainer() {
+  Widget projectsContainer() {
+    if (!_projectsLoaded) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final projects = _getFilteredProjects();
+
     return Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
         //height: 445,
@@ -217,8 +233,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         SizedBox(
                           width: constraints.maxWidth * 0.9,
                           height: constraints.maxHeight * 0.65,
-                          child:
-                              Image.asset(projects[index].previewPicturePath),
+                          child: projects[index].previewPicturePath != null
+                              ? Image.asset(projects[index].previewPicturePath!)
+                              : const Icon(Icons.image),
                         ),
                         SizedBox(
                           height: constraints.maxHeight * 0.025,
@@ -353,8 +370,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                               const WidgetStatePropertyAll(
                                                   Size(100, 40)),
                                         ),
-                                        onPressed: () {
-                                          //Add Export Functionality here
+                                        onPressed: () => {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ExportPage(
+                                                          projects[
+                                                                  index]
+                                                              .projectName)))
                                         },
                                         child: Row(
                                           mainAxisAlignment:
@@ -433,6 +456,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: TextField(
+        onChanged: _onSearchFieldChanged,
         style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         cursorColor: Theme.of(context).colorScheme.onPrimary,
         decoration: InputDecoration(

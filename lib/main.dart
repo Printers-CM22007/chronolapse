@@ -1,16 +1,18 @@
-import 'package:chronolapse/backend/notification_service.dart';
-
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
+import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:camera/camera.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
-import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
+
+// Used by DashboardPage to reload projects when it is returned to
+final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
 
 late List<CameraDescription> cameras;
 
@@ -83,8 +85,8 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: const ExamplePageOne("Title"),
-      // home: const ScratchPage(),
+      home: const DashboardPage(),
+      navigatorObservers: [routeObserver],
     );
   }
 }
