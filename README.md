@@ -99,7 +99,6 @@ The report can then be opened:
 open coverage/html/index.html
 ```
 
-
 As these tests run without Android, they cannot test native code (i.e. code in the `android` folder)
 
 ### Integration Tests

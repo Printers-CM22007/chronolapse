@@ -1,4 +1,5 @@
 import 'package:chronolapse/ui/models/project_card.dart';
+import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -86,51 +87,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      bottomNavigationBar: bottomNavBar(),
-    );
-  }
-
-  Container bottomNavBar() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-      clipBehavior: Clip.hardEdge,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(40)),
-        // borderRadius: BorderRadius.only(
-        //   topLeft: Radius.circular(35),
-        //   topRight: Radius.circular(35)
-        // ),
-        // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
-      ),
-      child: NavigationBar(
-          shadowColor: Theme.of(context).colorScheme.onInverseSurface,
-          height: 60,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          elevation: 0,
-          selectedIndex: 0,
-          indicatorColor: Theme.of(context).colorScheme.secondary,
-
-          // Commented out because this parameter doesn't exist - Robert
-          // labelTextStyle: WidgetStatePropertyAll(TextStyle(
-          //     color: Theme.of(context).colorScheme.onPrimary
-          // )),
-          //onDestinationSelected: (index) =>   ,
-          destinations: [
-            NavigationDestination(
-              icon: Icon(
-                DashboardPageIcons.projects,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Projects",
-            ),
-            NavigationDestination(
-              icon: Icon(
-                DashboardPageIcons.settings,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Settings",
-            )
-          ]),
+      bottomNavigationBar: const DashboardNavigationBar(0),
     );
   }
 

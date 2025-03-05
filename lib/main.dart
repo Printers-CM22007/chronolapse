@@ -7,6 +7,7 @@ import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:camera/camera.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
+import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:chronolapse/ui/example_page_one.dart';
 import 'package:flutter/material.dart';
 
@@ -83,7 +84,7 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: const ExamplePageOne("Title"),
+      home: const DashboardPage(),
       // home: const ScratchPage(),
     );
   }
