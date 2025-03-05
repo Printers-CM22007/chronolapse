@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
@@ -235,7 +237,8 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                           width: constraints.maxWidth * 0.9,
                           height: constraints.maxHeight * 0.65,
                           child: projects[index].previewPicturePath != null
-                              ? Image.asset(projects[index].previewPicturePath!)
+                              ? Image.file(
+                                  File(projects[index].previewPicturePath!))
                               : const Icon(Icons.image),
                         ),
                         SizedBox(

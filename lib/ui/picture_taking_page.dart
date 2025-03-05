@@ -138,7 +138,8 @@ class PictureTakingPageState extends State<PictureTakingPage>
         // Transition to PicturePreviewPage
         if (mounted) {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PicturePreviewPage(imagePath)));
+              builder: (context) =>
+                  PicturePreviewPage(widget._projectName, imagePath)));
         }
       }).timeout(_pictureTakingTimeoutDuration);
     } on TimeoutException catch (_) {
@@ -175,10 +176,10 @@ class PictureTakingPageState extends State<PictureTakingPage>
           angle: cameraController.description.sensorOrientation);
 
       // Save image to temporary file
-      final data = img.encodeJpg(rotatedImage).toList();
+      final data = img.encodePng(rotatedImage).toList();
 
       final temporaryDir = await getTemporaryDirectory();
-      final imagePath = "${temporaryDir.path}/${DateTime.now().hashCode}.jpg";
+      final imagePath = "${temporaryDir.path}/${DateTime.now().hashCode}.png";
 
       final file = File(imagePath);
       await file.writeAsBytes(data, flush: true);
