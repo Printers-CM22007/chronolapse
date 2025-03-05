@@ -38,8 +38,20 @@ class DashboardPageIcons {
 
 class _DashboardPageState extends State<DashboardPage> {
   List<ProjectCard> projects = [];
+  String _projectsSearchString = "";
+
   void _getProjects() {
     projects = ProjectCard.getProjects();
+
+    // Filter project using search string
+    if (_projectsSearchString != "") {
+      projects = projects.where((project) => project.projectName.toLowerCase().contains(_projectsSearchString.toLowerCase())).toList();
+    }
+  }
+
+  void _onSearchFieldChanged(String value) {
+    _projectsSearchString = value;
+    setState(() {});
   }
 
   @override
@@ -390,6 +402,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: TextField(
+        onChanged: _onSearchFieldChanged,
         style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         cursorColor: Theme.of(context).colorScheme.onPrimary,
         decoration: InputDecoration(
