@@ -100,7 +100,7 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
               title: const Text('Go to picture taking page'),
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const PictureTakingPage()));
+                    builder: (context) => const PictureTakingPage("")));
               },
             ),
             ListTile(
