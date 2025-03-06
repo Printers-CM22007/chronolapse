@@ -107,9 +107,19 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
 
         backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text(
+
           "Dashboard",
           style: TextStyle(fontWeight: FontWeight.bold),
+
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.white,), // Settings cog icon
+            onPressed: () {
+
+            },
+          ),
+        ],
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
       ),
@@ -138,9 +148,14 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
           Expanded(
             child: projectsContainer(),
           ),
+          const SizedBox(
+            height: 1,
+          )
         ],
       ),
+
       bottomNavigationBar: const DashboardNavigationBar(0),
+
     );
   }
 
@@ -322,6 +337,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               width: constraints.maxWidth * 0.4,
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerRight,
+
                               child: MenuAnchor(
                                   style: MenuStyle(
                                     shape: WidgetStatePropertyAll(
@@ -396,38 +412,40 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                                     .colorScheme
                                                     .onInverseSurface,
                                               ),
+
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      height: 30,
-                                      child: MenuItemButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  Theme.of(context)
+                                            onPressed: () {
+                                              //Add Export Functionality here
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Icon(
+                                                  DashboardPageIcons.export,
+                                                  color: Theme.of(context)
                                                       .colorScheme
                                                       .inverseSurface),
                                           fixedSize:
                                               const WidgetStatePropertyAll(
                                                   Size(100, 40)),
+
                                         ),
-                                        onPressed: () {
-                                          //Add delete functionality here
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Icon(
-                                              DashboardPageIcons.bin,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
+                                        SizedBox(
+                                          width: 100,
+                                          height: 30,
+                                          child: MenuItemButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStatePropertyAll(
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                              fixedSize:
+                                                  const WidgetStatePropertyAll(
+                                                      Size(100, 40)),
                                             ),
+
                                             Text(
                                               "Delete",
                                               style: TextStyle(
@@ -435,12 +453,13 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                                     .colorScheme
                                                     .onInverseSurface,
                                               ),
+
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ]),
+                                      ]),
+                                ],
+                              ),
                             ),
                           ],
                         ),
