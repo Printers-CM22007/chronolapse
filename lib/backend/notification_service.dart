@@ -3,10 +3,10 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as ltz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
-class NotificationService{
+class NotificationService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  bool _isInit = false;
+  final bool _isInit = false;
 
   bool get isInit => _isInit;
 
@@ -18,7 +18,6 @@ class NotificationService{
     ltz.initializeTimeZones();
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
-
 
     //Prepare android init settings
     const initSettingsAndroid =
@@ -47,22 +46,27 @@ class NotificationService{
   }
 
   //SHOW NOTIFICATION
-  Future<void> showNotification({int id = 0, String? title, String? body}) async{
-    return notificationsPlugin.show(id, title, body, const NotificationDetails(),);
+  Future<void> showNotification(
+      {int id = 0, String? title, String? body}) async {
+    return notificationsPlugin.show(
+      id,
+      title,
+      body,
+      const NotificationDetails(),
+    );
   }
 
   //SCHEDULE NOTIFICATIONS
-  Future<void> scheduleNotification({int id = 1, required String title, required String body, required int hour, required int minute}) async{
+  Future<void> scheduleNotification(
+      {int id = 1,
+      required String title,
+      required String body,
+      required int hour,
+      required int minute}) async {
     final now = tz.TZDateTime.now(tz.local); //current date time
 
-    var scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute
-    );
+    var scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
 
     await notificationsPlugin.zonedSchedule(
       id,
@@ -70,7 +74,8 @@ class NotificationService{
       body,
       scheduledDate,
       const NotificationDetails(),
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
 
       // REPEATS THE NOTIFICATION DAILY
@@ -78,7 +83,7 @@ class NotificationService{
     );
   }
 
-  Future<void> cancelAllNotifications() async{
+  Future<void> cancelAllNotifications() async {
     await notificationsPlugin.cancelAll();
   }
 }

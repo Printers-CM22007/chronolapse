@@ -1,0 +1,250 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:camera/camera.dart';
+import 'package:chronolapse/main.dart';
+import 'package:chronolapse/ui/picture_preview_page.dart';
+import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
+
+class PictureTakingPage extends StatefulWidget {
+  const PictureTakingPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return PictureTakingPageState();
+  }
+}
+
+class PictureTakingPageState extends State<PictureTakingPage>
+    with WidgetsBindingObserver {
+  static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
+  static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
+
+  late CameraController _cameraController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Create camera controller using first available camera
+    _cameraController = CameraController(cameras.first, _resolutionPreset);
+
+    _initializeCameraController();
+  }
+
+  @override
+  void dispose() {
+    _cameraController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.inactive) {
+      _cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _initializeCameraController();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_cameraController.value.isInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: const Text("Camera"),
+      ),
+      body: Stack(children: [
+        // Camera preview
+        Center(child: CameraPreview(_cameraController)),
+        // Take photo button
+        Container(
+            alignment: Alignment.bottomCenter,
+            child: Stack(children: [
+              Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 5)),
+                  child: Center(
+                      child: ElevatedButton(
+                    onPressed: () {
+                      _onShutterButtonPressed();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(10),
+                      backgroundColor:
+                          Colors.white.withAlpha(200), // Button color
+                      elevation: 5,
+                    ),
+                    child:
+                        const Icon(Icons.camera, color: Colors.white, size: 60),
+                  )))
+            ]))
+      ]),
+      backgroundColor: Colors.black,
+    );
+  }
+
+  Future<void> _initializeCameraController() async {
+    // Initialize camera controller
+    try {
+      await _cameraController.initialize();
+    } on CameraException catch (e) {
+      // TODO: work out how to best report error
+      print("Error initializing camera controller: ${e.toString()}");
+    }
+
+    // Notify state change
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _onShutterButtonPressed() async {
+    if (!_cameraController.value.isInitialized) {
+      print("Error: _takePhoto called before camera controller is initialized");
+      return;
+    }
+
+    try {
+      // Take picture
+      await _cameraController.pausePreview();
+
+      _takePictureUsingImageStream(_cameraController, (imagePath) async {
+        print("Took picture $imagePath");
+
+        await _cameraController.resumePreview();
+
+        // Transition to PicturePreviewPage
+        if (mounted) {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => PicturePreviewPage(imagePath)));
+        }
+      }).timeout(_pictureTakingTimeoutDuration);
+    } on TimeoutException catch (_) {
+      print("Timed out taking picture");
+    } on Exception catch (e) {
+      print("Error taking picture: ${e.toString()}");
+    } finally {
+      await _cameraController.resumePreview();
+    }
+  }
+
+  // Workaround for issue with CameraController.takePicture()
+  // `onImageTaken` is called with the path to the taken image
+  // https://github.com/flutter/flutter/issues/126125
+  // https://github.com/flutter/flutter/issues/126125#issuecomment-1986727724
+  static Future<void> _takePictureUsingImageStream(
+      CameraController cameraController,
+      void Function(String) onImageTaken) async {
+    if (cameraController.value.isStreamingImages) {
+      await cameraController.stopImageStream();
+    }
+    await cameraController.startImageStream((cameraImage) async {
+      await cameraController.stopImageStream();
+
+      // Decode image
+      final decodedImage = switch (cameraImage.format.group) {
+        ImageFormatGroup.nv21 => _nv21ToRgb(cameraImage),
+        ImageFormatGroup.yuv420 => _yuv420ToRgb(cameraImage),
+        _ => img.decodeImage(cameraImage.planes[0].bytes),
+      }!;
+
+      // Rotate image
+      final rotatedImage = img.copyRotate(decodedImage,
+          angle: cameraController.description.sensorOrientation);
+
+      // Save image to temporary file
+      final data = img.encodeJpg(rotatedImage).toList();
+
+      final temporaryDir = await getTemporaryDirectory();
+      final imagePath = "${temporaryDir.path}/${DateTime.now().hashCode}.jpg";
+
+      final file = File(imagePath);
+      await file.writeAsBytes(data, flush: true);
+
+      onImageTaken(imagePath);
+    });
+  }
+
+  // The following two functions are written by GitHub user SunFoxx
+  // https://github.com/flutter/flutter/issues/126125#issuecomment-1986727724
+
+  static img.Image _yuv420ToRgb(CameraImage image) {
+    final int width = image.width;
+    final int height = image.height;
+
+    var imgRgb = img.Image(width: width, height: height);
+
+    final planes = image.planes;
+    final int uvRowStride = planes[1].bytesPerRow;
+    final int uvPixelStride = planes[1].bytesPerPixel!;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final int uvIndex = uvRowStride * (y ~/ 2) + (x ~/ 2) * uvPixelStride;
+        final int index = y * width + x;
+
+        final yp = planes[0].bytes[index];
+        final up = planes[1].bytes[uvIndex];
+        final vp = planes[2].bytes[uvIndex];
+
+        // Convert YUV to RGB
+        var r = (yp + vp * 1436 / 1024 - 179).round().clamp(0, 255);
+        var g = (yp - up * 46549 / 131072 + 44 - vp * 93604 / 131072 + 91)
+            .round()
+            .clamp(0, 255);
+        var b = (yp + up * 1814 / 1024 - 227).round().clamp(0, 255);
+
+        imgRgb.setPixelRgb(x, y, r, g, b);
+      }
+    }
+
+    return imgRgb;
+  }
+
+  static img.Image _nv21ToRgb(CameraImage image) {
+    final int width = image.width;
+    final int height = image.height;
+
+    var imgRgb = img.Image(width: width, height: height);
+
+    final Uint8List yPlane = image.planes[0].bytes;
+    final Uint8List vuPlane = image.planes[1].bytes;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final int yIndex = y * width + x;
+        final int vuIndex = (y ~/ 2) * width + (x ~/ 2) * 2;
+
+        final int yp = yPlane[yIndex];
+        final int vp = vuPlane[vuIndex];
+        final int up = vuPlane[vuIndex + 1];
+
+        var r = (yp + vp * 1436 / 1024 - 179).round().clamp(0, 255);
+        var g = (yp - up * 46549 / 131072 + 44 - vp * 93604 / 131072 + 91)
+            .round()
+            .clamp(0, 255);
+        var b = (yp + up * 1814 / 1024 - 227).round().clamp(0, 255);
+
+        imgRgb.setPixelRgb(x, y, r, g, b);
+      }
+    }
+
+    return imgRgb;
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:flutter/material.dart';
 
 Color blackColour = const Color(0xff08070B);
@@ -9,7 +10,7 @@ Color redColour = const Color(0xff3A0101);
 
 class ProjectCard {
   String projectName;
-  String previewPicturePath;
+  String? previewPicturePath;
   String lastEdited;
   Color boxColor = blackColour;
 
@@ -19,22 +20,17 @@ class ProjectCard {
     required this.lastEdited,
   });
 
-  static List<ProjectCard> getProjects() {
-    List<ProjectCard> projects = [];
+  static Future<List<ProjectCard>> getProjects() async {
+    final projectNames = TimelapseStore.getProjectList();
+    final projects = [
+      for (final name in projectNames) await TimelapseStore.getProject(name)
+    ];
 
-    // Get projects here from the backend
-
-    //These are filler projects
-    projects.add(ProjectCard(
-        projectName: "MyLittlePony",
-        previewPicturePath: "assets/images/pretty_filler_image.png",
-        lastEdited: '10d'));
-
-    projects.add(ProjectCard(
-        projectName: "MyBigPony",
-        previewPicturePath: "assets/images/pretty_filler_image.png",
-        lastEdited: '30s'));
-
-    return projects;
+    return projects.map((projects) {
+      return ProjectCard(
+          projectName: projects.projectName(),
+          previewPicturePath: null,
+          lastEdited: "TODO");
+    }).toList();
   }
 }

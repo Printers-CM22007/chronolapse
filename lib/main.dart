@@ -1,16 +1,20 @@
-
-import 'package:chronolapse/backend/notification_service.dart';
-
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
+import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
-import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 String? currentProject = "sampleProject";
+
+// Used by DashboardPage to reload projects when it is returned to
+final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
+
+late List<CameraDescription> cameras;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +26,8 @@ void main() async {
 
   await TimelapseStore.deleteAllProjects();
   const projectName = "testProject";
-  await TimelapseStore.createProject(projectName);
+  final projectData = await TimelapseStore.createProject(projectName);
+
   final frame = TimelapseFrame.createNew(projectName);
   await frame.saveFrameFromPngBytes(Uint8List(12));
 
@@ -31,17 +36,20 @@ void main() async {
 
   print("Test: ${await testFunction(5)}");
 
+  // List available cameras
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    // TODO: work out how to best report error
+    debugPrint("Error listing available cameras: ${e.toString()}");
+  }
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // Color blackColour = const Color(0xff08070B);
-  // Color greyColour = const Color(0xff131316);
-  // Color whiteColour = const Color(0xffCCCCCC);
-  // Color blueColour1 = const Color(0xff11373B);
-  // Color blueColour2 = const Color(0xff384547);
-  // Color redColour = const Color(0xff3A0101);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -69,16 +77,16 @@ class MyApp extends StatelessWidget {
           secondary: Color(0xff11373B),
           onSecondary: Color(0xffCCCCCC),
           surface: Color(0xff131316),
-          onSurface: Color(0xff384547),
-          error: Color(0xff3A0101),
+          onSurface: Color(0xffaacfd5),
+          error: Color(0xff811d1d),
           onError: Color(0xffCCCCCC),
           brightness: Brightness.dark,
         ),
 
         useMaterial3: true,
       ),
-      home: const ExamplePageOne("Title"),
-      // home: const ScratchPage(),
+      home: const DashboardPage(),
+      navigatorObservers: [routeObserver],
     );
   }
 }

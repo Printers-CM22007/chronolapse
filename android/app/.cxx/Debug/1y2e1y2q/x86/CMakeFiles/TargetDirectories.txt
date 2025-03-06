@@ -1,0 +1,2 @@
+/home/robert/Documents/Printers/chronolapse/android/app/.cxx/Debug/1y2e1y2q/x86/CMakeFiles/edit_cache.dir
+/home/robert/Documents/Printers/chronolapse/android/app/.cxx/Debug/1y2e1y2q/x86/CMakeFiles/rebuild_cache.dir

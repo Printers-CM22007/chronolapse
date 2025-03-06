@@ -1,4 +1,5 @@
 import 'package:chronolapse/backend/settings_storage/settings_options.dart';
+import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -35,6 +36,8 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         body: ListView(
           children: projectWidgets + globalWidgets,
-        ));
+        ),
+      bottomNavigationBar: const DashboardNavigationBar(1),
+    );
   }
 }
