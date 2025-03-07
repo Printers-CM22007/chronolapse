@@ -29,29 +29,29 @@ class ProjectNavigationBar extends StatelessWidget {
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => ProjectEditPage(_projectName)));
+                    builder: (context) => PictureTakingPage(_projectName)));
                 break;
 
               case 1:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => PictureTakingPage(_projectName)));
+                    builder: (context) => ProjectEditPage(_projectName)));
                 break;
             }
           },
           destinations: [
             NavigationDestination(
               icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Edit",
-            ),
-            NavigationDestination(
-              icon: Icon(
                 Icons.camera_alt,
                 color: Theme.of(context).colorScheme.inverseSurface,
               ),
               label: "Take photo",
+            ),
+            NavigationDestination(
+              icon: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
+              label: "Edit",
             ),
           ]),
     );

@@ -23,7 +23,7 @@ void main() async {
 
   await TimelapseStore.deleteAllProjects();
   const projectName = "testProject";
-  final projectData = await TimelapseStore.createProject(projectName);
+  await TimelapseStore.createProject(projectName);
 
   //initialize notifications
   NotificationService().initNotification();

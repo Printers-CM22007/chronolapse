@@ -101,7 +101,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
                   )))
             ]))
       ]),
-      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 1),
+      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 0),
     );
   }
 

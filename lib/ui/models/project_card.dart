@@ -27,8 +27,6 @@ class ProjectCard {
     return projectNames.map((name) async {
       final project = await TimelapseStore.getProject(name);
 
-      debugPrint("RAA ${project.data.metaData.frames.toString()}");
-
       // Get path to first frame
       final firstFrameUuid = project.data.metaData.frames.firstOrNull;
       final firstFramePath = firstFrameUuid == null

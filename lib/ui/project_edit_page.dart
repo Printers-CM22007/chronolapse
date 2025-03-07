@@ -23,7 +23,7 @@ class ProjectEditPageState extends State<ProjectEditPage> {
             "Edit project ${widget._projectName}",
             style: const TextStyle(fontWeight: FontWeight.bold),
           )),
-      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 0),
+      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 1),
     );
   }
 }
