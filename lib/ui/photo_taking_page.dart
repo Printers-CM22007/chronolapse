@@ -4,24 +4,24 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:chronolapse/main.dart';
-import 'package:chronolapse/ui/picture_preview_page.dart';
+import 'package:chronolapse/ui/photo_preview_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
-class PictureTakingPage extends StatefulWidget {
+class PhotoTakingPage extends StatefulWidget {
   final String _projectName;
 
-  const PictureTakingPage(this._projectName, {super.key});
+  const PhotoTakingPage(this._projectName, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return PictureTakingPageState();
+    return PhotoTakingPageState();
   }
 }
 
-class PictureTakingPageState extends State<PictureTakingPage>
+class PhotoTakingPageState extends State<PhotoTakingPage>
     with WidgetsBindingObserver {
   static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
   static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
@@ -66,9 +66,9 @@ class PictureTakingPageState extends State<PictureTakingPage>
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: const Text(
-            "Camera",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          title: Text(
+            "Take photo - ${widget._projectName}",
+            style: const TextStyle(fontWeight: FontWeight.bold),
           )),
       body: Stack(children: [
         // Camera preview
@@ -139,7 +139,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
         if (mounted) {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
-                  PicturePreviewPage(widget._projectName, imagePath)));
+                  PhotoPreviewPage(widget._projectName, imagePath)));
         }
       }).timeout(_pictureTakingTimeoutDuration);
     } on TimeoutException catch (_) {

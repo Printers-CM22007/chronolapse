@@ -15,8 +15,9 @@ class _ExportPageState extends State<ExportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Export"),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title:
+            const Text("Export", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Center(
         child: Column(

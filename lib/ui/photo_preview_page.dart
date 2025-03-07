@@ -3,19 +3,19 @@ import 'dart:io';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:flutter/material.dart';
 
-class PicturePreviewPage extends StatefulWidget {
+class PhotoPreviewPage extends StatefulWidget {
   final String _projectName;
   final String _picturePath;
 
-  const PicturePreviewPage(this._projectName, this._picturePath, {super.key});
+  const PhotoPreviewPage(this._projectName, this._picturePath, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return PicturePreviewPageState();
+    return PhotoPreviewPageState();
   }
 }
 
-class PicturePreviewPageState extends State<PicturePreviewPage> {
+class PhotoPreviewPageState extends State<PhotoPreviewPage> {
   @override
   void initState() {
     super.initState();
