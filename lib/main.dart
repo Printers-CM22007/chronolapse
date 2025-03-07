@@ -1,9 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
@@ -26,10 +23,7 @@ void main() async {
 
   await TimelapseStore.deleteAllProjects();
   const projectName = "testProject";
-  final projectData = await TimelapseStore.createProject(projectName);
-
-  final frame = TimelapseFrame.createNew(projectName);
-  await frame.saveFrameFromPngBytes(Uint8List(12));
+  await TimelapseStore.createProject(projectName);
 
   //initialize notifications
   NotificationService().initNotification();

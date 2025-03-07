@@ -1,12 +1,14 @@
-import 'package:chronolapse/ui/dashboard_page.dart';
-import 'package:chronolapse/ui/settings_page.dart';
+import 'package:chronolapse/ui/picture_taking_page.dart';
+import 'package:chronolapse/ui/project_edit_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
 
-class DashboardNavigationBar extends StatelessWidget {
-  final int selectedIndex;
+class ProjectNavigationBar extends StatelessWidget {
+  final String _projectName;
+  final int _selectedIndex;
 
-  const DashboardNavigationBar(this.selectedIndex, {super.key});
+  const ProjectNavigationBar(this._projectName, this._selectedIndex,
+      {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,47 +17,42 @@ class DashboardNavigationBar extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(40)),
-        // borderRadius: BorderRadius.only(
-        //   topLeft: Radius.circular(35),
-        //   topRight: Radius.circular(35)
-        // ),
-        // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
       ),
       child: NavigationBar(
           shadowColor: Theme.of(context).colorScheme.onInverseSurface,
           height: 60,
           backgroundColor: Theme.of(context).colorScheme.surface,
           elevation: 0,
-          selectedIndex: selectedIndex,
+          selectedIndex: _selectedIndex,
           indicatorColor: Theme.of(context).colorScheme.secondary,
           onDestinationSelected: (index) {
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => const DashboardPage()));
+                    builder: (context) => PictureTakingPage(_projectName)));
                 break;
 
               case 1:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => const SettingsPage(null)));
+                    builder: (context) => ProjectEditPage(_projectName)));
                 break;
             }
           },
           destinations: [
             NavigationDestination(
               icon: Icon(
-                DashboardPageIcons.projects,
+                Icons.camera_alt,
                 color: Theme.of(context).colorScheme.inverseSurface,
               ),
-              label: "Projects",
+              label: "Take photo",
             ),
             NavigationDestination(
               icon: Icon(
-                DashboardPageIcons.settings,
+                Icons.edit,
                 color: Theme.of(context).colorScheme.inverseSurface,
               ),
-              label: "Settings",
-            )
+              label: "Edit",
+            ),
           ]),
     );
   }
