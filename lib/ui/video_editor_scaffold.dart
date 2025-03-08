@@ -23,6 +23,25 @@ class ManualMarkerPlacerPage extends StatefulWidget {
 // const ManualMarkerPlacerPage({super.key});
 }
 
+// class MarkerPainter extends CustomPainter{
+//   final List<Map<String, dynamic>> _markers;
+//
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     for (var marker in _markers) {
+//       final paint = Paint()..color = marker['color'];
+//       final offset = marker['offset'];
+//       canvas.drawCircle(offset, 10, paint);
+//     }
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     return true;
+//   }
+// }
+
+
 class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
   double _opacity = 1.0;
   double _brightness = 0.0;
@@ -31,6 +50,9 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
 
   final List<Map<String, dynamic>> _markers = [];
   int? _selectedMarkerIndex;
+  bool _showMarkers = true;
+
+
 
   Widget _buildAdjustmentSliders() {
     return Column(
@@ -140,6 +162,7 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
                     _markers[index] = {
                       'name': nameController.text,
                       'offset': Offset(newX, newY),
+                      'colour': marker['colour'],
                     };
                   });
                   Navigator.pop(context);
@@ -153,19 +176,28 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Tap image to place markers')),
+        appBar: AppBar(
+          title: const Text('Tap image to place markers'),
+          actions: [
+            IconButton(
+                icon: Icon(_showMarkers ? Icons.visibility : Icons.visibility_off),
+                onPressed: () => setState(() {_showMarkers = !_showMarkers;})
+            )],
+        ),
         body: Column(
           children: [
             LayoutBuilder(
               builder: (context, constraints) {
                 return GestureDetector(
                   onTapDown: (TapDownDetails details) {
+                    if (!_showMarkers) return;
                     RenderBox box = context.findRenderObject() as RenderBox;
                     Offset localPosition = box.globalToLocal(details.globalPosition);
                     setState(() {
                       _markers.add({
                         'offset': localPosition,
                         'name': 'Marker ${_markers.length + 1}',
+                        'colour': Colors.red,
                       });
                     });
                   },
@@ -193,12 +225,14 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
                           ),
                         ),
                       ),
-                      ..._markers.asMap().entries.map((entry) {
+                      if (_showMarkers)
+                        ..._markers.asMap().entries.map((entry) {
                         final index = entry.key;
                         final marker = entry.value;
+                        final isSelectedMarker = index == _selectedMarkerIndex;
                         return Positioned(
-                            left: marker['offset'].dx - 5,
-                            top: marker['offset'].dy - 5,
+                            left: marker['offset'].dx - (isSelectedMarker ? 10 : 5),
+                            top: marker['offset'].dy - (isSelectedMarker ? 10 : 5),
                             child: GestureDetector(
                               onPanUpdate: (DragUpdateDetails details) {
                                 RenderBox box = context.findRenderObject() as RenderBox;
@@ -207,12 +241,17 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
                                   _markers[index]['offset'] = newOffset;
                                 });
                               },
-                              child: const Icon(Icons.circle, color: Colors.red, size: 10,),
+                              child: Column(
+                                children: [
+                                  Icon(Icons.circle, color: marker['colour'], size: isSelectedMarker ? 20 : 10,),
+                                  if (isSelectedMarker)
+                                    Text(marker['name'], style: TextStyle(color: Colors.white, backgroundColor: Colors.black.withValues(alpha: 0.5)),)
+                                ],
+                              ),
                             ));
                       })
                     ],
                   ),
-
                 );
               },
             ),
@@ -280,9 +319,16 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> {
                               icon: const Icon(Icons.edit)
                               ),
                             ],),
+                        tileColor: _selectedMarkerIndex == index ? Colors.grey : null,
                         onTap: () {
                           setState(() {
+                            if (_selectedMarkerIndex != null) {
+                              _markers[_selectedMarkerIndex!]['colour'] = Colors.red;
+                            }
+
                             _selectedMarkerIndex = index;
+
+                            _markers[index]['colour'] = Colors.orange;
                           });
                         },
                   );
