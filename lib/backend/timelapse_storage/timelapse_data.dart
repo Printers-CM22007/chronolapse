@@ -20,7 +20,7 @@ class TimelapseData {
   factory TimelapseData.initial(String projectName) {
     return TimelapseData(
       metaData: TimelapseMetaData.initial(projectName),
-      knownFrameTransforms: const KnownFrameTransforms(frames: []),
+      knownFrameTransforms: KnownFrameTransforms(frames: []),
     );
   }
 

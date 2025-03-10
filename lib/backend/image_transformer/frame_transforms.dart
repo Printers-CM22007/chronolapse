@@ -12,11 +12,11 @@ class Homography {
   const Homography({required this.vals});
 
   factory Homography.fromMatrix(cv.Mat matrix) {
-    if (matrix.shape != [3, 3]) {
+    if (matrix.shape.length != 3 || matrix.shape[0] != 3 || matrix.shape[1] != 3 || matrix.shape[2] != 1) {
       throw Exception("Tried to create Homography from non-3x3 matrix");
     }
 
-    return Homography(vals: matrix.toList() as List<List<double>>);
+    return Homography(vals: matrix.toList().map((x) => (x.map((y) => y.toDouble())).toList()).toList());
   }
 
   cv.Mat getMatrix() {
@@ -45,12 +45,12 @@ class FrameTransform {
 @JsonSerializable()
 class KnownFrameTransforms {
   /// List of image uuids with known transforms
-  final List<String> frames;
+  List<String> frames;
 
-  const KnownFrameTransforms({required this.frames});
+  KnownFrameTransforms({required this.frames});
 
   factory KnownFrameTransforms.initial() {
-    return const KnownFrameTransforms(frames: []);
+    return KnownFrameTransforms(frames: []);
   }
 
   factory KnownFrameTransforms.fromJson(Map<String, dynamic> json) =>
