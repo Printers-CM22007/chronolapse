@@ -20,7 +20,7 @@ class Homography {
   }
 
   cv.Mat getMatrix() {
-    return cv.Mat.from2DList(vals, const cv.MatType.CV_64FC(1));
+    return cv.Mat.from2DList(vals, cv.MatType.CV_64FC1);
   }
 
   factory Homography.fromJson(Map<String, dynamic> json) =>

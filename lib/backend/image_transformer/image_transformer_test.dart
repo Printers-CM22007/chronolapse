@@ -22,7 +22,7 @@ Future<void> testImageTransformerBreaksEverything() async {
   final baseFrame = TimelapseFrame.createNewWithData(
       testProject.projectName(), FrameData.initial(testProject.projectName()));
   baseFrame.data.frameTransform = FrameTransform(
-      transform: Homography.fromMatrix(cv.Mat.eye(3, 3, cv.MatType.CV_32FC1)),
+      transform: Homography.fromMatrix(cv.Mat.eye(3, 3, cv.MatType.CV_64FC1)),
       isKnown: true);
   await baseFrame.saveFrameFromPngBytes(
       (await rootBundle.load("assets/image_transformer_test/f_0.jpg"))
@@ -42,17 +42,21 @@ Future<void> testImageTransformerBreaksEverything() async {
           .asUint8List());
 
   // Align new frame
-  final homography = await ImageTransformer.transformImage(testProject, testFrame);
+  final homography = await ImageTransformer.findHomography(testProject, testFrame);
 
   if (homography == null) {
     print("Failed to find homography");
+    print("Would prompt user to manually align here");
   }
   else {
     print("Found image homography");
-    print(homography.vals);
+
+    for (final r in homography.vals) {
+      print(r);
+    }
 
     // Save transform
-    testFrame.data.frameTransform = FrameTransform(transform: homography, isKnown: true);
+    testFrame.data.frameTransform = FrameTransform(transform: homography, isKnown: false); // isKnown false because this isn't user-aligned
     await testFrame.saveFrameDataOnly();
   }
 
