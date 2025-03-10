@@ -110,6 +110,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
         MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
   }
 
+  TextEditingController projectNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,7 +186,21 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
     );
   }
 
+
+  String? get _errorText {
+    // at any time, we can get the text from _controller.value.text
+    final text = projectNameController.value.text;
+    // Note: you can do your own custom validation here
+    // Move this logic this outside the widget for more testable code
+    if (text.isEmpty) {
+      return 'Can\'t be empty';
+    }
+    // return null if the text is valid
+    return null;
+  }
+
   SizedBox createNewButton() {
+    bool submitted = false;
     return SizedBox(
       width: 150,
       child: Padding(
@@ -193,7 +208,67 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
         child: TextButton(
           style: TextButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.secondary),
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return StatefulBuilder(
+                    builder: (context, StateSetter setState) {
+                      return AlertDialog(
+                          title: const Text("New Project"),
+                          actionsAlignment: MainAxisAlignment.spaceBetween,
+                          actions: [
+                            MaterialButton(
+                              onPressed: () {
+                                //pop the box
+                                Navigator.pop(context);
+                                setState((){submitted = false;});
+                                //clear the controller
+                                projectNameController.clear();
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                            MaterialButton(
+                              onPressed: (){
+                                setState((){submitted = true;});
+                                //check project name is not empty
+                                if (projectNameController.text.isNotEmpty) {
+                                  //close the box
+                                  Navigator.pop(context);
+                                  setState((){submitted = false;});
+
+                                  //TO-DO : CREATE THE PROJECT HERE
+                                  //PROJECT PROJECT
+                                  //HEHEHAHAHAH
+
+                                  //clear controller
+                                  projectNameController.clear();
+                                }
+                              },
+                              child: const Text("Create"),
+                            )
+                          ],
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              //User input for project name
+                              TextField(
+                                controller: projectNameController,
+                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                                decoration: InputDecoration(
+                                    hintText: "Enter project name", hintStyle: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white38),
+                                    errorText: submitted ? _errorText : null
+                                ),
+                              )
+
+                            ],
+                          )
+                      );
+                    },
+                  );
+                }
+            );
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
