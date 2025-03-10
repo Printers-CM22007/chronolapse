@@ -15,10 +15,10 @@ Future<void> testImageTransformerBreaksEverything() async {
   await TimelapseStore.deleteAllProjects();
   await SettingsStore.deleteAllSettings();
 
-  // Create test project
+  // * Create test project
   final testProject = (await TimelapseStore.createProject("testProject"))!;
 
-  // Create base frame to match against
+  // * Create base frame to match against
   final baseFrame = TimelapseFrame.createNewWithData(
       testProject.projectName(), FrameData.initial(testProject.projectName()));
   baseFrame.data.frameTransform = FrameTransform(
@@ -29,11 +29,12 @@ Future<void> testImageTransformerBreaksEverything() async {
           .buffer
           .asUint8List());
 
-  // Add frame to list of known frames
-  testProject.data.knownFrameTransforms.frames.add(baseFrame.uuid()!); // uuid is known here as the frame has been saved
+  // * Add frame to list of known frames
+  testProject.data.knownFrameTransforms.frames
+      .add(baseFrame.uuid()!); // uuid is known here as the frame has been saved
   await testProject.saveChanges();
 
-  // Create new frame to align
+  // * Create new frame to align
   final testFrame = TimelapseFrame.createNewWithData(
       testProject.projectName(), FrameData.initial(testProject.projectName()));
   await testFrame.saveFrameFromPngBytes(
@@ -41,14 +42,14 @@ Future<void> testImageTransformerBreaksEverything() async {
           .buffer
           .asUint8List());
 
-  // Align new frame
-  final homography = await ImageTransformer.findHomography(testProject, testFrame);
+  // * Align new frame
+  final homography =
+      await ImageTransformer.findHomography(testProject, testFrame);
 
   if (homography == null) {
     print("Failed to find homography");
     print("Would prompt user to manually align here");
-  }
-  else {
+  } else {
     print("Found image homography");
 
     for (final r in homography.vals) {
@@ -56,7 +57,9 @@ Future<void> testImageTransformerBreaksEverything() async {
     }
 
     // Save transform
-    testFrame.data.frameTransform = FrameTransform(transform: homography, isKnown: false); // isKnown false because this isn't user-aligned
+    testFrame.data.frameTransform = FrameTransform(
+        transform: homography,
+        isKnown: false); // isKnown false because this isn't user-aligned
     await testFrame.saveFrameDataOnly();
   }
 

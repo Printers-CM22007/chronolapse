@@ -28,10 +28,6 @@ void main() async {
 
   await testImageTransformerBreaksEverything();
 
-  await TimelapseStore.deleteAllProjects();
-  const projectName = "testProject";
-  await TimelapseStore.createProject(projectName);
-
   // List available cameras
   try {
     cameras = await availableCameras();

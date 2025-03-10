@@ -16,20 +16,19 @@ class ImageTransformer {
     final referenceFrameUuid = projectData.data.knownFrameTransforms.frames[0];
     final referenceFrame = await TimelapseFrame.fromExisting(
         projectData.projectName(), referenceFrameUuid);
-    final referenceImg = await cv.imreadAsync(
-        referenceFrame
-            .getFramePng()
-            .path);
+    final referenceImg =
+        await cv.imreadAsync(referenceFrame.getFramePng().path);
     final referenceGray =
         await cv.cvtColorAsync(referenceImg, cv.COLOR_BGR2GRAY);
 
-    if (referenceFrame.data.frameTransform == null || !referenceFrame.data.frameTransform!.isKnown) {
+    if (referenceFrame.data.frameTransform == null ||
+        !referenceFrame.data.frameTransform!.isKnown) {
       throw Exception("Reference frame '${referenceFrame.uuid()}' marked as "
           "having known transform in project '${projectData.projectName()}' "
           "however it is not present in the frame data");
     }
     final referenceHomography =
-      referenceFrame.data.frameTransform!.transform.getMatrix();
+        referenceFrame.data.frameTransform!.transform.getMatrix();
 
     final img = await cv.imreadAsync(frame.getFramePng().path);
     final imgGray = await cv.cvtColorAsync(img, cv.COLOR_BGR2GRAY);
@@ -53,16 +52,18 @@ class ImageTransformer {
 
     // TODO: Need to verify this
     final srcPts = cv.Mat.from2DList(
-            goodMatches.map((e) => [kpRef[e.queryIdx].x, kpRef[e.queryIdx].y]),
-            cv.MatType.CV_64FC1);
+        goodMatches.map((e) => [kpRef[e.queryIdx].x, kpRef[e.queryIdx].y]),
+        cv.MatType.CV_64FC1);
     final dstPts = cv.Mat.from2DList(
-            goodMatches.map((e) => [kpImg[e.trainIdx].x, kpImg[e.trainIdx].y]),
-            cv.MatType.CV_64FC1);
+        goodMatches.map((e) => [kpImg[e.trainIdx].x, kpImg[e.trainIdx].y]),
+        cv.MatType.CV_64FC1);
 
-    final (homography, _) = await cv.findHomographyAsync(dstPts, srcPts, method: cv.RANSAC, ransacReprojThreshold: 5.0);
+    final (homography, _) = await cv.findHomographyAsync(dstPts, srcPts,
+        method: cv.RANSAC, ransacReprojThreshold: 5.0);
 
     // TODO: Ensure homography is sensible
 
-    return Homography.fromMatrix(cv.gemm(referenceHomography, homography, 1.0, cv.Mat.zeros(3, 3, cv.MatType.CV_64FC1), 0.0));
+    return Homography.fromMatrix(cv.gemm(referenceHomography, homography, 1.0,
+        cv.Mat.zeros(3, 3, cv.MatType.CV_64FC1), 0.0));
   }
 }

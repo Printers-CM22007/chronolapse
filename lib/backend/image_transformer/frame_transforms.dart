@@ -12,11 +12,18 @@ class Homography {
   const Homography({required this.vals});
 
   factory Homography.fromMatrix(cv.Mat matrix) {
-    if (matrix.shape.length != 3 || matrix.shape[0] != 3 || matrix.shape[1] != 3 || matrix.shape[2] != 1) {
+    if (matrix.shape.length != 3 ||
+        matrix.shape[0] != 3 ||
+        matrix.shape[1] != 3 ||
+        matrix.shape[2] != 1) {
       throw Exception("Tried to create Homography from non-3x3 matrix");
     }
 
-    return Homography(vals: matrix.toList().map((x) => (x.map((y) => y.toDouble())).toList()).toList());
+    return Homography(
+        vals: matrix
+            .toList()
+            .map((x) => (x.map((y) => y.toDouble())).toList())
+            .toList());
   }
 
   cv.Mat getMatrix() {
