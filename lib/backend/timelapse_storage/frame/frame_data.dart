@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'frame_metadata.dart';
@@ -11,10 +12,13 @@ part 'frame_data.g.dart';
 class FrameData {
   FrameMetaData metaData;
 
-  FrameData({required this.metaData});
+  FrameTransform? frameTransform;
+
+  FrameData({required this.metaData, required this.frameTransform});
 
   factory FrameData.initial(String projectName) {
-    return FrameData(metaData: FrameMetaData.initial(projectName));
+    return FrameData(
+        metaData: FrameMetaData.initial(projectName), frameTransform: null);
   }
 
   factory FrameData.fromJson(Map<String, dynamic> json) =>
