@@ -50,7 +50,6 @@ class ImageTransformer {
     final numGoodMatches = max<int>((matches.length / 5).toInt(), 12);
     final goodMatches = matches.sublist(0, numGoodMatches);
 
-    // TODO: Need to verify this
     final srcPts = cv.Mat.from2DList(
         goodMatches.map((e) => [kpRef[e.queryIdx].x, kpRef[e.queryIdx].y]),
         cv.MatType.CV_64FC1);
