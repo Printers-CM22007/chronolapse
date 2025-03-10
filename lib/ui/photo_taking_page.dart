@@ -4,21 +4,24 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:chronolapse/main.dart';
-import 'package:chronolapse/ui/picture_preview_page.dart';
+import 'package:chronolapse/ui/photo_preview_page.dart';
+import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
-class PictureTakingPage extends StatefulWidget {
-  const PictureTakingPage({super.key});
+class PhotoTakingPage extends StatefulWidget {
+  final String _projectName;
+
+  const PhotoTakingPage(this._projectName, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return PictureTakingPageState();
+    return PhotoTakingPageState();
   }
 }
 
-class PictureTakingPageState extends State<PictureTakingPage>
+class PhotoTakingPageState extends State<PhotoTakingPage>
     with WidgetsBindingObserver {
   static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
   static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
@@ -60,17 +63,20 @@ class PictureTakingPageState extends State<PictureTakingPage>
     }
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: const Text("Camera"),
-      ),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          title: Text(
+            "Take photo - ${widget._projectName}",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          )),
       body: Stack(children: [
         // Camera preview
         Center(child: CameraPreview(_cameraController)),
         // Take photo button
         Container(
             alignment: Alignment.bottomCenter,
+            padding: const EdgeInsets.all(25.0),
             child: Stack(children: [
               Container(
                   width: 100,
@@ -95,7 +101,7 @@ class PictureTakingPageState extends State<PictureTakingPage>
                   )))
             ]))
       ]),
-      backgroundColor: Colors.black,
+      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 0),
     );
   }
 
@@ -132,7 +138,8 @@ class PictureTakingPageState extends State<PictureTakingPage>
         // Transition to PicturePreviewPage
         if (mounted) {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PicturePreviewPage(imagePath)));
+              builder: (context) =>
+                  PhotoPreviewPage(widget._projectName, imagePath)));
         }
       }).timeout(_pictureTakingTimeoutDuration);
     } on TimeoutException catch (_) {
@@ -169,10 +176,10 @@ class PictureTakingPageState extends State<PictureTakingPage>
           angle: cameraController.description.sensorOrientation);
 
       // Save image to temporary file
-      final data = img.encodeJpg(rotatedImage).toList();
+      final data = img.encodePng(rotatedImage).toList();
 
       final temporaryDir = await getTemporaryDirectory();
-      final imagePath = "${temporaryDir.path}/${DateTime.now().hashCode}.jpg";
+      final imagePath = "${temporaryDir.path}/${DateTime.now().hashCode}.png";
 
       final file = File(imagePath);
       await file.writeAsBytes(data, flush: true);

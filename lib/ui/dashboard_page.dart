@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
+import 'package:chronolapse/ui/photo_taking_page.dart';
+import 'package:chronolapse/ui/project_edit_page.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -94,6 +98,16 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
   void _onSearchFieldChanged(String value) {
     _projectsSearchString = value;
     setState(() {});
+  }
+
+  void _onPressProjectThumbnail(String projectName) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PhotoTakingPage(projectName)));
+  }
+
+  void _onPressProjectEdit(String projectName) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
   }
 
   @override
@@ -230,13 +244,28 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                         SizedBox(
                           height: constraints.maxHeight * 0.025,
                         ),
-                        SizedBox(
-                          width: constraints.maxWidth * 0.9,
-                          height: constraints.maxHeight * 0.65,
-                          child: projects[index].previewPicturePath != null
-                              ? Image.asset(projects[index].previewPicturePath!)
-                              : const Icon(Icons.image),
-                        ),
+                        InkWell(
+                            onTap: () {
+                              _onPressProjectThumbnail(
+                                  projects[index].projectName);
+                            },
+                            child: SizedBox(
+                                width: constraints.maxWidth * 0.9,
+                                height: constraints.maxHeight * 0.65,
+                                child: projects[index].previewPicturePath !=
+                                        null
+                                    ? Image.file(File(
+                                        projects[index].previewPicturePath!))
+                                    : const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                            Icon(
+                                              Icons.camera_alt,
+                                              size: 80,
+                                            ),
+                                            Text("Tap to take photo")
+                                          ]))),
                         SizedBox(
                           height: constraints.maxHeight * 0.025,
                         ),
@@ -290,7 +319,8 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                     left: constraints.maxWidth * 0.1),
                                 child: TextButton(
                                   onPressed: () {
-                                    //Open the project to be edited here
+                                    _onPressProjectEdit(
+                                        projects[index].projectName);
                                   },
                                   style: TextButton.styleFrom(
                                       backgroundColor: Theme.of(context)

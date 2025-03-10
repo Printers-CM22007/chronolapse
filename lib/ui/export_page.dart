@@ -1,4 +1,4 @@
-import 'package:chronolapse/ui/example_page_two.dart';
+import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class ExportPage extends StatefulWidget {
@@ -15,8 +15,9 @@ class _ExportPageState extends State<ExportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Export"),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title:
+            const Text("Export", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Center(
         child: Column(
@@ -27,9 +28,7 @@ class _ExportPageState extends State<ExportPage> {
               title: const Text('Go to previous page'),
               subtitle: const Text('Goes to video preview'),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    // placeholder below for previous page!!!!!!!!!!!!!!!!!!!
-                    builder: (context) => const ExamplePageTwo()));
+                Navigator.pop(context);
               },
             ),
             const Divider(),
@@ -68,7 +67,7 @@ class _ExportPageState extends State<ExportPage> {
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               // placeholder below for home page!!!!!!!!!!!!!!!!!!!
-              builder: (context) => const ExamplePageTwo()));
+              builder: (context) => const DashboardPage()));
         },
         tooltip: 'Increment',
         child: const Icon(Icons.home),

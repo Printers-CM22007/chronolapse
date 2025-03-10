@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:flutter/material.dart';
 
@@ -22,15 +23,22 @@ class ProjectCard {
 
   static Future<List<ProjectCard>> getProjects() async {
     final projectNames = TimelapseStore.getProjectList();
-    final projects = [
-      for (final name in projectNames) await TimelapseStore.getProject(name)
-    ];
 
-    return projects.map((projects) {
+    return projectNames.map((name) async {
+      final project = await TimelapseStore.getProject(name);
+
+      // Get path to first frame
+      final firstFrameUuid = project.data.metaData.frames.firstOrNull;
+      final firstFramePath = firstFrameUuid == null
+          ? null
+          : (await TimelapseFrame.fromExisting(name, firstFrameUuid))
+              .getFramePng()
+              .path;
+
       return ProjectCard(
-          projectName: projects.projectName(),
-          previewPicturePath: null,
+          projectName: name,
+          previewPicturePath: firstFramePath,
           lastEdited: "TODO");
-    }).toList();
+    }).wait;
   }
 }

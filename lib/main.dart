@@ -1,9 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
@@ -21,20 +18,16 @@ void main() async {
 
   print("Initialising SettingsStore");
   await SettingsStore.initialise();
-  print("Intialising TimelapseStore");
+  print("Initialising TimelapseStore");
   await TimelapseStore.initialise();
+  print("Initialising NotificationService");
+  NotificationService().initialise();
+
+  // ! TEST CODE START
 
   await TimelapseStore.deleteAllProjects();
   const projectName = "testProject";
-  final projectData = await TimelapseStore.createProject(projectName);
-
-  final frame = TimelapseFrame.createNew(projectName);
-  await frame.saveFrameFromPngBytes(Uint8List(12));
-
-  //initialize notifications
-  NotificationService().initNotification();
-
-  print("Test: ${await testFunction(5)}");
+  await TimelapseStore.createProject(projectName);
 
   // List available cameras
   try {
@@ -43,6 +36,8 @@ void main() async {
     // TODO: work out how to best report error
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
+
+  // ! TEST CODE END
 
   runApp(const MyApp());
 }
