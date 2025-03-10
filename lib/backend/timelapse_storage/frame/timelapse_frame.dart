@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 
 import 'frame_data.dart';
