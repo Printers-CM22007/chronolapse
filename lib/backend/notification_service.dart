@@ -10,15 +10,20 @@ enum NotificationFrequency{
 }
 
 class NotificationService {
-  final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  final bool _isInit = false;
+  static final NotificationService _notificationService = NotificationService._internal();
 
-  bool get isInit => _isInit;
+  factory NotificationService() {
+    return _notificationService;
+  }
+
+  NotificationService._internal();
+
+  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
+
 
   //INITIALIZE
   Future<void> initialise() async {
-    if (_isInit) return;
 
     //initialize timezone handling
     ltz.initializeTimeZones();

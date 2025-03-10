@@ -21,7 +21,8 @@ void main() async {
   print("Initialising TimelapseStore");
   await TimelapseStore.initialise();
   print("Initialising NotificationService");
-  NotificationService().initialise();
+  NotificationService notificationService = NotificationService();
+  await notificationService.initialise();
 
   // ! TEST CODE START
 
