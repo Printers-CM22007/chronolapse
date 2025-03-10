@@ -45,12 +45,12 @@ class FrameTransform {
 @JsonSerializable()
 class KnownFrameTransforms {
   /// List of image uuids with known transforms
-  final List<String> knownImageTransforms;
+  final List<String> frames;
 
-  const KnownFrameTransforms({required this.knownImageTransforms});
+  const KnownFrameTransforms({required this.frames});
 
   factory KnownFrameTransforms.initial() {
-    return const KnownFrameTransforms(knownImageTransforms: []);
+    return const KnownFrameTransforms(frames: []);
   }
 
   factory KnownFrameTransforms.fromJson(Map<String, dynamic> json) =>

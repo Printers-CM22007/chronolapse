@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_metadata.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -12,11 +13,15 @@ part 'timelapse_data.g.dart';
 /// modify `TimelapseMetaData` from outside `timelapse_storage` code !!
 class TimelapseData {
   TimelapseMetaData metaData;
+  KnownFrameTransforms knownFrameTransforms;
 
-  TimelapseData({required this.metaData});
+  TimelapseData({required this.metaData, required this.knownFrameTransforms});
 
   factory TimelapseData.initial(String projectName) {
-    return TimelapseData(metaData: TimelapseMetaData.initial(projectName));
+    return TimelapseData(
+      metaData: TimelapseMetaData.initial(projectName),
+      knownFrameTransforms: const KnownFrameTransforms(frames: []),
+    );
   }
 
   factory TimelapseData.fromJson(Map<String, dynamic> json) =>
