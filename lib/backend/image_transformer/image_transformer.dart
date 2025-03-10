@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
@@ -118,5 +119,21 @@ class ImageTransformer {
     // current frame
     return Homography.fromMatrix(cv.gemm(referenceHomography, homography, 1.0,
         cv.Mat.zeros(3, 3, cv.MatType.CV_64FC1), 0.0));
+  }
+
+  /// Applies a homography to an image and saves it to the destination
+  static Future<void> applyHomographyAndSave(
+      File initial, Homography homography, File destination) async {}
+
+  /// Applies a homography to an image
+  static Future<cv.Mat> applyHomography(
+      File initial, Homography homography) async {
+    final image = await cv.imreadAsync(initial.path);
+    final homographyMat = homography.getMatrix();
+
+    final aligned = await cv.warpPerspectiveAsync(
+        image, homographyMat, (image.shape[0], image.shape[1]));
+
+    return aligned;
   }
 }
