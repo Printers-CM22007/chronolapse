@@ -1,8 +1,7 @@
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:opencv_dart/opencv.dart' as cv;
 
-part 'known_frame_transforms.g.dart';
+part 'frame_transforms.g.dart';
 
 @JsonSerializable()
 class Homography {
@@ -31,10 +30,12 @@ class Homography {
 
 @JsonSerializable()
 class FrameTransform {
-  final String frame;
   final Homography transform;
 
-  const FrameTransform({required this.frame, required this.transform});
+  /// Represents whether this transform has been verified by the user
+  final bool isKnown;
+
+  const FrameTransform({required this.transform, required this.isKnown});
 
   factory FrameTransform.fromJson(Map<String, dynamic> json) =>
       _$FrameTransformFromJson(json);
@@ -43,12 +44,13 @@ class FrameTransform {
 
 @JsonSerializable()
 class KnownFrameTransforms {
-  final List<String> known;
+  /// List of image uuids with known transforms
+  final List<String> knownImageTransforms;
 
-  const KnownFrameTransforms({required this.known});
+  const KnownFrameTransforms({required this.knownImageTransforms});
 
   factory KnownFrameTransforms.initial() {
-    return const KnownFrameTransforms(known: []);
+    return const KnownFrameTransforms(knownImageTransforms: []);
   }
 
   factory KnownFrameTransforms.fromJson(Map<String, dynamic> json) =>

@@ -28,7 +28,6 @@ class DashboardNavigationBar extends StatelessWidget {
           elevation: 0,
           selectedIndex: selectedIndex,
           indicatorColor: Theme.of(context).colorScheme.secondary,
-
           onDestinationSelected: (index) {
             switch (index) {
               case 0:

@@ -374,10 +374,8 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ExportPage(
-                                                          projects[
-                                                                  index]
-                                                              .projectName)))
+                                                      ExportPage(projects[index]
+                                                          .projectName)))
                                         },
                                         child: Row(
                                           mainAxisAlignment:
