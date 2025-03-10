@@ -18,17 +18,16 @@ void main() async {
 
   print("Initialising SettingsStore");
   await SettingsStore.initialise();
-  print("Intialising TimelapseStore");
+  print("Initialising TimelapseStore");
   await TimelapseStore.initialise();
+  print("Initialising NotificationService");
+  NotificationService().initialise();
+
+  // ! TEST CODE START
 
   await TimelapseStore.deleteAllProjects();
   const projectName = "testProject";
   await TimelapseStore.createProject(projectName);
-
-  //initialize notifications
-  NotificationService().initNotification();
-
-  print("Test: ${await testFunction(5)}");
 
   // List available cameras
   try {
@@ -37,6 +36,8 @@ void main() async {
     // TODO: work out how to best report error
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
+
+  // ! TEST CODE END
 
   runApp(const MyApp());
 }

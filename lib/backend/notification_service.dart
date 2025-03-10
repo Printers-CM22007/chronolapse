@@ -11,7 +11,7 @@ class NotificationService {
   bool get isInit => _isInit;
 
   //INITIALIZE
-  Future<void> initNotification() async {
+  Future<void> initialise() async {
     if (_isInit) return;
 
     //initialize timezone handling
