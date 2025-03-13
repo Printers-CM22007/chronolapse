@@ -47,14 +47,6 @@ https://github.com/rainyl/dartcv
 - Create a folder somewhere e.g C:/dev/dartcv and put dartcv.dll in there
 - Go to edit environment variables and add the folder to path
 
-### Linux or Mac
-
-- idfk you're cooked
-
----
-
-- DM Alec if shit doesnt work
-
 ## Commands
 
 ### Building an Apk
