@@ -5,14 +5,17 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:chronolapse/util/test_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('T1', (WidgetTester tester) async {
+    await tester.pumpAndSettle();
     // await TimelapseStore.initialise();
     // // Build our app and trigger a frame.
     // await tester.pumpWidget(const MyApp());
     //
     // await Future.delayed(const Duration(seconds: 5));
+    expect(testFunctionOne(), 1);
   });
 }
