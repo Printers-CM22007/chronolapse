@@ -1,5 +1,7 @@
+import 'package:chronolapse/backend/export_options.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 
 class ExportPage extends StatefulWidget {
   final String _projectName;
@@ -26,7 +28,7 @@ class _ExportPageState extends State<ExportPage> {
             ListTile(
               leading: const Icon(Icons.arrow_back),
               title: const Text('Go to previous page'),
-              subtitle: const Text('Goes to video preview'),
+              //subtitle: const Text('Goes to video preview'),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -37,7 +39,8 @@ class _ExportPageState extends State<ExportPage> {
               title: const Text('Download timelapse'),
               subtitle: const Text('Saves video to camera roll'),
               onTap: () {
-                // save video to device
+                ExportOptions exportOptions = ExportOptions();
+                exportOptions.downloadVideo(widget._projectName);
               },
             ),
             const Divider(),
@@ -47,7 +50,8 @@ class _ExportPageState extends State<ExportPage> {
               subtitle: const Text(
                   'Send your timelapse to someone or upload it to social media'),
               onTap: () {
-                // share video with built in OS functionality
+                ExportOptions exportOptions = ExportOptions();
+                exportOptions.shareVideo(widget._projectName);
               },
             ),
             const Divider(),
@@ -57,7 +61,8 @@ class _ExportPageState extends State<ExportPage> {
               subtitle: const Text(
                   'Download a folder containing all the individual frames of the timelapse'),
               onTap: () {
-                // download all frames individually
+                ExportOptions exportOptions = ExportOptions();
+                exportOptions.downloadAllFrames(widget._projectName);
               },
             ),
           ],
