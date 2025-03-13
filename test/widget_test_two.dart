@@ -14,5 +14,6 @@ void main() {
     // await tester.pumpWidget(const MyApp());
     //
     // await Future.delayed(const Duration(seconds: 5));
+    expect(1, 2);
   });
 }
