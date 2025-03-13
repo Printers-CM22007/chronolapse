@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
@@ -76,7 +77,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
     _loadProjects();
   }
 
-  void _loadProjects() async {
+  Future<void> _loadProjects() async {
     _projects = await ProjectCard.getProjects();
     _projectsLoaded = true;
 
@@ -108,6 +109,14 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
   void _onPressProjectEdit(String projectName) {
     Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
+  }
+
+  Future<void> _onCompleteCreateProjectDialogue(String projectName) async {
+    // create the project in the backend
+    await TimelapseStore.createProject(projectName);
+
+    // reload project list
+    await _loadProjects();
   }
 
   TextEditingController projectNameController = TextEditingController();
@@ -186,7 +195,6 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
     );
   }
 
-
   String? get _errorText {
     // at any time, we can get the text from _controller.value.text
     final text = projectNameController.value.text;
@@ -222,26 +230,32 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               onPressed: () {
                                 //pop the box
                                 Navigator.pop(context);
-                                setState((){submitted = false;});
+                                setState(() {
+                                  submitted = false;
+                                });
                                 //clear the controller
                                 projectNameController.clear();
                               },
                               child: const Text("Cancel"),
                             ),
                             MaterialButton(
-                              onPressed: (){
-                                setState((){submitted = true;});
+                              onPressed: () {
+                                setState(() {
+                                  submitted = true;
+                                });
                                 //check project name is not empty
                                 if (projectNameController.text.isNotEmpty) {
-                                  //close the box
+                                  // close the box
                                   Navigator.pop(context);
-                                  setState((){submitted = false;});
+                                  setState(() {
+                                    submitted = false;
+                                  });
 
-                                  //TO-DO : CREATE THE PROJECT HERE
-                                  //PROJECT PROJECT
-                                  //HEHEHAHAHAH
+                                  // create the project in the backend
+                                  _onCompleteCreateProjectDialogue(
+                                      projectNameController.text);
 
-                                  //clear controller
+                                  // clear controller
                                   projectNameController.clear();
                                 }
                               },
@@ -254,20 +268,22 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               //User input for project name
                               TextField(
                                 controller: projectNameController,
-                                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                                 decoration: InputDecoration(
-                                    hintText: "Enter project name", hintStyle: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white38),
-                                    errorText: submitted ? _errorText : null
-                                ),
+                                    hintText: "Enter project name",
+                                    hintStyle: const TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.white38),
+                                    errorText: submitted ? _errorText : null),
                               )
-
                             ],
-                          )
-                      );
+                          ));
                     },
                   );
-                }
-            );
+                });
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
