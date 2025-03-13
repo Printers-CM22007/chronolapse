@@ -1,9 +1,8 @@
 class GeneratorOptions {
-  String destination;
   String codec;
   double fps;
 
-  GeneratorOptions.defaultSettings(this.destination)
+  GeneratorOptions.defaultSettings()
    :  codec = "H.256",
       fps = 60
   {}
