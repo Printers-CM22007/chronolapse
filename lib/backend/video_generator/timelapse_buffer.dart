@@ -14,7 +14,7 @@ class TimelapseBuffer {
   late ReceivePort _receivePort;
 
   late ProjectTimelapseData timelapseData;
-  List<cv2.Mat> _frames = [];
+  final List<cv2.Mat> _frames = [];
 
   Future<void> beginLoadingTimelapse(String projectName) async {
     _receivePort = ReceivePort();
@@ -57,7 +57,8 @@ class TimelapseBuffer {
       await beginProcessing.future;
 
       for (int i = 0; i < frameUUIDs.length; i++) {
-        var frameData = await TimelapseFrame.fromExisting(projectName, frameUUIDs[i]);
+        var frameData =
+            await TimelapseFrame.fromExisting(projectName, frameUUIDs[i]);
         var path = frameData.getFramePng().path;
 
         var img = await cv2.imreadAsync(path);
