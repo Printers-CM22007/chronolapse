@@ -3,6 +3,8 @@ import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/project_edit_page.dart';
+import 'package:chronolapse/ui/video_editor_scaffold.dart';
 import 'package:flutter/material.dart';
 
 import 'backend/image_transformer/image_transformer_test.dart';
@@ -66,9 +68,9 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: const ColorScheme(
-          primary: Color(0xff08070B),
+          primary: Color(0xff3e3655),
           onPrimary: Color(0xffCCCCCC),
-          secondary: Color(0xff11373B),
+          secondary: Color(0xff0a616a),
           onSecondary: Color(0xffCCCCCC),
           surface: Color(0xff131316),
           onSurface: Color(0xffaacfd5),
@@ -79,7 +81,7 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: const DashboardPage(),
+      home: const FrameEditor("sampleProject"),
       navigatorObservers: [routeObserver],
     );
   }

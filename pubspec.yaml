@@ -28,7 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  camera: ^0.10.5 # future versions have an issue where camera orientation is locked to portrait
+  camera: ^0.11.1 # future versions have an issue where camera orientation is locked to portrait
   chewie: ^1.10.0
   flutter:
     sdk: flutter
@@ -62,12 +62,12 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.4
   json_serializable: ^6.7.1
-  build_runner: ^2.4.6
+  build_runner: ^2.4.15
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -101,6 +101,9 @@ flutter_native_splash:
 flutter:
   assets:
     - assets/frames/
+    - assets/
+    - assets/images/
+    - assets/image_transformer_test/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -110,10 +113,7 @@ flutter:
       fonts:
         - asset: assets/fonts/icomoon.ttf
 
-  assets:
-    - assets/
-    - assets/images/
-    - assets/image_transformer_test/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

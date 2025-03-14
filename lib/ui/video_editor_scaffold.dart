@@ -1,67 +1,85 @@
-import 'package:chronolapse/ui/example_page_one.dart';
+import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
+import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/settings_page.dart';
+import 'package:chronolapse/ui/photo_taking_page.dart';
 
-class VideoEditor extends StatelessWidget {
-  const VideoEditor({super.key});
+// TODO: change the main file to show the dashboard first, not the editting page
+// TODO: the code crashes if a page with markers on it is deleted
+
+// class VideoEditor extends StatelessWidget {
+//   const VideoEditor({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Video Editor Scaffold',
+//       theme: ThemeData(
+//         primarySwatch: Colors.purple,
+//       ),
+//       home: const FrameEditor("sampleProject"),
+//     );
+//   }
+// }
+
+class FrameEditor extends StatefulWidget {
+  final String _projectName;
+
+  const FrameEditor(this._projectName, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Video Editor Scaffold',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-      ),
-      home: const ManualMarkerPlacerPage(),
-    );
-  }
+  _FrameEditorState createState() => _FrameEditorState();
 }
 
-class ManualMarkerPlacerPage extends StatefulWidget {
-  const ManualMarkerPlacerPage({super.key});
+class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStateMixin{
+  double opacity = 0.3;
+  double brightness = 0.0;
+  double contrast = 1.0;
+  double saturation = 1.0;
+  double balanceFactor = 0.0;
 
-  @override
-  _ManualMarkerPlacerPageState createState() => _ManualMarkerPlacerPageState();
 
-class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with SingleTickerProviderStateMixin{
-  double _opacity = 1.0;
-  double _brightness = 0.0;
-  double _contrast = 1.0;
-  double _saturation = 1.0;
 
-  final List<Map<String, dynamic>> _markers = [];
-  int? _selectedMarkerIndex;
-  bool _showMarkers = true;
-  bool _isDragging = false;
+  // final List<Map<String, dynamic>> markers = [];
+  int? selectedMarkerIndex;
+  bool showMarkers = true;
+  bool isDragging = false;
 
-  late TabController _tabController;
+  late TabController tabController;
 
-  int _currentIndex = 0;
-  int _currentImageIndex = 0;
+  int currentIndex = 0;
+  int currentImageIndex = 0;
 
-  final List<List<Map<String, dynamic>>> _markersForEachImage = [];
+
+  String _pageTitle = 'Tap image to place markers';
+  late String _respectiveName;
+
+  final List<List<Map<String, dynamic>>> markersForEachImage = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
 
-    for (int i = 0; i < _imagePaths.length; i++) {
-        _markersForEachImage.add([]);
+    for (int i = 0; i < imagePaths.length; i++) {
+        markersForEachImage.add([]);
     }
   }
 
-  final List<String> _imagePaths = [
+  final List<String> imagePaths = [
     'assets/frames/landscape.jpeg',
-    'assets/frames/clouds-country.jpg'
+    'assets/frames/clouds-country.jpg',
+    'assets/frames/SaxonyLandscape.jpg',
   ];
 
   @override
   void dispose() {
-    _tabController.dispose();
+    tabController.dispose();
     super.dispose();
   }
 
-  Widget _buildAdjustmentSliders() {
+
+  Widget buildAdjustmentSliders() {
     return Column(
       children: [
         const Padding(
@@ -72,13 +90,13 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
           ),
         ),
         Slider(
-            value: _brightness,
+            value: brightness,
             min: -1.0,
             max: 1.0,
             divisions: 200,
-            label: (_brightness * 100).round().toString(),
+            label: (brightness * 100).round().toString(),
             // label: 'Brightness: ${_brightness.toStringAsFixed(2)}',
-            onChanged: (v) => setState(() => _brightness = v)
+            onChanged: (v) => setState(() => brightness = v)
 
         ),
         const Padding(
@@ -90,12 +108,28 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
           ),
         ),
         Slider(
-            value: _contrast,
+            value: contrast,
             min: 0.0,
             max: 2.0,
             divisions: 200,
-            label: ((_contrast * 100) - 100).round().toString(),
-            onChanged: (v) => setState(() => _contrast = v)
+            label: ((contrast * 100) - 100).round().toString(),
+            onChanged: (v) => setState(() => contrast = v)
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'White Balance',
+            style:
+            TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+        ),
+        Slider(
+            value: balanceFactor,
+            min: -0.4,
+            max: 0.4,
+            divisions: 20,
+            // label: ((contrast * 100) - 100).round().toString(),
+            onChanged: (v) => setState(() => balanceFactor = v)
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -105,45 +139,45 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
           ),
         ),
         Slider(
-            value: _saturation,
+            value: saturation,
             min: 0.0,
             max: 2.0,
             divisions: 200,
-            label: ((_saturation * 100) - 100).round().toString(),
-            onChanged: (v) => setState(() => _saturation = v)
+            label: ((saturation * 100) - 100).round().toString(),
+            onChanged: (v) => setState(() => saturation = v)
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            'Opacity',
+            'Overlay Opacity Control',
             style:
             TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
         Slider(
-            value: _opacity,
+            value: opacity,
             min: 0.0,
             max: 1.0,
             divisions: 100,
-            label: (_opacity * 100).round().toString(),
-            onChanged: (v) => setState(() => _opacity = v)
+            label: (opacity * 100).round().toString(),
+            onChanged: (v) => setState(() => opacity = v)
         ),
       ],
     );
   }
 
-  void _deleteImage(int index) {
+  void deleteImage(int index) {
     setState(() {
-      if (_imagePaths.length == 1) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ExamplePageOne(title: '',)));
+      if (imagePaths.length == 1) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
       } else {
-        _imagePaths.removeAt(index);
+        imagePaths.removeAt(index);
       }
     });
   }
 
-  void _editMarkerDetails(int index) {
-    final marker = _markersForEachImage[_currentImageIndex][index];
+  void editMarkerDetails(int index) {
+    final marker = markersForEachImage[currentImageIndex][index];
     final TextEditingController nameController = TextEditingController(
       text: marker['name'],
     );
@@ -192,7 +226,7 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                   final newY = double.tryParse(yController.text) ?? marker['offset'].dy;
 
                   setState(() {
-                    _markersForEachImage[_currentImageIndex][index] = {
+                    markersForEachImage[currentImageIndex][index] = {
                       'name': nameController.text,
                       'offset': Offset(newX, newY),
                       'colour': marker['colour'],
@@ -213,83 +247,125 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
         length: 3,
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Tap image to place markers'),
+              title: Text(_pageTitle),
               actions: [
                 IconButton(
-                    icon: Icon(_showMarkers ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () => setState(() {_showMarkers = !_showMarkers;})
+                    icon: Icon(showMarkers ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () => setState(() {showMarkers = !showMarkers;})
                 )],
             ),
 
             body: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(bottom: 20.0),
+                  padding: const EdgeInsets.only(bottom: 20.0),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return GestureDetector(
                         onTapUp: (details) {
-                          if (!_showMarkers || _isDragging) return;
+                          if (!showMarkers || isDragging) return;// || !(currentImageIndex == 0)) return;
                           RenderBox box = context.findRenderObject() as RenderBox;
                           Offset localPosition = box.globalToLocal(details.globalPosition);
                           setState(() {
-                            _markersForEachImage[_currentImageIndex].add({
+                            if (currentImageIndex == 0) {
+                              _respectiveName = 'Marker ${markersForEachImage[currentImageIndex].length + 1}';
+                              markersForEachImage[currentImageIndex].add({
+                                'offset': localPosition,
+                                'name': _respectiveName,
+                                'colour': Colors.red,
+                              });
+                            }
+                            if (currentImageIndex > 0) {
+                              _respectiveName = (markersForEachImage[currentImageIndex - 1][markersForEachImage[currentImageIndex ].length]['name']);
+                              markersForEachImage[currentImageIndex].add({
                               'offset': localPosition,
-                              'name': 'Marker ${_markersForEachImage[_currentImageIndex].length + 1}',
+                              'name': _respectiveName,
                               'colour': Colors.red,
-                            });
+                              });
+                              if (markersForEachImage[currentImageIndex].length != markersForEachImage[currentImageIndex - 1].length) {
+                                _respectiveName = (markersForEachImage[currentImageIndex - 1][markersForEachImage[currentImageIndex ].length]['name']);
+                              _pageTitle = 'Place marker "$_respectiveName"';
+                              } else {
+                              _pageTitle = 'Drag the markers into place';// or move to the next frame';
+                              }
+                            }
+
+
                           });
                         },
                         child: Stack(
                           children: [
                             Opacity(
-                              opacity: _opacity,
+                              opacity: 1,
                               child: ColorFiltered(
                                 colorFilter: ColorFilter.matrix([
-                                  _contrast, 0, 0, 0, _brightness * 255,
-                                  0, _contrast, 0, 0, _brightness * 255,
-                                  0, 0, _contrast, 0, _brightness * 255,
+                                  contrast, 0, 0, 0, brightness * 255,
+                                  0, contrast, 0, 0, brightness * 255,
+                                  0, 0, contrast, 0, brightness * 255,
                                   0, 0, 0, 1, 0,
                                 ]),
                                 child: ColorFiltered(
                                   colorFilter: ColorFilter.matrix([
-                                    0.2126 + 0.7874 * _saturation, 0.7152 - 0.7152 * _saturation, 0.0722 - 0.0722 * _saturation, 0, 0,
-                                    0.2126 - 0.2126 * _saturation, 0.7152 + 0.2848 * _saturation, 0.0722 - 0.0722 * _saturation, 0, 0,
-                                    0.2126 - 0.2126 * _saturation, 0.7152 - 0.7152 * _saturation, 0.0722 + 0.9278 * _saturation, 0, 0,
+                                    0.2126 + 0.7874 * saturation, 0.7152 - 0.7152 * saturation, 0.0722 - 0.0722 * saturation, 0, 0,
+                                    0.2126 - 0.2126 * saturation, 0.7152 + 0.2848 * saturation, 0.0722 - 0.0722 * saturation, 0, 0,
+                                    0.2126 - 0.2126 * saturation, 0.7152 - 0.7152 * saturation, 0.0722 + 0.9278 * saturation, 0, 0,
                                     0, 0, 0, 1, 0,
 
                                   ]),
-                                  child: Image.asset(
-                                      _imagePaths[_currentImageIndex],
-                                      fit: BoxFit.cover,
+
+                                  child: ColorFiltered(
+                                      colorFilter: ColorFilter.matrix([
+                                        1.0 + balanceFactor, 0, 0, 0, 0,
+                                        0, 1.0 , 0, 0, 0,
+                                        0, 0, 1.0 - balanceFactor, 0, 0,
+                                        0, 0, 0, 1, 0,
+
+                                      ]),
+                                      child: Image.asset(
+                                        imagePaths[currentImageIndex],
+                                        fit: BoxFit.cover,
+                                      ),
                                   ),
+
+
+                                ),
                               ),
                             ),
-                            ),
-                            if (_showMarkers)
-                              ..._markersForEachImage[_currentImageIndex].asMap().entries.map((entry) {
+                            if (currentImageIndex != 0)
+                              Opacity(
+                                opacity: opacity,
+                                child: Image.asset(
+                                  imagePaths[currentImageIndex - 1],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+
+
+                            if (showMarkers)
+                              ...markersForEachImage[currentImageIndex].asMap().entries.map((entry) {
                                 final index = entry.key;
                                 final marker = entry.value;
-                                final isSelectedMarker = index == _selectedMarkerIndex;
+                                final isSelectedMarker = index == selectedMarkerIndex;
                                 return Positioned(
+                                    // TODO: The marker tends to jump by a fixed offset when its ListTile is selected
                                     left: marker['offset'].dx - (isSelectedMarker ? 10 : 5),
                                     top: marker['offset'].dy - (isSelectedMarker ? 10 : 5),
                                     child: GestureDetector(
                                       onPanStart: (details) {
                                         setState(() {
-                                          _isDragging = true;
+                                          isDragging = true;
                                         });
                                       },
                                       onPanUpdate: (DragUpdateDetails details) {
                                         RenderBox box = context.findRenderObject() as RenderBox;
                                         Offset newOffset = box.globalToLocal(details.globalPosition);
                                         setState(() {
-                                          _markersForEachImage[_currentImageIndex][index]['offset'] = newOffset;
+                                          markersForEachImage[currentImageIndex][index]['offset'] = newOffset;
                                         });
                                       },
                                       onPanEnd: (details) {
                                         setState(() {
-                                          _isDragging = false;
+                                          isDragging = false;
                                         });
                                       },
                                       child: Column(
@@ -300,7 +376,20 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                                         ],
                                       ),
                                     ));
+                                
                               }),
+                            if (showMarkers && currentImageIndex != 0)
+                              ...markersForEachImage[currentImageIndex - 1].asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final marker = entry.value;
+                                final isSelectedMarker = index == selectedMarkerIndex;
+                                return Positioned(
+                                left: marker['offset'].dx - (isSelectedMarker ? 10 : 5),
+                                top: marker['offset'].dy - (isSelectedMarker ? 10 : 5),
+                                child: Icon(Icons.circle, color: Colors.yellowAccent, size: 10,),
+                                );
+                                }),
+
 
                           ],
                         ),
@@ -309,8 +398,8 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                   ),
                 ),
                 TabBar (
-                  controller: _tabController,
-                  tabs: [
+                  controller: tabController,
+                  tabs: const [
                     Tab(text: 'Sliders'),
                     Tab(text: 'Markers'),
                     Tab(text: 'Frames',)
@@ -318,12 +407,12 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                 ),
                 Expanded(
                     child: TabBarView(
-                      controller: _tabController,
+                      controller: tabController,
                       children: [
                         SingleChildScrollView(
                           child: Column(
                             children: [
-                              _buildAdjustmentSliders(),
+                              buildAdjustmentSliders(),
                             ],
                           ),
                         ),
@@ -337,22 +426,34 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                                 children: [
                                   const Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                    child: Text(
-                                      'Your Markers',
-                                      style: TextStyle(
-                                          fontSize: 20, fontWeight: FontWeight.bold
-                                      ),),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Your Markers',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 20, fontWeight: FontWeight.bold
+                                          ),),
+                                        Text(
+                                          'Please name the markers for future reference',
+                                          style: TextStyle(
+                                            fontSize: 12, fontWeight: FontWeight.normal
+                                          ),
+                                        ),
+                                      ],
+                                    ),
 
 
                                   ),
                                   const Divider(height: 1, thickness: 1, color: Colors.grey,),
                                   Expanded(
                                     child: ListView.builder(
-                                      itemCount: _markersForEachImage[_currentImageIndex].length,
+                                      itemCount: markersForEachImage[currentImageIndex].length,
                                       itemBuilder: (context, index) {
-                                        final marker = _markersForEachImage[_currentImageIndex][index];
+                                        final marker = markersForEachImage[currentImageIndex][index];
                                         return ListTile(
-                                          title: Text(marker['name']),
+                                          title: Text(marker['name']), //_respectiveName == null ? Text(_respectiveName) : Text('Sam'),
                                           subtitle: Text('''
       X is ${marker['offset'].dx.toStringAsFixed(2)}
       Y is ${marker['offset'].dy.toStringAsFixed(2)}'''),
@@ -360,24 +461,25 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               IconButton(
+                                                // TODO: replacing delete with 'undo' makes it easier to track the path the user takes within the app
                                                 icon: const Icon(Icons.delete),
-                                                onPressed: () => setState(() => _markersForEachImage[_currentImageIndex].removeAt(index)),
+                                                onPressed: () => setState(() => markersForEachImage[currentImageIndex].removeAt(index)),
                                               ),
                                               IconButton(
-                                                  onPressed: () => _editMarkerDetails(index),
+                                                  onPressed: () => editMarkerDetails(index),
                                                   icon: const Icon(Icons.edit)
                                               ),
                                             ],),
-                                          tileColor: _selectedMarkerIndex == index ? Colors.grey : null,
+                                          tileColor: selectedMarkerIndex == index ? Colors.grey : null,
                                           onTap: () {
                                             setState(() {
-                                              if (_selectedMarkerIndex != null) {
-                                                _markersForEachImage[_currentImageIndex][_selectedMarkerIndex!]['colour'] = Colors.red;
+                                              if (selectedMarkerIndex != null) {
+                                                markersForEachImage[currentImageIndex][selectedMarkerIndex!]['colour'] = Colors.red;
                                               }
 
-                                              _selectedMarkerIndex = index;
+                                              selectedMarkerIndex = index;
 
-                                              _markersForEachImage[_currentImageIndex][index]['colour'] = Colors.orange;
+                                              markersForEachImage[currentImageIndex][index]['colour'] = Colors.orange;
                                             });
                                           },
                                         );
@@ -396,28 +498,47 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
                               crossAxisSpacing: 8.0,
                               mainAxisSpacing: 8.0,
                             ),
-                            itemCount: _imagePaths.length,
+                            itemCount: imagePaths.length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _currentImageIndex = index;
+                                    currentImageIndex = index;
+                                    if (currentImageIndex == 0) {
+                                      _pageTitle = 'Tap image to place markers';
+                                    }
+                                    else if (markersForEachImage[currentImageIndex].isEmpty) {
+                                      _pageTitle = 'Place marker "${markersForEachImage[currentImageIndex - 1][markersForEachImage[currentImageIndex].length]['name']}"';
+                                    } else {
+                                      if (markersForEachImage[currentImageIndex]
+                                          .length !=
+                                          markersForEachImage[currentImageIndex -
+                                              1].length) {
+                                        _pageTitle =
+                                        'Place marker "${(markersForEachImage[currentImageIndex -
+                                            1][markersForEachImage[currentImageIndex ]
+                                            .length]['name'])}"';
+                                      } else {
+                                        _pageTitle =
+                                        'Drag the markers into place'; // or move to the next frame';
+                                      }
+                                    }
                                   });
                                 },
                                 child: Card(
-                                  margin: EdgeInsets.all(8.0),
+                                  margin: const EdgeInsets.all(8.0),
                                   child: ListTile(
-                                      contentPadding: EdgeInsets.all(8.0),
+                                      contentPadding: const EdgeInsets.all(8.0),
                                       leading: Image.asset(
-                                        _imagePaths[index],
+                                        imagePaths[index],
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.cover,
                                       ),
-                                      title: Text('Image ${index + 1}'),
+                                     title: Text('Image ${index + 1}'),
                                       trailing: IconButton(
-                                        onPressed: () => _deleteImage(index),
-                                        icon: Icon(Icons.delete),
+                                        onPressed: () => deleteImage(index),
+                                        icon: const Icon(Icons.delete),
                                       ),
 
                                     ),
@@ -432,12 +553,31 @@ class _ManualMarkerPlacerPageState extends State<ManualMarkerPlacerPage> with Si
             bottomNavigationBar: BottomNavigationBar(
                 onTap: (index) {
                   setState(() {
-                    _currentIndex = index;
+                    currentIndex = index;
                   });
 
-                  if (index == 0) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExamplePageOne(title: 'Huh?')));
+                  switch (index) {
+                    case 0:
+                      Navigator.of(context).pushReplacement(InstantPageRoute(
+                          builder: (context) => const DashboardPage()));
+                    case 1:
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
+                    case 2:
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
+                      Navigator.of(context).pushReplacement(InstantPageRoute(
+                          builder: (context) => PhotoTakingPage(widget._projectName)));
+
                   }
+
+
+                  // if (index == 0) {
+                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
+                  // } else if (index == 1) {
+                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
+                  // }
+                  // else if (index == 2) {
+                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
+                  // }
                 },
                 items: const[
                   BottomNavigationBarItem(
