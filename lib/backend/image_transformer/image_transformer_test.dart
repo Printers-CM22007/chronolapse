@@ -21,9 +21,7 @@ Future<void> testImageTransformerBreaksEverything() async {
   // * Create base frame to match against
   final baseFrame = TimelapseFrame.createNewWithData(
       testProject.projectName(), FrameData.initial(testProject.projectName()));
-  baseFrame.data.frameTransform = FrameTransform(
-      transform: Homography.fromMatrix(cv.Mat.eye(3, 3, cv.MatType.CV_64FC1)),
-      isKnown: true);
+  baseFrame.data.frameTransform = FrameTransform.baseFrame();
   await baseFrame.saveFrameFromPngBytes(
       (await rootBundle.load("assets/image_transformer_test/f_0.jpg"))
           .buffer
