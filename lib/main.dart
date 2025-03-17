@@ -2,9 +2,10 @@ import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/native_methods/test_function.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
+
+import 'backend/image_transformer/image_transformer_test.dart';
 
 String? currentProject = "sampleProject";
 
@@ -26,9 +27,7 @@ void main() async {
 
   // ! TEST CODE START
 
-  await TimelapseStore.deleteAllProjects();
-  const projectName = "testProject";
-  await TimelapseStore.createProject(projectName);
+  await testImageTransformerBreaksEverything();
 
   // List available cameras
   try {
