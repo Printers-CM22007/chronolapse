@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -13,13 +15,14 @@ class NotificationService {
 
   static final NotificationService _notificationService = NotificationService._internal();
 
-  factory NotificationService() {
+  late FlutterLocalNotificationsPlugin notificationsPlugin;
+
+  factory NotificationService({FlutterLocalNotificationsPlugin? plugin}) {
+    _notificationService.notificationsPlugin = plugin ?? FlutterLocalNotificationsPlugin();
     return _notificationService;
   }
 
   NotificationService._internal();
-
-  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
 
   //INITIALIZE
@@ -69,7 +72,7 @@ class NotificationService {
 
   //SCHEDULE NOTIFICATIONS
   Future<void> scheduleNotification(
-      {int id = 1,
+      {
       required String title,
       required String body,
       required int hour,
@@ -79,9 +82,10 @@ class NotificationService {
 
     var scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
+    var random = Random();
+    int notificationId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
-      id,
+      notificationId,
       title,
       body,
       scheduledDate,
@@ -104,6 +108,11 @@ class NotificationService {
       case NotificationFrequency.weekly:
         return DateTimeComponents.dayOfWeekAndTime; //not sure if this actually makes it repeat weekly, need to look into it more
     }
+  }
+
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    print("Inside getPendingNotifications()");  // Debugging print
+    return await notificationsPlugin.pendingNotificationRequests();
   }
 
   Future<void> cancelAllNotifications() async {
