@@ -38,6 +38,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+<<<<<<< HEAD
+=======
+  integration_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  test: any
+>>>>>>> 93aa9e1ad5fba70822655a5db13c4f66e483a291
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -48,6 +56,12 @@ dev_dependencies:
 
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.4
+<<<<<<< HEAD
+=======
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.15
+  mockito: ^5.4.5
+>>>>>>> 93aa9e1ad5fba70822655a5db13c4f66e483a291
 
 flutter_launcher_icons:
   android: "launcher_icon"
