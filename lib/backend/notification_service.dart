@@ -1,3 +1,8 @@
+
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as ltz;
@@ -9,15 +14,21 @@ enum NotificationFrequency {
 }
 
 class NotificationService {
-  final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  final bool _isInit = false;
+  static final NotificationService _notificationService = NotificationService._internal();
 
-  bool get isInit => _isInit;
+  late FlutterLocalNotificationsPlugin notificationsPlugin;
+
+  factory NotificationService({FlutterLocalNotificationsPlugin? plugin}) {
+    _notificationService.notificationsPlugin = plugin ?? FlutterLocalNotificationsPlugin();
+    return _notificationService;
+  }
+
+  NotificationService._internal();
+
 
   //INITIALIZE
   Future<void> initialise() async {
-    if (_isInit) return;
 
     //initialize timezone handling
     ltz.initializeTimeZones();
@@ -63,7 +74,7 @@ class NotificationService {
 
   //SCHEDULE NOTIFICATIONS
   Future<void> scheduleNotification(
-      {int id = 1,
+      {
       required String title,
       required String body,
       required int hour,
@@ -74,18 +85,23 @@ class NotificationService {
 
     var scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
+    var random = Random();
+    int notificationId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
-        id, title, body, scheduledDate, const NotificationDetails(),
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      notificationId,
+      title,
+      body,
+      scheduledDate,
+      NotificationDetails(),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
 
-        // REPEATS THE NOTIFICATION DAILY
-        matchDateTimeComponents:
-            resolveNotificationFrequency(notificationFrequency)
-        //if daily is passed repeat it daily otherwise repeat weekly
-        );
+      // REPEATS THE NOTIFICATION DAILY
+      matchDateTimeComponents: resolveNotificationFrequency(notificationFrequency)
+      //if daily is passed repeat it daily otherwise repeat weekly
+    );
+
   }
 
   DateTimeComponents resolveNotificationFrequency(NotificationFrequency nf) {
@@ -98,6 +114,11 @@ class NotificationService {
         return DateTimeComponents
             .dayOfWeekAndTime; //not sure if this actually makes it repeat weekly, need to look into it more
     }
+  }
+
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    print("Inside getPendingNotifications()");  // Debugging print
+    return await notificationsPlugin.pendingNotificationRequests();
   }
 
   Future<void> cancelAllNotifications() async {
