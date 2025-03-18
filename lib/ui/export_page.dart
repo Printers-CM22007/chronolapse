@@ -1,4 +1,5 @@
 import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class ExportPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _ExportPageState extends State<ExportPage> {
         title:
             const Text("Export", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
+      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 2),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
