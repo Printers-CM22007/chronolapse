@@ -2,10 +2,12 @@ import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:flutter/material.dart';
 
 import '../../../util/util.dart';
+import '../../notification_service.dart';
 
 part './toggle_setting.dart';
 part './divider_no_setting.dart';
 part './title_no_setting.dart';
+part './notification_frequency_setting.dart';
 
 /// Abstract parent class for shared behaviour between `SettingWidget` and
 /// `PersistentSetting` - do not use

@@ -10,7 +10,28 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 
 enum NotificationFrequency {
   daily,
-  weekly,
+  weekly
+}
+
+extension NotificationFrequencyExt on NotificationFrequency {
+  String stringRepresentation() {
+    switch (this) {
+      case NotificationFrequency.daily:
+        return "Daily";
+      case NotificationFrequency.weekly:
+        return "Weekly";
+    }
+  }
+
+  static NotificationFrequency? getOptionFromString(String option) {
+    if (option.isEmpty) { return null; }
+    for (final possible in NotificationFrequency.values) {
+      if (possible.stringRepresentation() == option) {
+        return possible;
+      }
+    }
+    throw Exception("`$option` isn't a valid NotificationFrequencyOption");
+  }
 }
 
 class NotificationService {
