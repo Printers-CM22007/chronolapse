@@ -20,8 +20,6 @@ class VideoGenerator {
   // VideoCompiler is currently cooked because cv.VideoWriter doesn't work on android :'(
   // so for now, it will just place cat_video.mp4 into /data/data/com.example.chronolapse/files/timelapse.mp4
   Future<void> generateVideoFromTimelapse(String projectName) async {
-
-
     /*final projectData = await TimelapseStore.getProject(projectName);
     final List<String> frameUUIDs = projectData.data.metaData.frames;
 

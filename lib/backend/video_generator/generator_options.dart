@@ -3,7 +3,6 @@ class GeneratorOptions {
   double fps;
 
   GeneratorOptions.defaultSettings()
-   :  codec = "H.256",
-      fps = 60
-  {}
+      : codec = "H.256",
+        fps = 60 {}
 }

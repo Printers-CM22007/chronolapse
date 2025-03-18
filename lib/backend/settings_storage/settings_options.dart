@@ -24,11 +24,9 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
 const exampleToggleSetting = Global(
     ToggleSetting("exampleToggle", false, "Example Toggle", "Does nothing"));
 
-
 // Project Settings
 const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
     "exampleToggleTwo", true, "Example Toggle Two", "Also does nothing"));
 
 const notificationFrequencySetting = RequiresProject(
-    NotificationFrequencySetting("notificationFrequency", null)
-);
+    NotificationFrequencySetting("notificationFrequency", null));
