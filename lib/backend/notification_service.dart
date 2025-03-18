@@ -63,9 +63,11 @@ class NotificationService {
 
   //SHOW NOTIFICATION
   Future<void> showNotification(
-      {int id = 0, String? title, String? body}) async {
+      {int? id, String? title, String? body}) async {
+    var random = Random();
+    int randomId = random.nextInt(100000);
     return notificationsPlugin.show(
-      id,
+      id ?? randomId,
       title,
       body,
       const NotificationDetails(),
@@ -74,7 +76,7 @@ class NotificationService {
 
   //SCHEDULE NOTIFICATIONS
   Future<void> scheduleNotification(
-      {
+      {int? id,
       required String title,
       required String body,
       required int hour,
@@ -86,9 +88,9 @@ class NotificationService {
     var scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     var random = Random();
-    int notificationId = random.nextInt(100000);
+    int randomId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
-      notificationId,
+      id ?? randomId, //if no Id passed in use random id
       title,
       body,
       scheduledDate,
@@ -119,6 +121,10 @@ class NotificationService {
   Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     print("Inside getPendingNotifications()");  // Debugging print
     return await notificationsPlugin.pendingNotificationRequests();
+  }
+
+  Future<void> cancelNotification(int id) async{
+    await notificationsPlugin.cancel(id);
   }
 
   Future<void> cancelAllNotifications() async {
