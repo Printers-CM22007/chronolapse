@@ -6,6 +6,13 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_data.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:opencv_dart/opencv.dart' as cv;
 
+class Point {
+  final double x;
+  final double y;
+
+  const Point(this.x, this.y);
+}
+
 class ImageTransformer {
   /// Finds a homography for the specified frame and saves it to the frame.
   /// Returns a boolean representing success.
@@ -117,7 +124,29 @@ class ImageTransformer {
     // Apply the reference's homography so that instead of the homography
     // being reference -> current frame it's initial frame (absolute truth ->
     // current frame
-    return Homography.fromMatrix(cv.gemm(referenceHomography, homography, 1.0,
+    return Homography.fromMatrix(await cv.gemmAsync(referenceHomography, homography, 1.0,
+        cv.Mat.zeros(3, 3, cv.MatType.CV_64FC1), 0.0));
+  }
+
+  /// Returns a homography that maps an image from the `from` points to the `to`
+  /// points. `addTo` may be specified to add the resulting homography onto an
+  /// existing one
+  static Future<Homography> getHomographyFromPoints(Iterable<Point> from, Iterable<Point> to, {Homography? addTo}) async {
+    final srcPts = cv.Mat.from2DList(
+        from.map((p) => [p.x, p.y]),
+        cv.MatType.CV_64FC1);
+    final dstPts = cv.Mat.from2DList(
+        to.map((p) => [p.x, p.y]),
+        cv.MatType.CV_64FC1);
+
+    final (homography, _) = await cv.findHomographyAsync(srcPts, dstPts,
+        method: cv.RANSAC, ransacReprojThreshold: 5.0);
+
+    if (addTo == null) {
+      return Homography.fromMatrix(homography);
+    }
+
+    return Homography.fromMatrix(await cv.gemmAsync(addTo.getMatrix(), homography, 1.0,
         cv.Mat.zeros(3, 3, cv.MatType.CV_64FC1), 0.0));
   }
 
