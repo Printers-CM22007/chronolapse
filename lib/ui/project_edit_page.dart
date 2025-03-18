@@ -20,7 +20,7 @@ class ProjectEditPageState extends State<ProjectEditPage> {
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            "Edit - ${widget._projectName}",
+            "Edit frames - ${widget._projectName}",
             style: const TextStyle(fontWeight: FontWeight.bold),
           )),
       bottomNavigationBar: ProjectNavigationBar(widget._projectName, 1),
