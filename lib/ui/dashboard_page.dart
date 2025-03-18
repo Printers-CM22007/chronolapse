@@ -6,6 +6,7 @@ import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/models/project_card.dart';
 import 'package:chronolapse/ui/photo_taking_page.dart';
 import 'package:chronolapse/ui/project_edit_page.dart';
+import 'package:chronolapse/ui/project_view_page.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -104,6 +105,12 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
   void _onPressProjectThumbnail(String projectName) {
     Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => PhotoTakingPage(projectName)));
+  }
+
+  //
+  void _onPressProjectView(String projectName) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ProjectViewPage(projectName)));
   }
 
   void _onPressProjectEdit(String projectName) {
@@ -440,7 +447,44 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                 )),
                             Container(
                               //color: Colors.yellow,
-                              width: constraints.maxWidth * 0.4,
+                                width: constraints.maxWidth * 0.35,
+                                height: constraints.maxHeight * 0.125,
+                                padding: EdgeInsets.only(
+                                    left: constraints.maxWidth * 0.1),
+                                child: TextButton(
+                                  onPressed: () {
+                                    _onPressProjectView(
+                                        projects[index].projectName);
+                                  },
+                                  style: TextButton.styleFrom(
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(
+                                        DashboardPageIcons.edit,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                      ),
+                                      Text(
+                                        "View",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )),
+
+                            Container(
+                              //color: Colors.yellow,
+                              width: constraints.maxWidth * 0.3,
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerRight,
                               child: MenuAnchor(
