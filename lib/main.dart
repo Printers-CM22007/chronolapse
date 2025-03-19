@@ -27,10 +27,6 @@ void main() async {
   NotificationService notificationService = NotificationService();
   await notificationService.initialise();
 
-  // ! TEST CODE START
-
-  await testImageTransformerBreaksEverything();
-
   // List available cameras
   try {
     cameras = await availableCameras();
@@ -38,8 +34,6 @@ void main() async {
     // TODO: work out how to best report error
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
-
-  // ! TEST CODE END
 
   runApp(const MyApp());
 }
