@@ -12,10 +12,8 @@ import 'package:flutter_local_notifications/src/initialization_settings.dart'
 import 'package:flutter_local_notifications/src/notification_details.dart'
     as _i6;
 import 'package:flutter_local_notifications/src/platform_specifics/android/schedule_mode.dart'
-    as _i9;
-import 'package:flutter_local_notifications/src/platform_specifics/ios/enums.dart'
     as _i8;
-import 'package:flutter_local_notifications/src/types.dart' as _i10;
+import 'package:flutter_local_notifications/src/types.dart' as _i9;
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
     as _i5;
 import 'package:mockito/mockito.dart' as _i1;
@@ -120,19 +118,15 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
     String? body,
     _i7.TZDateTime? scheduledDate,
     _i6.NotificationDetails? notificationDetails, {
-    required _i8.UILocalNotificationDateInterpretation?
-    uiLocalNotificationDateInterpretation,
-    required _i9.AndroidScheduleMode? androidScheduleMode,
+    required _i8.AndroidScheduleMode? androidScheduleMode,
     String? payload,
-    _i10.DateTimeComponents? matchDateTimeComponents,
+    _i9.DateTimeComponents? matchDateTimeComponents,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
               #zonedSchedule,
               [id, title, body, scheduledDate, notificationDetails],
               {
-                #uiLocalNotificationDateInterpretation:
-                    uiLocalNotificationDateInterpretation,
                 #androidScheduleMode: androidScheduleMode,
                 #payload: payload,
                 #matchDateTimeComponents: matchDateTimeComponents,
@@ -150,7 +144,7 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
     String? body,
     _i5.RepeatInterval? repeatInterval,
     _i6.NotificationDetails? notificationDetails, {
-    required _i9.AndroidScheduleMode? androidScheduleMode,
+    required _i8.AndroidScheduleMode? androidScheduleMode,
     String? payload,
   }) =>
       (super.noSuchMethod(
@@ -171,8 +165,8 @@ class MockFlutterLocalNotificationsPlugin extends _i1.Mock
     String? body,
     Duration? repeatDurationInterval,
     _i6.NotificationDetails? notificationDetails, {
-    _i9.AndroidScheduleMode? androidScheduleMode =
-        _i9.AndroidScheduleMode.exact,
+    _i8.AndroidScheduleMode? androidScheduleMode =
+        _i8.AndroidScheduleMode.exact,
     String? payload,
   }) =>
       (super.noSuchMethod(

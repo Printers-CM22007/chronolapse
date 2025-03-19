@@ -385,7 +385,7 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
                     onPressed: () => setState(() {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
                     }),
-                    icon: Icon(DashboardPageIcons.settings)),
+                    icon: Icon(Icons.settings)),
                 IconButton(
                     icon: Icon(showMarkers ? Icons.visibility : Icons.visibility_off),
                     onPressed: () => setState(() {showMarkers = !showMarkers;})
@@ -797,7 +797,7 @@ class VideoEditorNavigationBar extends StatelessWidget {
             ),
             NavigationDestination(
               icon: Icon(
-                DashboardPageIcons.export,
+                Icons.share,
                 color: Theme.of(context).colorScheme.inverseSurface,
               ),
               label: "Export",
