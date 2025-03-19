@@ -58,7 +58,7 @@ class ProjectNavigationBar extends StatelessWidget {
                 Icons.edit,
                 color: Theme.of(context).colorScheme.inverseSurface,
               ),
-              label: "Edit pages",
+              label: "Edit frames",
             ),
             NavigationDestination(
               icon: Icon(
