@@ -43,7 +43,7 @@ void main() async {
     // Mock zonedSchedule to simulate successful scheduling
     when(mockFlutterLocalNotificationsPlugin.zonedSchedule(
       any, any, any, any, any,
-      uiLocalNotificationDateInterpretation: anyNamed('uiLocalNotificationDateInterpretation'),
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,//anyNamed('uiLocalNotificationDateInterpretation'),
       androidScheduleMode: anyNamed('androidScheduleMode'),
       matchDateTimeComponents: anyNamed('matchDateTimeComponents'),
     )).thenAnswer((invocation) async {

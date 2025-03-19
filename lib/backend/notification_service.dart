@@ -1,11 +1,7 @@
-<<<<<<< HEAD
-=======
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
->>>>>>> 93aa9e1ad5fba70822655a5db13c4f66e483a291
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as ltz;
@@ -95,7 +91,7 @@ class NotificationService {
       title,
       body,
       scheduledDate,
-      const NotificationDetails(),
+      NotificationDetails(),
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,

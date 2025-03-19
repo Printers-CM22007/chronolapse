@@ -1,8 +1,19 @@
+// import 'dart:ui';
+
+import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:chronolapse/ui/settings_page.dart';
+import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
 import 'package:chronolapse/ui/photo_taking_page.dart';
+import 'package:chronolapse/ui/shared/instant_page_route.dart';
+import 'package:flutter/services.dart';
+
+import '../backend/settings_storage/settings_store.dart';
+import '../backend/timelapse_storage/frame/timelapse_frame.dart';
+import '../backend/timelapse_storage/timelapse_data.dart';
+import '../backend/timelapse_storage/timelapse_store.dart';
 
 // TODO: change the main file to show the dashboard first, not the editting page
 // TODO: the code crashes if a page with markers on it is deleted
@@ -22,6 +33,18 @@ import 'package:chronolapse/ui/photo_taking_page.dart';
 //   }
 // }
 
+
+// class VideoEditorPageIcons extends DashboardPageIcons {
+//
+//   @override
+//   // VideoEditorPageIcons._();
+//
+//   static const fontFamily = 'icomoon';
+//
+//   static const IconData dashboard = IconData(0xe986, fontFamily: fontFamily);
+//
+//   // static const IconData camera = Icon(Icons.camera_alt)//IconData(0xe130, fontFamily: fontFamily);
+// }
 class FrameEditor extends StatefulWidget {
   final String _projectName;
 
@@ -56,9 +79,17 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
 
   final List<List<Map<String, dynamic>>> markersForEachImage = [];
 
+  //The stuff below is experimental
+  late ProjectTimelapseData _project;
+  late List<String> _projectFrameUuidList;
+  int currentFrameIndex = 0;
+  String currentFramePath = "none";
+  bool _projectLoaded = false;
+
   @override
   void initState() {
     super.initState();
+    // accessBackendPhotos();
     tabController = TabController(length: 3, vsync: this);
 
     for (int i = 0; i < imagePaths.length; i++) {
@@ -240,15 +271,121 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
     );
   }
 
+  Future<void> addPhotoBackend(ProjectTimelapseData tProject, String imagePath) async {
+    final baseFrame = TimelapseFrame.createNewWithData(
+        tProject.projectName(), FrameData.initial(tProject.projectName()));
+    await baseFrame.saveFrameFromPngBytes(
+        (await rootBundle.load(imagePath))
+        .buffer
+        .asUint8List());
+
+    // * Add frame to list of known frames
+    tProject.data.knownFrameTransforms.frames
+        .add(baseFrame.uuid()!); // uuid is known here as the frame has been saved
+    await tProject.saveChanges();
+  }
+
+  Future<void> accessBackendPhotos() async {
+
+    //When using this, make sure to delete previous projects when testing
+    // await TimelapseStore.deleteAllProjects();
+    // await SettingsStore.deleteAllSettings();
+
+    // * Create test project
+    final testProject = (await TimelapseStore.createProject(widget._projectName)) ?? (await TimelapseStore.getProject(widget._projectName));
+
+    // addPhotoBackend(testProject, "assets/frames/landscape.jpeg");
+    // addPhotoBackend(testProject, "assets/frames/clouds-country.jpg");
+    // addPhotoBackend(testProject, "assets/frames/SaxonyLandscape.jpg");
+
+    _loadProject(); // exp
+
+  }
+
+  // The below text is from the ViewPage branch
+
+
+//  //This stuff is for styling the page
+// class ProjectViewPageIcons {
+//   ProjectViewPageIcons._();
+//
+//   static const fontFamily = 'icomoon';
+//
+//   static const IconData next = IconData(0xe986, fontFamily: fontFamily);
+//
+//   static const IconData previous = IconData(0xe986, fontFamily: fontFamily);
+//
+//   static const IconData edit = IconData(0xe905, fontFamily: fontFamily);
+// }
+
+  void _loadProject() async {
+    TimelapseStore.initialise();
+    _project = await TimelapseStore.getProject(widget._projectName);
+    _projectLoaded = true;
+    _projectFrameUuidList = _project.data.metaData.frames;
+
+    print("Chromo");
+    print(_projectFrameUuidList.length);
+
+    // Assumed if you can view the Project it must have at least 1
+    currentFrameIndex = -1;
+    _getNextFrame();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<String?> getPathForIndex() async{
+    var fromExisting = TimelapseFrame.fromExisting(widget._projectName, _projectFrameUuidList[currentFrameIndex]);
+    return (fromExisting).then((x) => x.getFramePng().path);
+  }
+  bool _getNextFrame() {
+    if (currentFrameIndex < _projectFrameUuidList.length - 1) {
+      currentFrameIndex += 1;
+      Future<String?> pathForIndex = getPathForIndex();
+      pathForIndex.then((p){
+        if (p != null) {
+          setState(() {
+            currentFramePath = p;
+          });
+        }} );
+      return true;
+    } return false;
+  }
+  bool _getPreviousFrame() {
+    if (currentFrameIndex > 0) {
+      currentFrameIndex -= 1;
+      Future<String?> pathForIndex = getPathForIndex();
+      pathForIndex.then((p){
+        if (p != null) {
+          setState(() {
+            currentFramePath = p;
+          });
+        }} );
+      return true;
+    } return false;
+  }
+
+  void _playAll(){
+    bool next = true;
+    while(next){
+      next = _getNextFrame();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
         length: 3,
         child: Scaffold(
             appBar: AppBar(
               title: Text(_pageTitle),
               actions: [
+                IconButton(
+                    onPressed: () => setState(() {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
+                    }),
+                    icon: Icon(DashboardPageIcons.settings)),
                 IconButton(
                     icon: Icon(showMarkers ? Icons.visibility : Icons.visibility_off),
                     onPressed: () => setState(() {showMarkers = !showMarkers;})
@@ -494,7 +631,7 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
                         ),
                         GridView.builder(
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                              crossAxisCount: 3,
                               crossAxisSpacing: 8.0,
                               mainAxisSpacing: 8.0,
                             ),
@@ -525,78 +662,154 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
                                     }
                                   });
                                 },
-                                child: Card(
-                                  margin: const EdgeInsets.all(8.0),
-                                  child: ListTile(
-                                      contentPadding: const EdgeInsets.all(8.0),
-                                      leading: Image.asset(
-                                        imagePaths[index],
-                                        width: 100,
-                                        height: 100,
-                                        fit: BoxFit.cover,
-                                      ),
-                                     title: Text('Image ${index + 1}'),
-                                      trailing: IconButton(
-                                        onPressed: () => deleteImage(index),
-                                        icon: const Icon(Icons.delete),
-                                      ),
-
+                                // child: ListTile(
+                                //       contentPadding: const EdgeInsets.all(8.0),
+                                //       leading: Image.asset(
+                                //         imagePaths[index],
+                                //         width: 100,
+                                //         height: 100,
+                                //         fit: BoxFit.cover,
+                                //       ),
+                                //     title: Text('Image ${index + 1}'),
+                                //     trailing: IconButton(
+                                //         onPressed: () => deleteImage(index),
+                                //         icon: const Icon(Icons.delete),
+                                //       ),
+                                //     ),
+                                child: GridTile(
+                                  child: Image.asset(
+                                      imagePaths[index],
+                                      fit: BoxFit.cover,
                                     ),
                                 ),
-                              );
+                                );
                             },
                         )
                       ],
                     )
                 ),
                 ]),
-            bottomNavigationBar: BottomNavigationBar(
-                onTap: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-
-                  switch (index) {
-                    case 0:
-                      Navigator.of(context).pushReplacement(InstantPageRoute(
-                          builder: (context) => const DashboardPage()));
-                    case 1:
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
-                    case 2:
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
-                      Navigator.of(context).pushReplacement(InstantPageRoute(
-                          builder: (context) => PhotoTakingPage(widget._projectName)));
-
-                  }
-
-
-                  // if (index == 0) {
-                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
-                  // } else if (index == 1) {
-                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
-                  // }
-                  // else if (index == 2) {
-                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
-                  // }
-                },
-                items: const[
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: 'Dashboard',
-                  ),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.settings),
-                      label: 'Settings'
-                  ),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.camera_alt),
-                      label: 'Take a photo'
-                  ),
-                ]
-            ),
+            bottomNavigationBar: VideoEditorNavigationBar(0, widget._projectName),
+            // BottomNavigationBar(
+            //     onTap: (index) {
+            //       setState(() {
+            //         currentIndex = index;
+            //       });
+            //
+            //       switch (index) {
+            //         case 0:
+            //           Navigator.of(context).pushReplacement(InstantPageRoute(
+            //               builder: (context) => const DashboardPage()));
+            //         case 1:
+            //           Navigator.push(context, MaterialPageRoute(builder: (context) => ExportPage(widget._projectName)));
+            //         case 2:
+            //           // Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
+            //           Navigator.of(context).pushReplacement(InstantPageRoute(
+            //               builder: (context) => PhotoTakingPage(widget._projectName)));
+            //
+            //       }
+            //
+            //
+            //       // if (index == 0) {
+            //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
+            //       // } else if (index == 1) {
+            //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(widget._projectName)));
+            //       // }
+            //       // else if (index == 2) {
+            //       //   Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
+            //       // }
+            //     },
+            //     items: const[
+            //       BottomNavigationBarItem(
+            //           icon: Icon(Icons.home),
+            //           label: 'Dashboard',
+            //       ),
+            //       BottomNavigationBarItem(
+            //           icon: Icon(Icons.upload),
+            //           label: 'Export'
+            //       ),
+            //       BottomNavigationBarItem(
+            //           icon: Icon(Icons.camera_alt),
+            //           label: 'Take photo'
+            //       ),
+            //     ]
+            // ),
             ),
 
         );
 
+  }
+}
+
+class VideoEditorNavigationBar extends StatelessWidget {
+  final int selectedIndex;
+
+  final dynamic _projectName;
+
+  const VideoEditorNavigationBar(this.selectedIndex, this._projectName, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      clipBehavior: Clip.hardEdge,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(40)),
+        // borderRadius: BorderRadius.only(
+        //   topLeft: Radius.circular(35),
+        //   topRight: Radius.circular(35)
+        // ),
+        // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
+      ),
+      child: NavigationBar(
+          shadowColor: Theme.of(context).colorScheme.onInverseSurface,
+          height: 60,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          elevation: 0,
+          selectedIndex: selectedIndex,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
+          onDestinationSelected: (index) {
+            switch (index) {
+              case 0:
+                Navigator.of(context).pushReplacement(InstantPageRoute(
+                    builder: (context) => const DashboardPage()));
+                break;
+
+              case 1:
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ExportPage(_projectName)));
+                break;
+
+              case 2:
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
+                Navigator.of(context).pushReplacement(InstantPageRoute(
+                    builder: (context) => PhotoTakingPage(_projectName)));
+                break;
+
+            }
+          },
+          destinations: [
+            NavigationDestination(
+              icon: Icon(
+                Icons.dashboard,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
+              label: "Dashboard",
+            ),
+            NavigationDestination(
+              icon: Icon(
+                DashboardPageIcons.export,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
+              label: "Export",
+            ),
+            NavigationDestination(
+              icon: Icon(
+                Icons.camera_alt,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
+              label: "Take Photo",
+            ),
+          ]),
+    );
   }
 }

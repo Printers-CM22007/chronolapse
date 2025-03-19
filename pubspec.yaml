@@ -28,24 +28,38 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  camera: ^0.10.5 # future versions have an issue where camera orientation is locked to portrait
+  chewie: ^1.10.0
   flutter:
     sdk: flutter
 
+  flutter_local_notifications: ^18.0.1
+
+  json_annotation: ^4.9.0
+  opencv_dart: ^1.4.1
+  path_provider: ^2.1.5
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+#  cupertino_icons: ^1.0.8
+  image: ^4.5.3
+  shared_preferences: ^2.5.1
+  video_player: ^2.9.2
+
+  timezone: ^0.10.0
+  flutter_timezone: ^4.1.0
+  uuid: ^4.5.1
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-<<<<<<< HEAD
-=======
   integration_test:
     sdk: flutter
   flutter_driver:
     sdk: flutter
   test: any
->>>>>>> 93aa9e1ad5fba70822655a5db13c4f66e483a291
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -56,12 +70,10 @@ dev_dependencies:
 
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.4
-<<<<<<< HEAD
-=======
   json_serializable: ^6.7.1
   build_runner: ^2.4.15
   mockito: ^5.4.5
->>>>>>> 93aa9e1ad5fba70822655a5db13c4f66e483a291
+
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -97,7 +109,16 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: icomoon
+      fonts:
+        - asset: assets/fonts/icomoon.ttf
 
+  assets:
+    - assets/
+    - assets/frames/
+    - assets/images/
+    - assets/image_transformer_test/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

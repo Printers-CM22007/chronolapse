@@ -17,6 +17,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class DashboardPageIcons {
+  DashboardPageIcons();
   DashboardPageIcons._();
 
   static const fontFamily = 'icomoon';
