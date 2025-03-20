@@ -1,5 +1,8 @@
 // import 'dart:ui';
 
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'package:chronolapse/ui/settings_page.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
 import 'package:chronolapse/ui/photo_taking_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import '../backend/settings_storage/settings_store.dart';
@@ -15,8 +19,8 @@ import '../backend/timelapse_storage/frame/timelapse_frame.dart';
 import '../backend/timelapse_storage/timelapse_data.dart';
 import '../backend/timelapse_storage/timelapse_store.dart';
 
-// TODO: change the main file to show the dashboard first, not the editting page
-// TODO: the code crashes if a page with markers on it is deleted
+// OUTDATED-GOAL: the code crashes if a page with markers on it is deleted
+// TODO: there is an unhandled error when the project is exited sometimes
 
 // class VideoEditor extends StatelessWidget {
 //   const VideoEditor({super.key});
@@ -47,8 +51,9 @@ import '../backend/timelapse_storage/timelapse_store.dart';
 // }
 class FrameEditor extends StatefulWidget {
   final String _projectName;
+  final String _uuid;
 
-  const FrameEditor(this._projectName, {super.key});
+  const FrameEditor(this._projectName, this._uuid, {super.key});
 
   @override
   _FrameEditorState createState() => _FrameEditorState();
@@ -60,6 +65,8 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
   double contrast = 1.0;
   double saturation = 1.0;
   double balanceFactor = 0.0;
+
+  final GlobalKey _boundaryKey = GlobalKey();
 
 
 
@@ -73,11 +80,21 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
   int currentIndex = 0;
   int currentImageIndex = 0;
 
+  String? theImage;
+  File? photoFile;
+
 
   String _pageTitle = 'Tap image to place markers';
   late String _respectiveName;
 
   final List<List<Map<String, dynamic>>> markersForEachImage = [];
+
+  Future<String?> getPathForIndex(String uuid) async{
+    // await TimelapseStore.deleteAllProjects();
+
+    var fromExisting = TimelapseFrame.fromExisting(widget._projectName, uuid);
+    return (fromExisting).then((x) => x.getFramePng().path);
+  }
 
   //The stuff below is experimental
   late ProjectTimelapseData _project;
@@ -86,22 +103,56 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
   String currentFramePath = "none";
   bool _projectLoaded = false;
 
+  Future<TimelapseFrame> pleaseGetPhoto() async {
+    final frame = await TimelapseFrame.fromExisting(widget._projectName, widget._uuid);
+
+    File photoFile = frame.getFramePng();
+
+    if (!(photoFile.existsSync())) {
+      print("Photo file not found!");
+    }
+
+    return frame;
+  }
+
   @override
   void initState() {
     super.initState();
+    // TimelapseFrame.get
+    // _getFrameImageFile
+
+    // getPathForIndex(widget._uuid);
+
+    List<String> imagePaths = ['assets/frames/landscape.jpeg'];
+
+    Future<String?> futureString = getPathForIndex(widget._uuid);
+    // futureString.then((value) {
+    //   print("Hey it worked: ${value}");
+    //   imagePaths[0] = (value!);
+    // });
+
+    final test = TimelapseFrame.fromExisting(widget._projectName, widget._uuid);
+
+    print("picture path is ${widget._uuid}");
+    print("imagePaths is ${imagePaths}");
+    pleaseGetPhoto();
+
     // accessBackendPhotos();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
 
     for (int i = 0; i < imagePaths.length; i++) {
         markersForEachImage.add([]);
     }
   }
 
-  final List<String> imagePaths = [
-    'assets/frames/landscape.jpeg',
-    'assets/frames/clouds-country.jpg',
-    'assets/frames/SaxonyLandscape.jpg',
-  ];
+  //
+  // List<String> imagePaths = [widget._picturePath];
+  // List<String> imagePaths = [
+  //   'assets/frames/landscape.jpeg',
+  //   'assets/frames/clouds-country.jpg',
+  //   'assets/frames/SaxonyLandscape.jpg',
+  // ];
+
 
   @override
   void dispose() {
@@ -197,15 +248,15 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
     );
   }
 
-  void deleteImage(int index) {
-    setState(() {
-      if (imagePaths.length == 1) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
-      } else {
-        imagePaths.removeAt(index);
-      }
-    });
-  }
+  // void deleteImage(int index) {
+  //   setState(() {
+  //     if (imagePaths.length == 1) {
+  //       Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
+  //     } else {
+  //       imagePaths.removeAt(index);
+  //     }
+  //   });
+  // }
 
   void editMarkerDetails(int index) {
     final marker = markersForEachImage[currentImageIndex][index];
@@ -302,6 +353,60 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
 
   }
 
+  Future<Uint8List?> captureEditedImage() async {
+    try {
+
+      if (_boundaryKey.currentContext == null) {
+        print("RepaintBoundary key is not attached to the widget tree");
+        return null;
+      }
+      RenderRepaintBoundary boundary = _boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+
+      if (boundary.size.isEmpty) {
+        print("RepaintBoundary size is empty: ${boundary.size}");
+        return null;
+      }
+      // Now we convert this to an image
+      final ui.Image image = await boundary.toImage();
+      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      //Then we can return the PNG in 'PNG bytes' format
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      print("There was a error. This is what it said: $e");
+      return null;
+    }
+  }
+
+  Future<void> saveEditedFrame(String projectName, String frameUuid) async {
+    try {
+      // final Uint8List? pngBytes = await captureEditedImage();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final Uint8List? pngBytes = await captureEditedImage();
+        if (pngBytes != null) {
+          // Proceed with saving
+          final frame = await TimelapseFrame.fromExisting(projectName, frameUuid);
+
+          await frame.saveFrameFromPngBytes(pngBytes);
+        } else {
+          print("Nooooooo");
+        }
+      });
+
+      // if (pngBytes == null) {
+      //   print("Failed to capture the edited image =(");
+      //   return;
+      // }
+      
+
+
+      print("Yipee");
+    } catch (e) {
+      print("You can't do ML once you solve this: $e");
+    }
+  }
+
   // The below text is from the ViewPage branch
 
 
@@ -318,6 +423,7 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
 //   static const IconData edit = IconData(0xe905, fontFamily: fontFamily);
 // }
 
+
   void _loadProject() async {
     TimelapseStore.initialise();
     _project = await TimelapseStore.getProject(widget._projectName);
@@ -327,54 +433,68 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
     print("Chromo");
     print(_projectFrameUuidList.length);
 
-    // Assumed if you can view the Project it must have at least 1
-    currentFrameIndex = -1;
-    _getNextFrame();
-    if (mounted) {
-      setState(() {});
-    }
+    // // Assumed if you can view the Project it must have at least 1
+    // currentFrameIndex = -1;
+    // _getNextFrame();
+    // if (mounted) {
+    //   setState(() {});
+    // }
   }
-
-  Future<String?> getPathForIndex() async{
-    var fromExisting = TimelapseFrame.fromExisting(widget._projectName, _projectFrameUuidList[currentFrameIndex]);
-    return (fromExisting).then((x) => x.getFramePng().path);
-  }
-  bool _getNextFrame() {
-    if (currentFrameIndex < _projectFrameUuidList.length - 1) {
-      currentFrameIndex += 1;
-      Future<String?> pathForIndex = getPathForIndex();
-      pathForIndex.then((p){
-        if (p != null) {
-          setState(() {
-            currentFramePath = p;
-          });
-        }} );
-      return true;
-    } return false;
-  }
-  bool _getPreviousFrame() {
-    if (currentFrameIndex > 0) {
-      currentFrameIndex -= 1;
-      Future<String?> pathForIndex = getPathForIndex();
-      pathForIndex.then((p){
-        if (p != null) {
-          setState(() {
-            currentFramePath = p;
-          });
-        }} );
-      return true;
-    } return false;
-  }
-
-  void _playAll(){
-    bool next = true;
-    while(next){
-      next = _getNextFrame();
-    }
-  }
+  //
+  // Future<String?> getPathForIndex() async{
+  //   var fromExisting = TimelapseFrame.fromExisting(widget._projectName, _projectFrameUuidList[currentFrameIndex]);
+  //   return (fromExisting).then((x) => x.getFramePng().path);
+  // }
+  // bool _getNextFrame() {
+  //   if (currentFrameIndex < _projectFrameUuidList.length - 1) {
+  //     currentFrameIndex += 1;
+  //     Future<String?> pathForIndex = getPathForIndex();
+  //     pathForIndex.then((p){
+  //       if (p != null) {
+  //         setState(() {
+  //           currentFramePath = p;
+  //         });
+  //       }} );
+  //     return true;
+  //   } return false;
+  // }
+  // bool _getPreviousFrame() {
+  //   if (currentFrameIndex > 0) {
+  //     currentFrameIndex -= 1;
+  //     Future<String?> pathForIndex = getPathForIndex();
+  //     pathForIndex.then((p){
+  //       if (p != null) {
+  //         setState(() {
+  //           currentFramePath = p;
+  //         });
+  //       }} );
+  //     return true;
+  //   } return false;
+  // }
+  //
+  // void _playAll(){
+  //   bool next = true;
+  //   while(next){
+  //     next = _getNextFrame();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+
+    Future<TimelapseFrame> frame = pleaseGetPhoto();
+
+    frame.then((value) {
+      if (mounted) {
+        setState(() {
+          photoFile = value.getFramePng();
+          theImage = photoFile?.path ?? 'No path available';
+          // print("the image is $theImage");
+        });
+      }
+    });
+
+
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -395,6 +515,8 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
             body: Column(
               children: [
                 Container(
+                  // width: 100,
+                  height: 300,
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
@@ -430,27 +552,29 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
 
                           });
                         },
-                        child: Stack(
-                          children: [
-                            Opacity(
-                              opacity: 1,
-                              child: ColorFiltered(
-                                colorFilter: ColorFilter.matrix([
-                                  contrast, 0, 0, 0, brightness * 255,
-                                  0, contrast, 0, 0, brightness * 255,
-                                  0, 0, contrast, 0, brightness * 255,
-                                  0, 0, 0, 1, 0,
-                                ]),
+                        child: RepaintBoundary(
+                          key: _boundaryKey,
+                          child: Stack(
+                            children: [
+                              Opacity(
+                                opacity: 1,
                                 child: ColorFiltered(
                                   colorFilter: ColorFilter.matrix([
-                                    0.2126 + 0.7874 * saturation, 0.7152 - 0.7152 * saturation, 0.0722 - 0.0722 * saturation, 0, 0,
-                                    0.2126 - 0.2126 * saturation, 0.7152 + 0.2848 * saturation, 0.0722 - 0.0722 * saturation, 0, 0,
-                                    0.2126 - 0.2126 * saturation, 0.7152 - 0.7152 * saturation, 0.0722 + 0.9278 * saturation, 0, 0,
+                                    contrast, 0, 0, 0, brightness * 255,
+                                    0, contrast, 0, 0, brightness * 255,
+                                    0, 0, contrast, 0, brightness * 255,
                                     0, 0, 0, 1, 0,
-
                                   ]),
-
                                   child: ColorFiltered(
+                                    colorFilter: ColorFilter.matrix([
+                                      0.2126 + 0.7874 * saturation, 0.7152 - 0.7152 * saturation, 0.0722 - 0.0722 * saturation, 0, 0,
+                                      0.2126 - 0.2126 * saturation, 0.7152 + 0.2848 * saturation, 0.0722 - 0.0722 * saturation, 0, 0,
+                                      0.2126 - 0.2126 * saturation, 0.7152 - 0.7152 * saturation, 0.0722 + 0.9278 * saturation, 0, 0,
+                                      0, 0, 0, 1, 0,
+
+                                    ]),
+
+                                    child: ColorFiltered(
                                       colorFilter: ColorFilter.matrix([
                                         1.0 + balanceFactor, 0, 0, 0, 0,
                                         0, 1.0 , 0, 0, 0,
@@ -458,77 +582,75 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
                                         0, 0, 0, 1, 0,
 
                                       ]),
-                                      child: Image.asset(
-                                        imagePaths[currentImageIndex],
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child: theImage != null ? Image.file(File(theImage!), fit: BoxFit.cover) : Text('Image at $theImage is loading...'),
+                                    ),
+
+
                                   ),
-
-
                                 ),
                               ),
-                            ),
-                            if (currentImageIndex != 0)
-                              Opacity(
-                                opacity: opacity,
-                                child: Image.asset(
-                                  imagePaths[currentImageIndex - 1],
-                                  fit: BoxFit.cover,
+                              if (currentImageIndex != 0)
+                                Opacity(
+                                  opacity: opacity,
+                                  child: Image.asset(
+                                    widget._uuid[currentImageIndex - 1],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
 
 
-                            if (showMarkers)
-                              ...markersForEachImage[currentImageIndex].asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final marker = entry.value;
-                                final isSelectedMarker = index == selectedMarkerIndex;
-                                return Positioned(
+                              if (showMarkers)
+                                ...markersForEachImage[currentImageIndex].asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final marker = entry.value;
+                                  final isSelectedMarker = index == selectedMarkerIndex;
+                                  return Positioned(
                                     // TODO: The marker tends to jump by a fixed offset when its ListTile is selected
+                                      left: marker['offset'].dx - (isSelectedMarker ? 10 : 5),
+                                      top: marker['offset'].dy - (isSelectedMarker ? 10 : 5),
+                                      child: GestureDetector(
+                                        onPanStart: (details) {
+                                          setState(() {
+                                            isDragging = true;
+                                          });
+                                        },
+                                        onPanUpdate: (DragUpdateDetails details) {
+                                          RenderBox box = context.findRenderObject() as RenderBox;
+                                          Offset newOffset = box.globalToLocal(details.globalPosition);
+                                          setState(() {
+                                            markersForEachImage[currentImageIndex][index]['offset'] = newOffset;
+                                          });
+                                        },
+                                        onPanEnd: (details) {
+                                          setState(() {
+                                            isDragging = false;
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Icon(Icons.circle, color: marker['colour'], size: isSelectedMarker ? 20 : 10,),
+                                            if (isSelectedMarker)
+                                              Text(marker['name'], style: TextStyle(color: Colors.white, backgroundColor: Colors.black.withValues(alpha: 0.5)),)
+                                          ],
+                                        ),
+                                      ));
+
+                                }),
+                              if (showMarkers && currentImageIndex != 0)
+                                ...markersForEachImage[currentImageIndex - 1].asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final marker = entry.value;
+                                  final isSelectedMarker = index == selectedMarkerIndex;
+                                  return Positioned(
                                     left: marker['offset'].dx - (isSelectedMarker ? 10 : 5),
                                     top: marker['offset'].dy - (isSelectedMarker ? 10 : 5),
-                                    child: GestureDetector(
-                                      onPanStart: (details) {
-                                        setState(() {
-                                          isDragging = true;
-                                        });
-                                      },
-                                      onPanUpdate: (DragUpdateDetails details) {
-                                        RenderBox box = context.findRenderObject() as RenderBox;
-                                        Offset newOffset = box.globalToLocal(details.globalPosition);
-                                        setState(() {
-                                          markersForEachImage[currentImageIndex][index]['offset'] = newOffset;
-                                        });
-                                      },
-                                      onPanEnd: (details) {
-                                        setState(() {
-                                          isDragging = false;
-                                        });
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Icon(Icons.circle, color: marker['colour'], size: isSelectedMarker ? 20 : 10,),
-                                          if (isSelectedMarker)
-                                            Text(marker['name'], style: TextStyle(color: Colors.white, backgroundColor: Colors.black.withValues(alpha: 0.5)),)
-                                        ],
-                                      ),
-                                    ));
-                                
-                              }),
-                            if (showMarkers && currentImageIndex != 0)
-                              ...markersForEachImage[currentImageIndex - 1].asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final marker = entry.value;
-                                final isSelectedMarker = index == selectedMarkerIndex;
-                                return Positioned(
-                                left: marker['offset'].dx - (isSelectedMarker ? 10 : 5),
-                                top: marker['offset'].dy - (isSelectedMarker ? 10 : 5),
-                                child: Icon(Icons.circle, color: Colors.yellowAccent, size: 10,),
-                                );
+                                    child: Icon(Icons.circle, color: Colors.yellowAccent, size: 10,),
+                                  );
                                 }),
 
 
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -539,7 +661,7 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
                   tabs: const [
                     Tab(text: 'Sliders'),
                     Tab(text: 'Markers'),
-                    Tab(text: 'Frames',)
+                    // Tab(text: 'Frames',)
                   ],
                 ),
                 Expanded(
@@ -629,67 +751,107 @@ class _FrameEditorState extends State<FrameEditor> with SingleTickerProviderStat
                             ),
                           ],
                         ),
-                        GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 8.0,
-                              mainAxisSpacing: 8.0,
-                            ),
-                            itemCount: imagePaths.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    currentImageIndex = index;
-                                    if (currentImageIndex == 0) {
-                                      _pageTitle = 'Tap image to place markers';
-                                    }
-                                    else if (markersForEachImage[currentImageIndex].isEmpty) {
-                                      _pageTitle = 'Place marker "${markersForEachImage[currentImageIndex - 1][markersForEachImage[currentImageIndex].length]['name']}"';
-                                    } else {
-                                      if (markersForEachImage[currentImageIndex]
-                                          .length !=
-                                          markersForEachImage[currentImageIndex -
-                                              1].length) {
-                                        _pageTitle =
-                                        'Place marker "${(markersForEachImage[currentImageIndex -
-                                            1][markersForEachImage[currentImageIndex ]
-                                            .length]['name'])}"';
-                                      } else {
-                                        _pageTitle =
-                                        'Drag the markers into place'; // or move to the next frame';
-                                      }
-                                    }
-                                  });
-                                },
-                                // child: ListTile(
-                                //       contentPadding: const EdgeInsets.all(8.0),
-                                //       leading: Image.asset(
-                                //         imagePaths[index],
-                                //         width: 100,
-                                //         height: 100,
-                                //         fit: BoxFit.cover,
-                                //       ),
-                                //     title: Text('Image ${index + 1}'),
-                                //     trailing: IconButton(
-                                //         onPressed: () => deleteImage(index),
-                                //         icon: const Icon(Icons.delete),
-                                //       ),
-                                //     ),
-                                child: GridTile(
-                                  child: Image.asset(
-                                      imagePaths[index],
-                                      fit: BoxFit.cover,
-                                    ),
-                                ),
-                                );
-                            },
-                        )
+                        // GridView.builder(
+                        //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        //       crossAxisCount: 3,
+                        //       crossAxisSpacing: 8.0,
+                        //       mainAxisSpacing: 8.0,
+                        //     ),
+                        //     itemCount: imagePaths.length,
+                        //     itemBuilder: (context, index) {
+                        //       return GestureDetector(
+                        //         onTap: () {
+                        //           setState(() {
+                        //             currentImageIndex = index;
+                        //             if (currentImageIndex == 0) {
+                        //               _pageTitle = 'Tap image to place markers';
+                        //             }
+                        //             else if (markersForEachImage[currentImageIndex].isEmpty) {
+                        //               _pageTitle = 'Place marker "${markersForEachImage[currentImageIndex - 1][markersForEachImage[currentImageIndex].length]['name']}"';
+                        //             } else {
+                        //               if (markersForEachImage[currentImageIndex]
+                        //                   .length !=
+                        //                   markersForEachImage[currentImageIndex -
+                        //                       1].length) {
+                        //                 _pageTitle =
+                        //                 'Place marker "${(markersForEachImage[currentImageIndex -
+                        //                     1][markersForEachImage[currentImageIndex ]
+                        //                     .length]['name'])}"';
+                        //               } else {
+                        //                 _pageTitle =
+                        //                 'Drag the markers into place'; // or move to the next frame';
+                        //               }
+                        //             }
+                        //           });
+                        //         },
+                        //         // child: ListTile(
+                        //         //       contentPadding: const EdgeInsets.all(8.0),
+                        //         //       leading: Image.asset(
+                        //         //         imagePaths[index],
+                        //         //         width: 100,
+                        //         //         height: 100,
+                        //         //         fit: BoxFit.cover,
+                        //         //       ),
+                        //         //     title: Text('Image ${index + 1}'),
+                        //         //     trailing: IconButton(
+                        //         //         onPressed: () => deleteImage(index),
+                        //         //         icon: const Icon(Icons.delete),
+                        //         //       ),
+                        //         //     ),
+                        //         child: GridTile(
+                        //           child: Image.asset(
+                        //               imagePaths[index],
+                        //               fit: BoxFit.cover,
+                        //             ),
+                        //         ),
+                        //         );
+                        //     },
+                        // )
                       ],
                     )
                 ),
                 ]),
-            bottomNavigationBar: VideoEditorNavigationBar(0, widget._projectName),
+            bottomNavigationBar: Container(
+              color: Colors.transparent,
+              padding: EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                ),
+                  onPressed: () async {
+                  //   frame.then(
+                  //       onValue
+                  //   )
+                    await saveEditedFrame(widget._projectName, widget._uuid);
+                    print("Save button pressed");
+                    frame.then((value) {
+                      setState(() {
+                        if (mounted) {
+                          value.saveFrameFromPngFile(photoFile!);
+                          photoFile = value.getFramePng();
+                          theImage = photoFile?.path ?? 'No path available';
+                          // print("the image is $theImage");
+                        }
+                      });
+                    });
+                    Navigator.of(context).pushReplacement(InstantPageRoute(
+                        builder: (context) => const DashboardPage()));
+                  },
+                  child: Text(
+                      'Save and exit',
+                  style: TextStyle(fontSize: 18.0),),
+
+                ),
+              ),
+            ),
+
             // BottomNavigationBar(
             //     onTap: (index) {
             //       setState(() {
@@ -771,6 +933,7 @@ class VideoEditorNavigationBar extends StatelessWidget {
           onDestinationSelected: (index) {
             switch (index) {
               case 0:
+
                 Navigator.of(context).pushReplacement(InstantPageRoute(
                     builder: (context) => const DashboardPage()));
                 break;

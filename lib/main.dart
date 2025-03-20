@@ -3,8 +3,9 @@ import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/photo_taking_page.dart';
 import 'package:chronolapse/ui/project_edit_page.dart';
-import 'package:chronolapse/ui/video_editor_scaffold.dart';
+import 'package:chronolapse/ui/frame_editting_page.dart';
 import 'package:flutter/material.dart';
 
 import 'backend/image_transformer/image_transformer_test.dart';
@@ -76,7 +77,8 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      home: const FrameEditor("sampleProject"),
+      // home: const PhotoTakingPage("sampleProject"),
+      home: const DashboardPage(),
       navigatorObservers: [routeObserver],
     );
   }
