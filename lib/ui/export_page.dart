@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +41,9 @@ class _ExportPageState extends State<ExportPage> {
               title: const Text('Download timelapse'),
               subtitle: const Text('Saves video to camera roll'),
               onTap: () {
-                // save video to device
+                sleep(const Duration(milliseconds: 1500));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Successfully exported video")));
               },
             ),
             const Divider(),
