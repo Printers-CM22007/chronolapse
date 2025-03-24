@@ -28,38 +28,27 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  camera: ^0.10.5 # future versions have an issue where camera orientation is locked to portrait
-  chewie: ^1.10.0
   flutter:
     sdk: flutter
 
-  opencv_dart: ^1.4.1
-  path_provider: ^2.1.5
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-#  cupertino_icons: ^1.0.8
-  image: ^4.5.3
-  shared_preferences: ^2.5.1
-  video_player: ^2.9.2
-
-  flutter_local_notifications: ^18.0.1
+  cupertino_icons: ^1.0.8
+  camera: ^0.10.5 # future versions have an issue where camera orientation is locked to portrait
+  opencv_dart: ^1.4.1
   timezone: ^0.10.0
   flutter_timezone: ^4.1.0
-
-  json_annotation: ^4.9.0
+  path_provider: ^2.1.5
+  chewie: ^1.11.0
+  video_player: ^2.9.3
+  flutter_local_notifications: ^19.0.0
   uuid: ^4.5.1
-
+  shared_preferences: ^2.5.2
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  integration_test:
-    sdk: flutter
-  flutter_driver:
-    sdk: flutter
-  test: any
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -111,11 +100,10 @@ flutter:
     - family: icomoon
       fonts:
         - asset: assets/fonts/icomoon.ttf
-
   assets:
     - assets/
-    - assets/images/
-    - assets/image_transformer_test/
+    - assets/frames/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/ui/frame_editting_page.dart';
 import 'package:flutter/material.dart';
 
 class PhotoPreviewPage extends StatefulWidget {
@@ -26,8 +27,13 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
     final frame = TimelapseFrame.createNew(widget._projectName);
     await frame.saveFrameFromPngFile(File(widget._picturePath));
 
+    String validUuid = frame.uuid() ?? "";
+
     if (mounted) {
-      Navigator.pop(context, true);
+      // Navigator.pop(context, true);
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => FrameEditor(widget._projectName, validUuid)));
     }
   }
 
