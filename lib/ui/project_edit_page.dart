@@ -1,5 +1,6 @@
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:chronolapse/ui/frame_editting_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -153,7 +154,11 @@ class ProjectEditPageState extends State<ProjectEditPage> {
         ));
   }
 
-  void _onEditPressed(int frameIndex) {}
+  void _onEditPressed(int frameIndex) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) =>
+            FrameEditor(widget._projectName, _frames[frameIndex].uuid)));
+  }
 
   void _onDeletePressed(int frameIndex) {
     showDialog(

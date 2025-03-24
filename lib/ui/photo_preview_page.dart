@@ -52,16 +52,16 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
           TextButton(
             style: TextButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.inverseSurface),
-            onPressed: _onAcceptPressed,
+            onPressed: _onRejectPressed,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                  Icons.check,
+                  Icons.close,
                   color: Theme.of(context).colorScheme.onInverseSurface,
                 ),
                 Text(
-                  "Accept",
+                  "Cancel",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
@@ -72,16 +72,16 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
           TextButton(
             style: TextButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.inverseSurface),
-            onPressed: _onRejectPressed,
+            onPressed: _onAcceptPressed,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                  Icons.close,
+                  Icons.check,
                   color: Theme.of(context).colorScheme.onInverseSurface,
                 ),
                 Text(
-                  "Reject",
+                  "Continue",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
