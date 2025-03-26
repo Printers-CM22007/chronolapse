@@ -4,8 +4,10 @@ import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'backend/image_transformer/image_transformer_test.dart';
+import 'backend/video_generator/video_generator_test.dart';
 
 String? currentProject = "sampleProject";
 
@@ -26,7 +28,15 @@ void main() async {
 
   // ! TEST CODE START
 
-  await testImageTransformerBreaksEverything();
+  final platform = MethodChannel('com.example.chronolapse/channel');
+  final result = await platform.invokeMethod('testFunction', {'count': 4});
+  print(result);
+
+  await platform.invokeMethod("testMediaCodec");
+
+  //await testImageTransformerBreaksEverything();
+  //await testVideoGenerator();
+  //await test_ffmpeg();
 
   // List available cameras
   try {
