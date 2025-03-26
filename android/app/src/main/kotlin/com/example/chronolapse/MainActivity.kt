@@ -35,16 +35,29 @@ class MainActivity: FlutterActivity() {
 
     private fun testMediaCodec() {
         Log.println(Log.DEBUG, "", "test")
-        val mediaFormat = android.media.MediaFormat.createVideoFormat(android.media.MediaFormat.MIMETYPE_VIDEO_AVC, 1920, 1080).apply {
-            setInteger(android.media.MediaFormat.KEY_BIT_RATE, 1000000)
-            setInteger(android.media.MediaFormat.KEY_FRAME_RATE, 30)
-            setInteger(android.media.MediaFormat.KEY_I_FRAME_INTERVAL, 10)
+        val width = 320
+        val height = 240
+
+        val mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height).apply {
+            setInteger(MediaFormat.KEY_BIT_RATE, 4000)
+            setInteger(MediaFormat.KEY_FRAME_RATE, 15)
+            setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10)
         }
 
-        val codec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC).apply {
+
+
+        Log.println(Log.DEBUG, "", "codec")
+        val videoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC).apply {
             configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
-            start()
         }
+
+        val videoCapabilities = videoEncoder.codecInfo.getCapabilitiesForType("video/avc").videoCapabilities
+        if (!videoCapabilities.supportedWidths.contains(width) || !videoCapabilities.supportedHeights.contains(height)) {
+            Log.d("chtonolapse", "Encoder can't deal with $height x $width")
+
+        }
+        videoEncoder.start()
+
 
         /*val mediaMuxer = MediaMuxer(outputFile.absolutePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4).apply {
             val videoTrackIndex = addTrack(mediaFormat)
