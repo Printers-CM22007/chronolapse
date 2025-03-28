@@ -11,6 +11,8 @@ const String timelapseDirName = "timelapses";
 const String timelapseProjectListKey = "timelapse_store/project_list";
 
 RegExp projectNameRegex = RegExp(r'^[a-zA-Z0-9 ]*$');
+const String projectNameRegexFailureExplanation =
+    "Must be alphanumeric and spaces";
 
 /// An interface for interacting with timelapse files on-disk
 class TimelapseStore {
@@ -70,14 +72,30 @@ class TimelapseStore {
         "${TimelapseStore.getProjectDir(projectName).path}/timelapse_data.json");
   }
 
+  /// Returns null if the projectName is valid. Returns an error if not.
+  static String? checkProjectName(String projectName) {
+    if (getProjectList().contains(projectName)) {
+      return "Project name already in use";
+    }
+
+    if (projectName.trim().isEmpty) {
+      return "Project name must not be empty";
+    }
+
+    if (!projectNameRegex.hasMatch(projectName)) {
+      return projectNameRegexFailureExplanation;
+    }
+
+    return null;
+  }
+
   /// Creates a new project. The name must be unique and alpha-numeric (with
   /// spaces) - the function will return null if an invalid project name is
   /// used.
   /// `TimelapseStore.initialise()` must have been called (and awaited) before
   /// this can be used.
   static Future<ProjectTimelapseData?> createProject(String projectName) async {
-    if (getProjectList().contains(projectName) ||
-        !projectNameRegex.hasMatch(projectName)) {
+    if (checkProjectName(projectName) != null) {
       return null;
     }
 
