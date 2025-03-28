@@ -16,9 +16,11 @@ class FrameData {
 
   FrameData({required this.metaData, required this.frameTransform});
 
-  factory FrameData.initial(String projectName, FrameTransform frameTransformation) {
+  factory FrameData.initial(
+      String projectName, FrameTransform frameTransformation) {
     return FrameData(
-        metaData: FrameMetaData.initial(projectName), frameTransform: frameTransformation);
+        metaData: FrameMetaData.initial(projectName),
+        frameTransform: frameTransformation);
   }
 
   factory FrameData.fromJson(Map<String, dynamic> json) =>

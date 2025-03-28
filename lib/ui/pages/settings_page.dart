@@ -37,7 +37,12 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: ListView(
         children: projectWidgets +
-            (projectWidgets.isEmpty ? [] : [const DividerNoSetting().getWidget(const ProjectName.global())]) +
+            (projectWidgets.isEmpty
+                ? []
+                : [
+                    const DividerNoSetting()
+                        .getWidget(const ProjectName.global())
+                  ]) +
             globalWidgets,
       ),
       bottomNavigationBar: const DashboardNavigationBar(1),

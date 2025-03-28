@@ -6,7 +6,6 @@ import 'package:chronolapse/ui/shared/settings_cog.dart';
 import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -46,8 +45,7 @@ class _ExportPageState extends State<ExportPage> {
         _videoPath = result.path;
         _generatingVideo = false;
       });
-    }
-    else {
+    } else {
       setState(() {
         _videoPath = null;
         _generatingVideo = false;
@@ -167,11 +165,8 @@ class _ExportPageState extends State<ExportPage> {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              message,
-              style: TextStyle(
-                  color:
-                  Theme.of(context).colorScheme.onSurface)),
+          content: Text(message,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.black54,
         ),

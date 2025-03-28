@@ -3,10 +3,7 @@ import 'dart:math';
 
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/backend/video_generator/frame_transformer.dart';
-import 'package:chronolapse/backend/video_generator/generator_options.dart';
-import 'package:chronolapse/backend/video_generator/video_compiler.dart';
 import 'package:chronolapse/native_methods/video_compiler.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 class VideoGenerationResult {
@@ -21,35 +18,44 @@ class VideoGenerationResult {
 const String framesFolderName = "frames";
 const String outputsFolderName = "outputs";
 
-Future<VideoGenerationResult> generateVideo(String projectName, Function(String) progressCallback) async {
+Future<VideoGenerationResult> generateVideo(
+    String projectName, Function(String) progressCallback) async {
   final projectData = await TimelapseStore.getProject(projectName);
   final frameList = projectData.data.metaData.frames;
 
   progressCallback("Setting up directory structure...");
 
-  final frameDir = Directory("${(await getApplicationCacheDirectory()).path}/$framesFolderName");
-  if (await frameDir.exists()) { await frameDir.delete(recursive: true); }
+  final frameDir = Directory(
+      "${(await getApplicationCacheDirectory()).path}/$framesFolderName");
+  if (await frameDir.exists()) {
+    await frameDir.delete(recursive: true);
+  }
   await frameDir.create(recursive: true);
 
-  const int minId = 10^8;
-  const int maxId = 10^9;
+  const int minId = 10 ^ 8;
+  const int maxId = 10 ^ 9;
   final int outputId = minId + Random().nextInt(maxId - minId);
-  final outputDir = Directory("${(await getApplicationCacheDirectory()).path}/$outputsFolderName/$outputId");
-  if (await outputDir.exists()) { await outputDir.delete(recursive: true); }
+  final outputDir = Directory(
+      "${(await getApplicationCacheDirectory()).path}/$outputsFolderName/$outputId");
+  if (await outputDir.exists()) {
+    await outputDir.delete(recursive: true);
+  }
   await outputDir.create(recursive: true);
   final outputFile = "${outputDir.path}/$projectName.mp4";
 
-
-  final transformResult = await transformFrames(projectName, frameList, frameDir.path, progressCallback);
+  final transformResult = await transformFrames(
+      projectName, frameList, frameDir.path, progressCallback);
   if (!transformResult) {
     return const VideoGenerationResult.error("Failed to transform frames");
   }
 
   progressCallback("Compiling frames into video...");
 
-  final compileResult = await compileVideo(frameDir.path, frameList.length, outputFile);
+  final compileResult =
+      await compileVideo(frameDir.path, frameList.length, outputFile);
   if (compileResult == null) {
-    return const VideoGenerationResult.error("Failed to compile frames into video");
+    return const VideoGenerationResult.error(
+        "Failed to compile frames into video");
   }
 
   return VideoGenerationResult.path(compileResult);

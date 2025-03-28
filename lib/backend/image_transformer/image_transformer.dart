@@ -24,12 +24,13 @@ class ImageTransformer {
   /// `frameTransform` set to the identity matrix with `isKnown` set to true.
   static Future<bool> findAndSaveHomography(
       ProjectTimelapseData projectData, TimelapseFrame frame) async {
-    if (frame.data.frameTransform?.isKnown ?? false) {
+    if (frame.data.frameTransform.isKnown ?? false) {
       throw Exception("Cannot overwrite a know user-verified homography for"
           " frame '${frame.uuid()}' with a automatically-generated one");
     }
 
-    final homography = await findHomography(projectData, frame.getFramePng().path);
+    final homography =
+        await findHomography(projectData, frame.getFramePng().path);
 
     if (homography == null) {
       return false;
