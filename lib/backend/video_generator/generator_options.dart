@@ -4,5 +4,5 @@ class GeneratorOptions {
 
   GeneratorOptions.defaultSettings()
       : codec = "H.256",
-        fps = 60 {}
+        fps = 60;
 }

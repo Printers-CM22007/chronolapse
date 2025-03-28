@@ -1,4 +1,5 @@
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
+import 'package:chronolapse/main.dart';
 import 'package:flutter/material.dart';
 
 import '../../../util/util.dart';

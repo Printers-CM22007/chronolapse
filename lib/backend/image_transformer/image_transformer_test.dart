@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 import '../settings_storage/settings_store.dart';
 import '../timelapse_storage/timelapse_store.dart';
 
-import 'package:opencv_dart/opencv.dart' as cv;
-
 Future<void> testImageTransformerBreaksEverything() async {
   print("Starting image transformer test");
 

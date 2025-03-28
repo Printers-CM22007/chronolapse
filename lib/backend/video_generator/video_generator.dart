@@ -1,21 +1,14 @@
 import 'dart:io';
 
 import 'package:chronolapse/backend/video_generator/generator_options.dart';
-import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
-import 'package:chronolapse/backend/image_transformer/image_transformer.dart';
-import 'package:chronolapse/backend/video_generator/timelapse_buffer.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
-import 'package:chronolapse/backend/timelapse_storage/timelapse_data.dart';
-import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/backend/video_generator/video_compiler.dart';
 import 'package:flutter/services.dart';
-import 'package:opencv_dart/opencv.dart' as cv2;
 
 class VideoGenerator {
   late VideoCompiler compiler;
   final GeneratorOptions options;
 
-  VideoGenerator(this.options) {}
+  VideoGenerator(this.options);
 
   // VideoCompiler is currently cooked because cv.VideoWriter doesn't work on android :'(
   // so for now, it will just place cat_video.mp4 into /data/data/com.example.chronolapse/files/timelapse.mp4
