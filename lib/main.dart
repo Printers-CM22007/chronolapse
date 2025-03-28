@@ -4,6 +4,7 @@ import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Used by DashboardPage to reload projects when it is returned to
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
@@ -40,6 +41,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
