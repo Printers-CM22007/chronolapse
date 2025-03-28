@@ -322,6 +322,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
           scrollDirection: Axis.vertical,
           itemCount: projects.length,
           itemBuilder: (context, index) {
+            final project = projects[index];
             return Container(
                 height: 300,
                 decoration: BoxDecoration(
@@ -337,14 +338,12 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                         ),
                         InkWell(
                             onTap: () {
-                              _onPressProjectThumbnail(
-                                  projects[index].projectName);
+                              _onPressProjectThumbnail(project.projectName);
                             },
                             child: SizedBox(
                                 width: constraints.maxWidth * 0.9,
                                 height: constraints.maxHeight * 0.65,
-                                child: projects[index].previewPicturePath !=
-                                        null
+                                child: project.previewPicturePath != null
                                     ? Image.file(File(
                                         projects[index].previewPicturePath!))
                                     : const Column(
@@ -370,7 +369,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               padding: EdgeInsets.only(
                                   left: constraints.maxWidth * 0.1),
                               child: Text(
-                                projects[index].projectName,
+                                project.projectName,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontSize: 20,
@@ -386,7 +385,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                projects[index].lastEdited,
+                                project.lastEdited,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(
                                   fontSize: 13,
@@ -410,8 +409,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                     left: constraints.maxWidth * 0.1),
                                 child: TextButton(
                                   onPressed: () {
-                                    _onPressProjectEdit(
-                                        projects[index].projectName);
+                                    _onPressProjectEdit(project.projectName);
                                   },
                                   style: TextButton.styleFrom(
                                       backgroundColor: Theme.of(context)
@@ -534,8 +532,10 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                               const WidgetStatePropertyAll(
                                                   Size(100, 40)),
                                         ),
-                                        onPressed: () {
-                                          //Add delete functionality here
+                                        onPressed: () async {
+                                          await TimelapseStore.deleteProject(
+                                              project.projectName);
+                                          await _loadProjects();
                                         },
                                         child: Row(
                                           mainAxisAlignment:

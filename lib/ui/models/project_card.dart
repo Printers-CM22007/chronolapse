@@ -38,14 +38,15 @@ class ProjectCard {
               .getFramePng()
               .path;
 
-      final lastEdited = lastModifiedProject.withProject(ProjectName(name)).getValue();
+      final lastEdited =
+          lastModifiedProject.withProject(ProjectName(name)).getValue();
 
       String lastEditedString;
       if (lastEdited == 0) {
         lastEditedString = "Never edited";
-      }
-      else {
-        final timeAgo = timeago.format(DateTime.fromMillisecondsSinceEpoch(lastEdited));
+      } else {
+        final timeAgo =
+            timeago.format(DateTime.fromMillisecondsSinceEpoch(lastEdited));
         lastEditedString = "Edited $timeAgo";
       }
 
