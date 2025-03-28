@@ -1,7 +1,6 @@
 import 'package:chronolapse/ui/export_page.dart';
 import 'package:chronolapse/ui/photo_taking_page.dart';
 import 'package:chronolapse/ui/project_edit_page.dart';
-import 'package:chronolapse/ui/settings_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
 

@@ -1,15 +1,33 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as ltz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
-enum NotificationFrequency {
-  daily,
-  weekly,
+enum NotificationFrequency { daily, weekly }
+
+extension NotificationFrequencyExt on NotificationFrequency {
+  String stringRepresentation() {
+    switch (this) {
+      case NotificationFrequency.daily:
+        return "Daily";
+      case NotificationFrequency.weekly:
+        return "Weekly";
+    }
+  }
+
+  static NotificationFrequency? getOptionFromString(String option) {
+    if (option.isEmpty) {
+      return null;
+    }
+    for (final possible in NotificationFrequency.values) {
+      if (possible.stringRepresentation() == option) {
+        return possible;
+      }
+    }
+    throw Exception("`$option` isn't a valid NotificationFrequencyOption");
+  }
 }
 
 class NotificationService {
@@ -76,14 +94,12 @@ class NotificationService {
       {int? id,
       required String title,
       required String body,
-      required int hour,
-      required int minute,
-      NotificationFrequency notificationFrequency =
-          NotificationFrequency.daily}) async {
+      required NotificationFrequency notificationFrequency}) async {
     final now = tz.TZDateTime.now(tz.local); //current date time
+    now.add(const Duration(minutes: 2));
 
-    var scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    var scheduledDate = tz.TZDateTime(
+        tz.local, now.year, now.month, now.day, now.hour, now.minute);
     var random = Random();
     int randomId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
@@ -91,7 +107,7 @@ class NotificationService {
         title,
         body,
         scheduledDate,
-        NotificationDetails(),
+        const NotificationDetails(),
         /*
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,

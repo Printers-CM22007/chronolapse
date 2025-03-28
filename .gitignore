@@ -46,3 +46,4 @@ app.*.map.json
 /coverage
 
 *.g.dart
+*.mocks.dart
