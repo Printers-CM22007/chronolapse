@@ -5,6 +5,7 @@ import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:chronolapse/ui/pages/project_edit_page.dart';
+import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,7 @@
 part of 'dashboard_page.dart';
 
+enum CardOptions { settings, export, delete }
+
 extension ProjectCardList on DashboardPageState {
   void _onPressProjectThumbnail(String projectName) {
     Navigator.of(context).push(
@@ -103,7 +105,7 @@ extension ProjectCardList on DashboardPageState {
                             ),
                             Container(
                               //color: Colors.yellow,
-                              width: constraints.maxWidth * 0.4,
+                              width: constraints.maxWidth * 0.5,
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -158,9 +160,12 @@ extension ProjectCardList on DashboardPageState {
                                     ],
                                   ),
                                 )),
+                            _cardOptionDropdown(project)
+
+/*
                             Container(
                               //color: Colors.yellow,
-                              width: constraints.maxWidth * 0.4,
+                              width: constraints.maxWidth * 0.5,
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerRight,
                               child: MenuAnchor(
@@ -171,13 +176,13 @@ extension ProjectCardList on DashboardPageState {
                                                 BorderRadius.circular(15))),
                                     //maximumSize: WidgetStatePropertyAll(Size.fromHeight(40)),
                                     fixedSize: const WidgetStatePropertyAll(
-                                        Size(100, 80)),
+                                        Size(120, 106)),
                                     backgroundColor: WidgetStatePropertyAll(
                                         Theme.of(context)
                                             .colorScheme
                                             .inverseSurface),
                                   ),
-                                  alignmentOffset: const Offset(-60, -100),
+                                  alignmentOffset: const Offset(-60, -130),
                                   builder: (_, MenuController controller,
                                       Widget? child) {
                                     return IconButton(
@@ -197,92 +202,51 @@ extension ProjectCardList on DashboardPageState {
                                     );
                                   },
                                   menuChildren: <Widget>[
-                                    SizedBox(
-                                      width: 100,
-                                      height: 30,
-                                      child: MenuItemButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .inverseSurface),
-                                          fixedSize:
-                                              const WidgetStatePropertyAll(
-                                                  Size(100, 40)),
-                                        ),
-                                        onPressed: () => {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ExportPage(
-                                                          project.projectName)))
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Icon(
-                                              DashboardPageIcons.export,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onInverseSurface,
-                                            ),
-                                            Text(
-                                              "Export",
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onInverseSurface,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      height: 30,
-                                      child: MenuItemButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              WidgetStatePropertyAll(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .inverseSurface),
-                                          fixedSize:
-                                              const WidgetStatePropertyAll(
-                                                  Size(100, 40)),
-                                        ),
-                                        onPressed: () async {
-                                          await TimelapseStore.deleteProject(
-                                              project.projectName);
-                                          await _loadProjects();
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Icon(
-                                              DashboardPageIcons.bin,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .error,
-                                            ),
-                                            Text(
-                                              "Delete",
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onInverseSurface,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                    _cardOptionsEntry(
+                                        project,
+                                        "Settings",
+                                        Icon(
+                                          DashboardPageIcons.settings,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onInverseSurface,
+                                        ), () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SettingsPage(
+                                                      project.projectName)));
+                                    }),
+                                    _cardOptionsEntry(
+                                        project,
+                                        "Export",
+                                        Icon(
+                                          DashboardPageIcons.export,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onInverseSurface,
+                                        ), () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => ExportPage(
+                                                  project.projectName)));
+                                    }),
+                                    _cardOptionsEntry(
+                                        project,
+                                        "Delete",
+                                        Icon(
+                                          DashboardPageIcons.bin,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                        ), () async {
+                                      await TimelapseStore.deleteProject(
+                                          project.projectName);
+                                      await _loadProjects();
+                                    })
                                   ]),
                             ),
+*/
                           ],
                         ),
                       ],
@@ -292,4 +256,127 @@ extension ProjectCardList on DashboardPageState {
           },
         ));
   }
+
+  void _deleteConfirmationPopup(ProjectCard project) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Deleting '${project.projectName}'"),
+          content: Text(
+              "Are you sure you want to delete '${project.projectName}' last modified ${project.lastEditedText}"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await TimelapseStore.deleteProject(project.projectName);
+                await _loadProjects();
+              },
+              child: Text(
+                'Delete',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _cardOptionDropdown(ProjectCard project) {
+    return PopupMenuButton<CardOptions>(
+      offset: const Offset(-10, -160),
+      onSelected: (value) async {
+        switch (value) {
+          case CardOptions.settings:
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SettingsPage(project.projectName)));
+            break;
+          case CardOptions.export:
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ExportPage(project.projectName)));
+            break;
+          case CardOptions.delete:
+            _deleteConfirmationPopup(project);
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          const PopupMenuItem<CardOptions>(
+            value: CardOptions.settings,
+            child: Row(
+              children: [
+                Icon(DashboardPageIcons.settings),
+                SizedBox(width: 8),
+                Text('Settings'),
+              ],
+            ),
+          ),
+          const PopupMenuItem<CardOptions>(
+            value: CardOptions.export,
+            child: Row(
+              children: [
+                Icon(DashboardPageIcons.export),
+                SizedBox(width: 8),
+                Text('Export'),
+              ],
+            ),
+          ),
+          PopupMenuItem<CardOptions>(
+            value: CardOptions.delete,
+            child: Row(
+              children: [
+                Icon(
+                  DashboardPageIcons.bin,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                const SizedBox(width: 8),
+                const Text('Delete'),
+              ],
+            ),
+          ),
+        ];
+      },
+      icon: const Icon(Icons.more_vert),
+    );
+  }
+
+  /*Widget _cardOptionsEntry(
+      ProjectCard project, String text, Icon icon, VoidCallback onClick) {
+    return SizedBox(
+      width: 100,
+      height: 30,
+      child: MenuItemButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(
+              Theme.of(context).colorScheme.inverseSurface),
+          fixedSize: const WidgetStatePropertyAll(Size(100, 40)),
+        ),
+        onPressed: onClick,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            icon,
+            Text(
+              text,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onInverseSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }*/
 }
