@@ -32,6 +32,7 @@ class _ExportPageState extends State<ExportPage> {
     setState(() {
       _generatingVideo = true;
       _videoPath = null;
+      _generationProgress = null;
     });
 
     final result = await generateVideo(widget._projectName, (val) {
@@ -44,11 +45,13 @@ class _ExportPageState extends State<ExportPage> {
       setState(() {
         _videoPath = result.path;
         _generatingVideo = false;
+        _generationProgress = null;
       });
     } else {
       setState(() {
         _videoPath = null;
         _generatingVideo = false;
+        _generationProgress = null;
       });
       _showToast(result.error!);
     }
@@ -61,7 +64,7 @@ class _ExportPageState extends State<ExportPage> {
         CircularProgressIndicator(
             color: Theme.of(context).secondaryHeaderColor),
         Text(
-          "Generating timelapse...",
+          _generationProgress == null ? "Generating timelapse..." : _generationProgress!,
           style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
         ),
       ],

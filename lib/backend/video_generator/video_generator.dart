@@ -18,6 +18,18 @@ class VideoGenerationResult {
 const String framesFolderName = "frames";
 const String outputsFolderName = "outputs";
 
+Future<void> cleanupGeneratedVideo() async {
+  final videoDirectory = Directory("${(await getApplicationCacheDirectory()).path}/$outputsFolderName");
+
+  if (!await videoDirectory.exists()) { return; }
+
+  final videoDirs = await videoDirectory.list().toList();
+
+  for (final entry in videoDirs) {
+    entry.delete(recursive: true);
+  }
+}
+
 Future<VideoGenerationResult> generateVideo(
     String projectName, Function(String) progressCallback) async {
   final projectData = await TimelapseStore.getProject(projectName);
@@ -52,11 +64,15 @@ Future<VideoGenerationResult> generateVideo(
   progressCallback("Compiling frames into video...");
 
   final compileResult =
-      await compileVideo(frameDir.path, frameList.length, outputFile);
+      await compileVideo(frameDir.path, frameList.length, outputFile, projectName);
   if (compileResult == null) {
     return const VideoGenerationResult.error(
         "Failed to compile frames into video");
   }
+
+  progressCallback("Cleaning up...");
+
+  await frameDir.delete(recursive: true);
 
   return VideoGenerationResult.path(compileResult);
 }

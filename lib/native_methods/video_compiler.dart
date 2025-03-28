@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 Future<String?> compileVideo(
-    String frameDir, int frameCount, String outputPath) async {
+    String frameDir, int frameCount, String outputPath, String projectName) async {
   const MethodChannel platform =
       MethodChannel('com.example.chronolapse/channel');
 
