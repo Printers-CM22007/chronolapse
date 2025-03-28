@@ -1,7 +1,4 @@
-
 import 'dart:math';
-
-import 'package:flutter/material.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -97,14 +94,12 @@ class NotificationService {
       {int? id,
       required String title,
       required String body,
-      required int hour,
-      required int minute,
-      NotificationFrequency notificationFrequency =
-          NotificationFrequency.daily}) async {
+      required NotificationFrequency notificationFrequency}) async {
     final now = tz.TZDateTime.now(tz.local); //current date time
+    now.add(const Duration(minutes: 2));
 
-    var scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    var scheduledDate = tz.TZDateTime(
+        tz.local, now.year, now.month, now.day, now.hour, now.minute);
     var random = Random();
     int randomId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
@@ -112,7 +107,7 @@ class NotificationService {
         title,
         body,
         scheduledDate,
-        NotificationDetails(),
+        const NotificationDetails(),
         /*
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,

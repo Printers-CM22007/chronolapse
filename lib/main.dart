@@ -3,12 +3,7 @@ import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
-import 'package:chronolapse/ui/photo_taking_page.dart';
-import 'package:chronolapse/ui/project_edit_page.dart';
-import 'package:chronolapse/ui/frame_editting_page.dart';
 import 'package:flutter/material.dart';
-
-import 'backend/image_transformer/image_transformer_test.dart';
 
 String? currentProject = "sampleProject";
 
@@ -16,6 +11,8 @@ String? currentProject = "sampleProject";
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
 
 late List<CameraDescription> cameras;
+
+late NotificationService notificationService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +22,7 @@ void main() async {
   print("Initialising TimelapseStore");
   await TimelapseStore.initialise();
   print("Initialising NotificationService");
-  NotificationService notificationService = NotificationService();
+  notificationService = NotificationService();
   await notificationService.initialise();
 
   // List available cameras

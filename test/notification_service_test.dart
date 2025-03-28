@@ -19,7 +19,7 @@ void main() async {
   var random = Random();
   setUp(() async {
     // Mock flutter_timezone since it is a platform plugin
-    MethodChannel('flutter_timezone')
+    const MethodChannel('flutter_timezone')
         .setMockMethodCallHandler((MethodCall methodCall) async {
       return "UTC";
     });
@@ -81,9 +81,13 @@ void main() async {
     });
     test('should have 2 notifications scheduled', () async {
       await notificationService.scheduleNotification(
-          title: "n1", body: "test noti_1", hour: 1, minute: 50);
+          title: "n1",
+          body: "test noti_1",
+          notificationFrequency: NotificationFrequency.daily);
       await notificationService.scheduleNotification(
-          title: "n2", body: "test noti_2", hour: 5, minute: 15);
+          title: "n2",
+          body: "test noti_2",
+          notificationFrequency: NotificationFrequency.weekly);
 
       List<PendingNotificationRequest> pendingNotifications =
           await notificationService.getPendingNotifications();
@@ -93,9 +97,13 @@ void main() async {
     test('Cancelling notifications should set pendingNotifications to 0',
         () async {
       await notificationService.scheduleNotification(
-          title: "n1", body: "test noti_1", hour: 1, minute: 50);
+          title: "n1",
+          body: "test noti_1",
+          notificationFrequency: NotificationFrequency.daily);
       await notificationService.scheduleNotification(
-          title: "n2", body: "test noti_2", hour: 5, minute: 15);
+          title: "n2",
+          body: "test noti_2",
+          notificationFrequency: NotificationFrequency.weekly);
 
       notificationService.cancelAllNotifications();
 

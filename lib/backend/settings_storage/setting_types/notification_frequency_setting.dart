@@ -16,9 +16,13 @@ class NotificationFrequencySetting
   Future<void> setValue(
       String projectPrefix, NotificationFrequency? value) async {
     if (value == null) {
-      // NotificationSystem.cancelNotification(projectPrefix.hashCode);
+      notificationService.cancelNotification(projectPrefix.hashCode);
     } else {
-      // NotificationSystem.createNotification(projectPrefix.hashCode, value);
+      notificationService.scheduleNotification(
+          id: projectPrefix.hashCode,
+          title: 'Test Title',
+          body: 'Test Body',
+          notificationFrequency: value);
     }
     await SettingsStore.sp().setString(
         projectPrefix + super._key, value?.stringRepresentation() ?? "");
