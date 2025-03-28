@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
-import 'package:chronolapse/ui/pages/frame_editting_page.dart';
 import 'package:flutter/material.dart';
 
 class PhotoPreviewPage extends StatefulWidget {
@@ -24,17 +22,20 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
 
   void _onAcceptPressed() async {
     // Save photo into timelapse storage
-    final frame = TimelapseFrame.createNew(widget._projectName);
-    await frame.saveFrameFromPngFile(File(widget._picturePath));
 
-    String validUuid = frame.uuid() ?? "";
+    throw UnimplementedError();
 
-    if (mounted) {
-      // Navigator.pop(context, true);
-
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => FrameEditor(widget._projectName, validUuid)));
-    }
+    // final frame = TimelapseFrame.createNew(widget._projectName);
+    // await frame.saveFrameFromPngFile(File(widget._picturePath));
+    //
+    // String validUuid = frame.uuid() ?? "";
+    //
+    // if (mounted) {
+    //   // Navigator.pop(context, true);
+    //
+    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //       builder: (context) => FrameEditor(widget._projectName, validUuid)));
+    // }
   }
 
   void _onRejectPressed() {

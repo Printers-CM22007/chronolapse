@@ -1,4 +1,5 @@
 import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
+import 'package:chronolapse/backend/settings_storage/setting_types/project_setting.dart';
 import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,14 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       body: ListView(
-        children: projectWidgets + globalWidgets,
+        children: projectWidgets +
+            (projectWidgets.isEmpty
+                ? []
+                : [
+                    const DividerNoSetting()
+                        .getWidget(const ProjectName.global())
+                  ]) +
+            globalWidgets,
       ),
       bottomNavigationBar: const DashboardNavigationBar(1),
     );

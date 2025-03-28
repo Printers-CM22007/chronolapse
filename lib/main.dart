@@ -2,7 +2,9 @@ import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:chronolapse/backend/video_generator/video_generator.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
+import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,6 +18,11 @@ late NotificationService notificationService;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
+
+  print("Cleaning up cache");
+  await cleanupGeneratedVideo();
+  await cleanUpTakenImages();
   print("Initialising SettingsStore");
   await SettingsStore.initialise();
   print("Initialising TimelapseStore");

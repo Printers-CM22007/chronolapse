@@ -6,7 +6,6 @@ import 'package:chronolapse/backend/settings_storage/setting_types/project_setti
 List<WidgetSettingGlobal> availableGlobalSettings = [
   const WidgetSettingGlobal(TitleNoSetting("Global Settings")),
   exampleToggleSetting.asWidgetOnly(),
-  const WidgetSettingGlobal(DividerNoSetting()),
 ];
 
 // List of project settings (as well as decorations) available in the settings
@@ -14,7 +13,6 @@ List<WidgetSettingGlobal> availableGlobalSettings = [
 List<WidgetSettingRequiresProject> availableProjectSettings = [
   const WidgetSettingRequiresProject(TitleNoSetting("Project Settings")),
   exampleToggleSettingTwo.asWidgetOnly(),
-  const WidgetSettingRequiresProject(DividerNoSetting()),
   notificationFrequencySetting.asWidgetOnly()
 ];
 
@@ -31,5 +29,7 @@ const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
 const notificationFrequencySetting = RequiresProject(
     NotificationFrequencySetting("notificationFrequency", null));
 
+// ! Do not show these in the settings page
+// Hidden Setting
 const lastModifiedProject =
     RequiresProject(LastModifiedNoWidget("lastModified"));

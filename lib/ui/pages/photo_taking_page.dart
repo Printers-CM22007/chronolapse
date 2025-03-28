@@ -12,6 +12,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '../shared/settings_cog.dart';
 
+const String cameraCacheDirectory = "camera";
+
 class PhotoTakingPage extends StatefulWidget {
   final String _projectName;
 
@@ -182,8 +184,9 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
       // Save image to temporary file
       final data = img.encodePng(rotatedImage).toList();
 
-      final temporaryDir = await getTemporaryDirectory();
-      final imagePath = "${temporaryDir.path}/${DateTime.now().hashCode}.png";
+      final temporaryDir = await getApplicationCacheDirectory();
+      final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
+      final imagePath = "${cameraDir.path}/${DateTime.now().hashCode}.png";
 
       final file = File(imagePath);
       await file.writeAsBytes(data, flush: true);
@@ -257,5 +260,15 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     }
 
     return imgRgb;
+  }
+}
+
+Future<void> cleanUpTakenImages() async {
+  final temporaryDir = await getApplicationCacheDirectory();
+  final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
+  if (!await cameraDir.exists()) { return; }
+
+  for (final entry in await cameraDir.list().toList()) {
+    entry.delete(recursive: true);
   }
 }
