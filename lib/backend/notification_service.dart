@@ -73,6 +73,7 @@ class NotificationService {
         channelDescription: 'Daily Notifications Channel',
         importance: Importance.max,
         priority: Priority.high,
+        icon: '@mipmap/launcher_icon'
       ),
     );
   }
@@ -85,7 +86,7 @@ class NotificationService {
       id ?? randomId,
       title,
       body,
-      const NotificationDetails(),
+      notificationDetails(),
     );
   }
 
@@ -107,7 +108,7 @@ class NotificationService {
         title,
         body,
         scheduledDate,
-        const NotificationDetails(),
+        notificationDetails(),
         /*
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
