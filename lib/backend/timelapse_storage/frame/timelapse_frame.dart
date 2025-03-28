@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 
+import '../../settings_storage/project_requirements.dart';
+import '../../settings_storage/settings_options.dart';
 import 'frame_data.dart';
 
 /// An interface for interacting with timelapse frames on-disk
@@ -89,6 +91,7 @@ class TimelapseFrame {
     final jsonString = jsonEncode(data.toJson());
     final file = _getFrameDataFile(_projectName, _getUuid());
     await file.writeAsString(jsonString);
+    await lastModifiedProject.withProject(ProjectName(_projectName)).setValue(DateTime.now().millisecondsSinceEpoch);
   }
 
   /// Updates the `FrameData` with data from disk

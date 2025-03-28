@@ -1,5 +1,8 @@
+import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
+import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/material.dart';
 
 Color blackColour = const Color(0xff08070B);
@@ -35,10 +38,21 @@ class ProjectCard {
               .getFramePng()
               .path;
 
+      final lastEdited = lastModifiedProject.withProject(ProjectName(name)).getValue();
+
+      String lastEditedString;
+      if (lastEdited == 0) {
+        lastEditedString = "Never edited";
+      }
+      else {
+        final timeAgo = timeago.format(DateTime.fromMillisecondsSinceEpoch(lastEdited));
+        lastEditedString = "Edited $timeAgo";
+      }
+
       return ProjectCard(
           projectName: name,
           previewPicturePath: firstFramePath,
-          lastEdited: "TODO");
+          lastEdited: lastEditedString);
     }).wait;
   }
 }
