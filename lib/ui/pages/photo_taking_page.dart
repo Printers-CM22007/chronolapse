@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:chronolapse/main.dart';
-import 'package:chronolapse/ui/photo_preview_page.dart';
+import 'package:chronolapse/ui/pages/photo_preview_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;

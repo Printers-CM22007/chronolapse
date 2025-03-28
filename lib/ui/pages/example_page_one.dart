@@ -1,4 +1,4 @@
-import 'package:chronolapse/ui/example_page_two.dart';
+import 'package:chronolapse/ui/pages/example_page_two.dart';
 import 'package:flutter/material.dart';
 
 class ExamplePageOne extends StatefulWidget {

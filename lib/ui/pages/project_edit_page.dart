@@ -1,6 +1,6 @@
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/ui/frame_editting_page.dart';
+import 'package:chronolapse/ui/pages/frame_editting_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 

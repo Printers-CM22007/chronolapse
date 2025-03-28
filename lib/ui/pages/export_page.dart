@@ -1,4 +1,4 @@
-import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
