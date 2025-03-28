@@ -386,7 +386,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Last edited ${projects[index].lastEdited} ago",
+                                projects[index].lastEdited,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(
                                   fontSize: 13,

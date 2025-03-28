@@ -30,3 +30,5 @@ const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
 
 const notificationFrequencySetting = RequiresProject(
     NotificationFrequencySetting("notificationFrequency", null));
+
+const lastModifiedProject = RequiresProject(LastModifiedNoWidget("lastModified"));
