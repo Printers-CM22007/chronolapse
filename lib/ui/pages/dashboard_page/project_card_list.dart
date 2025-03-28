@@ -16,14 +16,14 @@ extension ProjectCardList on DashboardPageState {
 
     final filtered = _projects
         .where((project) => project.projectName
-        .toLowerCase()
-        .contains(_projectsSearchString.toLowerCase()))
+            .toLowerCase()
+            .contains(_projectsSearchString.toLowerCase()))
         .toList();
-    
+
     filtered.sort((cardA, cardB) {
       return cardB.lastEdited - cardA.lastEdited;
     });
-    
+
     return filtered;
   }
 

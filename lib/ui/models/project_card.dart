@@ -19,12 +19,11 @@ class ProjectCard {
   int lastEdited;
   Color boxColor = blackColour;
 
-  ProjectCard({
-    required this.projectName,
-    required this.previewPicturePath,
-    required this.lastEditedText,
-    required this.lastEdited
-  });
+  ProjectCard(
+      {required this.projectName,
+      required this.previewPicturePath,
+      required this.lastEditedText,
+      required this.lastEdited});
 
   static Future<List<ProjectCard>> getProjects() async {
     final projectNames = TimelapseStore.getProjectList();
@@ -56,7 +55,7 @@ class ProjectCard {
           projectName: name,
           previewPicturePath: firstFramePath,
           lastEditedText: lastEditedString,
-      lastEdited: lastEdited);
+          lastEdited: lastEdited);
     }).wait;
   }
 }
