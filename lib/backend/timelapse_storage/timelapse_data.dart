@@ -46,7 +46,9 @@ class ProjectTimelapseData {
     final jsonString = jsonEncode(data.toJson());
     final file = TimelapseStore.getProjectDataFile(_projectName);
     await file.writeAsString(jsonString);
-    await lastModifiedProject.withProject(ProjectName(_projectName)).setValue(DateTime.now().millisecondsSinceEpoch);
+    await lastModifiedProject
+        .withProject(ProjectName(_projectName))
+        .setValue(DateTime.now().millisecondsSinceEpoch);
   }
 
   /// Loads changes from disk

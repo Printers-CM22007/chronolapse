@@ -91,7 +91,9 @@ class TimelapseFrame {
     final jsonString = jsonEncode(data.toJson());
     final file = _getFrameDataFile(_projectName, _getUuid());
     await file.writeAsString(jsonString);
-    await lastModifiedProject.withProject(ProjectName(_projectName)).setValue(DateTime.now().millisecondsSinceEpoch);
+    await lastModifiedProject
+        .withProject(ProjectName(_projectName))
+        .setValue(DateTime.now().millisecondsSinceEpoch);
   }
 
   /// Updates the `FrameData` with data from disk
