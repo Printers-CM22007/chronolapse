@@ -5,8 +5,9 @@ class NotificationFrequencySetting
   const NotificationFrequencySetting(super._key, super._defaultValue);
 
   @override
-  NotificationFrequency? getValue(String projectPrefix) {
-    final val = SettingsStore.sp().getString(projectPrefix + super._key);
+  NotificationFrequency? getValue(ProjectName projectName) {
+    final val =
+        SettingsStore.sp().getString(projectName.settingPrefix() + super._key);
     return val != null
         ? NotificationFrequencyExt.getOptionFromString(val)
         : super._defaultVal;
@@ -14,31 +15,31 @@ class NotificationFrequencySetting
 
   @override
   Future<void> setValue(
-      String projectPrefix, NotificationFrequency? value) async {
+      ProjectName projectName, NotificationFrequency? value) async {
     if (value == null) {
-      notificationService.cancelNotification(projectPrefix.hashCode);
+      notificationService.cancelNotification(projectName.name().hashCode);
     } else {
       notificationService.scheduleNotification(
-          id: projectPrefix.hashCode,
-          title: 'Test Title',
-          body: 'Test Body',
+          id: projectName.name().hashCode,
+          title: "'${projectName.name()!}' Reminder",
+          body: 'Remember to take a photo!',
           notificationFrequency: value);
     }
-    await SettingsStore.sp().setString(
-        projectPrefix + super._key, value?.stringRepresentation() ?? "");
+    await SettingsStore.sp().setString(projectName.settingPrefix() + super._key,
+        value?.stringRepresentation() ?? "");
   }
 
   @override
-  Widget getWidget(String projectPrefix) {
-    return NotificationFrequencyWidget(this, projectPrefix);
+  Widget getWidget(ProjectName projectName) {
+    return NotificationFrequencyWidget(this, projectName);
   }
 }
 
 class NotificationFrequencyWidget extends StatefulWidget {
   final NotificationFrequencySetting _setting;
-  final String _projectPrefix;
+  final ProjectName _projectName;
 
-  const NotificationFrequencyWidget(this._setting, this._projectPrefix,
+  const NotificationFrequencyWidget(this._setting, this._projectName,
       {super.key});
 
   @override
@@ -52,7 +53,7 @@ class _NotificationFrequencySettingWidgetState
 
   @override
   void initState() {
-    _value = widget._setting.getValue(widget._projectPrefix);
+    _value = widget._setting.getValue(widget._projectName);
     super.initState();
   }
 
@@ -73,7 +74,7 @@ class _NotificationFrequencySettingWidgetState
             } else {
               freqOpt = NotificationFrequencyExt.getOptionFromString(newValue);
             }
-            await widget._setting.setValue(widget._projectPrefix, freqOpt);
+            await widget._setting.setValue(widget._projectName, freqOpt);
             setState(() {
               _value = freqOpt;
             });

@@ -5,8 +5,6 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
-String? currentProject = "sampleProject";
-
 // Used by DashboardPage to reload projects when it is returned to
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
 
