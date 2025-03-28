@@ -1,5 +1,6 @@
 package com.example.chronolapse
 
+
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -11,7 +12,10 @@ import android.media.MediaMuxer
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
 
+import com.example.chronolapse.sixo.TimeLapseEncoder
+import com.example.chronolapse.sixo.TextureRenderer
 
 class MainActivity: FlutterActivity() {
     private val channel = "com.example.chronolapse/channel"
@@ -24,47 +28,30 @@ class MainActivity: FlutterActivity() {
             if (call.method == "testFunction") {
                 val count = call.argument<Int>("count")!!
                 result.success(count + 1)
-            } else if (call.method == "testMediaCodec") {
-                testMediaCodec();
-                result.success(true);
+            } else if (call.method == "compileTimelapse") {
+                val dirPath = call.argument<String>("framesDirPath")!!
+                val outputPath = call.argument<String>("outputPath")!!
+                val nFrames = call.argument<Int>("nFrames")!!
+                val projectName = call.argument<String>("projectName")!!
+                val frameRate = call.argument<Int>("frameRate")!!
+                val bitRate = call.argument<Int>("bitRate")!!
+                compileTimelapse(dirPath, outputPath, nFrames, projectName, frameRate, bitRate)
             } else {
                 result.notImplemented()
             }
         }
     }
 
-    private fun testMediaCodec() {
-        Log.println(Log.DEBUG, "", "test")
-        val width = 320
-        val height = 240
+    private fun compileTimelapse(dirPath: String, outputPath: String, nFrames: Int, projectName: String, frameRate: Int, bitRate: Int): File {
+        val uriList: MutableList<Uri> = ArrayList()
+        for (i in 0..nFrames) {
+            val file = File("$dirPath/$i.png")
 
-        val mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height).apply {
-            setInteger(MediaFormat.KEY_BIT_RATE, 4000)
-            setInteger(MediaFormat.KEY_FRAME_RATE, 15)
-            setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10)
+            val uri = Uri.fromFile(file);
+            uriList.add(uri)
         }
+        TimeLapseEncoder(frameRate, bitRate).encode(cacheDir.path + "/$projectName.mp4", uriList, contentResolver);
 
-
-
-        Log.println(Log.DEBUG, "", "codec")
-        val videoEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC).apply {
-            configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
-        }
-
-        val videoCapabilities = videoEncoder.codecInfo.getCapabilitiesForType("video/avc").videoCapabilities
-        if (!videoCapabilities.supportedWidths.contains(width) || !videoCapabilities.supportedHeights.contains(height)) {
-            Log.d("chtonolapse", "Encoder can't deal with $height x $width")
-
-        }
-        videoEncoder.start()
-
-
-        /*val mediaMuxer = MediaMuxer(outputFile.absolutePath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4).apply {
-            val videoTrackIndex = addTrack(mediaFormat)
-            start()
-        }
-
-        val bufferInfo = MediaCodec.BufferInfo()
-        val outputBuffer = ByteBuffer.allocate(1024 * 1024)  // Buffer to hold encoded data*/
+        return File(cacheDir, "output.mp4")
     }
 }
