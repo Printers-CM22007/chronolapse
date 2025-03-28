@@ -28,7 +28,7 @@ import java.lang.Exception
  * I used various information sources to glue this together, but I found the most important and most relevant
  * information in EncodeAndMuxTest.java at https://bigflake.com/mediacodec/EncodeAndMuxTest.java.txt
  */
-class TimeLapseEncoder {
+class TimeLapseEncoder(private var frameRate: Int, private var bitRate: Int) {
 
     // MediaCodec and encoding configuration
     private var encoder: MediaCodec? = null
@@ -41,7 +41,7 @@ class TimeLapseEncoder {
 
     private var presentationTimeUs = 0L
 
-    private var frameRate = 30
+    //private var frameRate = 30
 
     private val timeoutUs = 10000L
 
@@ -103,8 +103,8 @@ class TimeLapseEncoder {
     private fun getFormat(size: Size): MediaFormat {
         val format = MediaFormat.createVideoFormat(mime, size.width, size.height)
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
-        format.setInteger(MediaFormat.KEY_BIT_RATE, 2000000)
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, 60)
+        format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate)
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 15)
 
         return format

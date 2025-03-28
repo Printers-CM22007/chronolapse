@@ -1,0 +1,2 @@
+## TimelapseEncoder
+- Class now takes frameRate and bitrate in through the constructor
