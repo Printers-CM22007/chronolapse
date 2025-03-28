@@ -25,6 +25,7 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
 
     throw UnimplementedError();
 
+    /*
     if (mounted) {
       // Navigator.pop(context, true);
 
@@ -39,17 +40,7 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
             builder: (context) => FrameEditor(widget._projectName, validUuid)));
       }
     }
-    // final frame = TimelapseFrame.createNew(widget._projectName);
-    // await frame.saveFrameFromPngFile(File(widget._picturePath));
-    //
-    // String validUuid = frame.uuid() ?? "";
-    //
-    // if (mounted) {
-    //   // Navigator.pop(context, true);
-    //
-    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //       builder: (context) => FrameEditor(widget._projectName, validUuid)));
-    // }
+     */
   }
 
   void _onRejectPressed() {
