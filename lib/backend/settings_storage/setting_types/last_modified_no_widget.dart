@@ -5,13 +5,15 @@ class LastModifiedNoWidget extends PersistentSetting<int> {
 
   @override
   int getValue(ProjectName projectName) {
-    return SettingsStore.sp().getInt(projectName.settingPrefix() + super._key) ?? super._defaultVal;
+    return SettingsStore.sp()
+            .getInt(projectName.settingPrefix() + super._key) ??
+        super._defaultVal;
   }
 
   @override
-  Future<void> setValue(
-      ProjectName projectName, int value) async {
-    await SettingsStore.sp().setInt(projectName.settingPrefix() + super._key, value);
+  Future<void> setValue(ProjectName projectName, int value) async {
+    await SettingsStore.sp()
+        .setInt(projectName.settingPrefix() + super._key, value);
   }
 
   @override
