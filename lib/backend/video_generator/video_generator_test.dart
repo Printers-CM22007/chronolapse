@@ -1,10 +1,7 @@
 import '../settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
-import 'package:chronolapse/backend/image_transformer/image_transformer.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
-import 'package:chronolapse/backend/video_generator/video_generator.dart';
-import 'package:chronolapse/backend/video_generator/generator_options.dart';
 import 'package:flutter/services.dart';
 
 import '../timelapse_storage/timelapse_store.dart';
@@ -32,20 +29,19 @@ Future<void> testVideoGenerator() async {
           .buffer
           .asUint8List());
 
-  testProject.data.knownFrameTransforms.frames
-      .add(baseFrame.uuid()!);
+  testProject.data.knownFrameTransforms.frames.add(baseFrame.uuid()!);
   await testProject.saveChanges();
 
   // * Create new frames to align
-  for(int i = 0; i < 60; i++) {
+  for (int i = 0; i < 60; i++) {
     final testFrame = TimelapseFrame.createNewWithData(
-        testProject.projectName(), FrameData.initial(testProject.projectName()));
+        testProject.projectName(),
+        FrameData.initial(testProject.projectName()));
     await testFrame.saveFrameFromPngBytes(
         (await rootBundle.load("assets/image_transformer_test/fm_x.png"))
             .buffer
             .asUint8List());
   }
-
 
   // Align new frame
   /*final homography =
@@ -73,14 +69,24 @@ Future<void> testVideoGenerator() async {
   //final generator = VideoGenerator(GeneratorOptions.defaultSettings("/data/data/com.example.chronolapse/cache/video.mp4"));
   //await generator.generateVideoFromTimelapse("testProject");
 
-  final img = cv.Mat.create(rows: 100, cols: 100, r: 128, g: 128, b: 128, type: cv.MatType.CV_8SC(4));
+  final img = cv.Mat.create(
+      rows: 100,
+      cols: 100,
+      r: 128,
+      g: 128,
+      b: 128,
+      type: const cv.MatType.CV_8SC(4));
   cv.imwrite("/data/data/com.example.chronolapse/cache/test.png", img);
   //cv.imwrite("${cacheDir.path}/test.png", img);
   print(cv.getBuildInformation());
   // !!!!!!!!!!!!!! if doesnt use cv.CAP_OPENCV_MJPEG cant read the fucking path
-  final writer = cv.VideoWriter.fromFile("/data/data/com.example.chronolapse/cache/video.avi", "MJPG  ", 60, (100, 100));//, apiPreference: cv.CAP_OPENCV_MJPEG);
+  final writer = cv.VideoWriter.fromFile(
+      "/data/data/com.example.chronolapse/cache/video.avi",
+      "MJPG  ",
+      60,
+      (100, 100)); //, apiPreference: cv.CAP_OPENCV_MJPEG);
   if (!writer.isOpened) throw Exception("video writer failed to open");
-  for(int i = 0; i < 100; i++) {
+  for (int i = 0; i < 100; i++) {
     writer.write(img);
   }
   writer.release();

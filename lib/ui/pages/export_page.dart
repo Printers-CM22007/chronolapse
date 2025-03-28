@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
+import 'package:chronolapse/ui/shared/settings_cog.dart';
 import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
@@ -86,6 +87,10 @@ class _ExportPageState extends State<ExportPage> {
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text("Export '${widget._projectName}'",
               style: const TextStyle(fontWeight: FontWeight.bold)),
+          actions: <Widget>[
+            settingsCog(context, widget._projectName,
+                enabled: !_generatingVideo)
+          ],
         ),
         bottomNavigationBar: ProjectNavigationBar(widget._projectName, 2,
             disabled: _generatingVideo),
