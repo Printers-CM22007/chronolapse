@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:json_annotation/json_annotation.dart';
 

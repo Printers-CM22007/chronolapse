@@ -1,15 +1,20 @@
+import 'dart:io';
+
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/frame_editting_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 
 class FeaturePointsSetupPage extends StatefulWidget {
-  final String _projectName;
-  final String _frameUuid;
+  final PendingFrame _pendingFrame;
+  final bool isFirstFrame;
 
-  FeaturePointsSetupPage(this._projectName, this._frameUuid, {super.key});
+  FeaturePointsSetupPage(this._pendingFrame,
+      {this.isFirstFrame = false, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -36,14 +41,11 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   }
 
   Future<void> _load() async {
-    final frame = await TimelapseFrame.fromExisting(
-        widget._projectName, widget._frameUuid);
-
-    final imageFile = frame.getFramePng();
-
     _frameImageKey = GlobalKey();
-    _frameImage = Image.file(imageFile, key: _frameImageKey);
-    _frameImageDimensions = await getImageDimensions(imageFile.path);
+    _frameImage = Image.file(File(widget._pendingFrame.temporaryImagePath),
+        key: _frameImageKey);
+    _frameImageDimensions =
+        await getImageDimensions(widget._pendingFrame.temporaryImagePath);
     _loaded = true;
 
     if (mounted) {
@@ -52,18 +54,20 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   }
 
   Future<void> _saveAndExit() async {
-    final frame = await TimelapseFrame.fromExisting(
-        widget._projectName, widget._frameUuid);
+    // Create frame
+    final pendingFrame = widget._pendingFrame;
+    pendingFrame.featurePoints = _featurePoints;
+    pendingFrame.frameTransform = widget.isFirstFrame
+        ? FrameTransform.baseFrame()
+        : throw UnimplementedError();
 
-    // Set feature points
-    frame.data.featurePoints = _featurePoints;
-    frame.saveFrameDataOnly();
+    final frame = await pendingFrame.saveInBackend();
 
     // Continue to frame editor
     if (mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) =>
-              FrameEditor(widget._projectName, widget._frameUuid)));
+              FrameEditor(widget._pendingFrame.projectName, frame.uuid()!)));
     }
   }
 
