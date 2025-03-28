@@ -13,7 +13,8 @@ List<WidgetSettingGlobal> availableGlobalSettings = [
 List<WidgetSettingRequiresProject> availableProjectSettings = [
   const WidgetSettingRequiresProject(TitleNoSetting("Project Settings")),
   exampleToggleSettingTwo.asWidgetOnly(),
-  notificationFrequencySetting.asWidgetOnly()
+  notificationFrequencySetting.asWidgetOnly(),
+  fpsSetting.asWidgetOnly(),
 ];
 
 // ! Use only alphanumeric characters in setting keys!
@@ -28,6 +29,8 @@ const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
 
 const notificationFrequencySetting = RequiresProject(
     NotificationFrequencySetting("notificationFrequency", null));
+
+const fpsSetting = RequiresProject(MultistepSetting("videoFps", 6, [1, 2, 3, 5, 10, 20, 30, 45, 60, 90, 120], "Generated Video FPS", "", " FPS selected"));
 
 // ! Do not show these in the settings page
 // Hidden Setting

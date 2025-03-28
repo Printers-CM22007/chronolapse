@@ -1,3 +1,5 @@
+import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
+import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:flutter/services.dart';
 
 Future<String?> compileVideo(
@@ -8,7 +10,8 @@ Future<String?> compileVideo(
   final result = await platform.invokeMethod("compileVideo", {
     "frameDir": frameDir,
     "frameCount": frameCount,
-    "outputPath": outputPath
+    "outputPath": outputPath,
+    "frameRate": fpsSetting.withProject(ProjectName(projectName)).getValue()
   });
   if (result == null) {
     return null;

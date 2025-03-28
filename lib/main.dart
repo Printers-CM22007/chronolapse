@@ -18,8 +18,6 @@ late NotificationService notificationService;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
-
   print("Cleaning up cache");
   await cleanupGeneratedVideo();
   await cleanUpTakenImages();
