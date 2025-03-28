@@ -12,13 +12,15 @@ part 'frame_data.g.dart';
 class FrameData {
   FrameMetaData metaData;
 
-  FrameTransform? frameTransform;
+  FrameTransform frameTransform;
 
   FrameData({required this.metaData, required this.frameTransform});
 
-  factory FrameData.initial(String projectName) {
+  factory FrameData.initial(
+      String projectName, FrameTransform frameTransformation) {
     return FrameData(
-        metaData: FrameMetaData.initial(projectName), frameTransform: null);
+        metaData: FrameMetaData.initial(projectName),
+        frameTransform: frameTransformation);
   }
 
   factory FrameData.fromJson(Map<String, dynamic> json) =>

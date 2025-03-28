@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:chronolapse/backend/video_generator/video_generator.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:chronolapse/ui/shared/settings_cog.dart';
 import 'package:chronolapse/ui/shared/video_player_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -23,6 +23,7 @@ class _ExportPageState extends State<ExportPage> {
   String? _videoPath;
   bool _generatingVideo = false;
   bool _isSaving = false;
+  String? _generationProgress;
 
   void _startVideoGeneration() async {
     if (_generatingVideo) {
@@ -31,18 +32,29 @@ class _ExportPageState extends State<ExportPage> {
     setState(() {
       _generatingVideo = true;
       _videoPath = null;
+      _generationProgress = null;
     });
 
-    // Generation code here
-    await Future.delayed(const Duration(seconds: 5));
-    final path =
-        "${(await getApplicationDocumentsDirectory()).path}/earth-video.mp4";
-    print(path);
-
-    setState(() {
-      _videoPath = path;
-      _generatingVideo = false;
+    final result = await generateVideo(widget._projectName, (val) {
+      setState(() {
+        _generationProgress = val;
+      });
     });
+
+    if (result.path != null) {
+      setState(() {
+        _videoPath = result.path;
+        _generatingVideo = false;
+        _generationProgress = null;
+      });
+    } else {
+      setState(() {
+        _videoPath = null;
+        _generatingVideo = false;
+        _generationProgress = null;
+      });
+      _showToast(result.error!);
+    }
   }
 
   Widget _generationIndicator() {
@@ -52,7 +64,7 @@ class _ExportPageState extends State<ExportPage> {
         CircularProgressIndicator(
             color: Theme.of(context).secondaryHeaderColor),
         Text(
-          "Generating timelapse...",
+          _generationProgress == null ? "Generating timelapse..." : _generationProgress!,
           style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
         ),
       ],
@@ -126,21 +138,9 @@ class _ExportPageState extends State<ExportPage> {
                     setState(() {
                       _isSaving = false;
                     });
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              result
-                                  ? "Video saved successfully"
-                                  : "Video failed to save",
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface)),
-                          duration: const Duration(seconds: 3),
-                          backgroundColor: Colors.black54,
-                        ),
-                      );
-                    }
+                    _showToast(result
+                        ? "Video saved successfully"
+                        : "Video failed to save");
                   },
                   enabled: _videoPath != null && !_isSaving,
                 ),
@@ -162,6 +162,19 @@ class _ExportPageState extends State<ExportPage> {
             ),
           ),
         ));
+  }
+
+  void _showToast(String message) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.black54,
+        ),
+      );
+    }
   }
 }
 

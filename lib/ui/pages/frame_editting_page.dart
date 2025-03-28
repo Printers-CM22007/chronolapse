@@ -8,7 +8,6 @@ import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -312,15 +311,16 @@ class _FrameEditorState extends State<FrameEditor>
 
   Future<void> addPhotoBackend(
       ProjectTimelapseData tProject, String imagePath) async {
-    final baseFrame = TimelapseFrame.createNewWithData(
-        tProject.projectName(), FrameData.initial(tProject.projectName()));
-    await baseFrame.saveFrameFromPngBytes(
-        (await rootBundle.load(imagePath)).buffer.asUint8List());
-
-    // * Add frame to list of known frames
-    tProject.data.knownFrameTransforms.frames.add(
-        baseFrame.uuid()!); // uuid is known here as the frame has been saved
-    await tProject.saveChanges();
+    throw UnimplementedError();
+    // final baseFrame = TimelapseFrame.createNewWithData(
+    //     tProject.projectName(), FrameData.initial(tProject.projectName()));
+    // await baseFrame.saveFrameFromPngBytes(
+    //     (await rootBundle.load(imagePath)).buffer.asUint8List());
+    //
+    // // * Add frame to list of known frames
+    // tProject.data.knownFrameTransforms.frames.add(
+    //     baseFrame.uuid()!); // uuid is known here as the frame has been saved
+    // await tProject.saveChanges();
   }
 
   Future<void> accessBackendPhotos() async {
