@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
+import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
+import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_metadata.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -44,6 +46,9 @@ class ProjectTimelapseData {
     final jsonString = jsonEncode(data.toJson());
     final file = TimelapseStore.getProjectDataFile(_projectName);
     await file.writeAsString(jsonString);
+    await lastModifiedProject
+        .withProject(ProjectName(_projectName))
+        .setValue(DateTime.now().millisecondsSinceEpoch);
   }
 
   /// Loads changes from disk

@@ -1,89 +1,14 @@
-import 'dart:io';
+part of 'dashboard_page.dart';
 
-import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/main.dart';
-import 'package:chronolapse/ui/export_page.dart';
-import 'package:chronolapse/ui/models/project_card.dart';
-import 'package:chronolapse/ui/photo_taking_page.dart';
-import 'package:chronolapse/ui/project_edit_page.dart';
-import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
-import 'package:flutter/material.dart';
-
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
-
-  @override
-  State<DashboardPage> createState() => _DashboardPageState();
-}
-
-class DashboardPageIcons {
-  DashboardPageIcons._();
-
-  static const fontFamily = 'icomoon';
-
-  static const IconData search = IconData(0xe986, fontFamily: fontFamily);
-
-  static const IconData edit = IconData(0xe905, fontFamily: fontFamily);
-
-  static const IconData projects = IconData(0xe920, fontFamily: fontFamily);
-
-  static const IconData notifications =
-      IconData(0xe951, fontFamily: fontFamily);
-
-  static const IconData export = IconData(0xe968, fontFamily: fontFamily);
-
-  static const IconData settings = IconData(0xe994, fontFamily: fontFamily);
-
-  static const IconData bin = IconData(0xe9ac, fontFamily: fontFamily);
-
-  static const IconData import = IconData(0xe9c5, fontFamily: fontFamily);
-
-  static const IconData add = IconData(0xea0a, fontFamily: fontFamily);
-
-  static const IconData dots = IconData(0xeaa3, fontFamily: fontFamily);
-}
-
-class _DashboardPageState extends State<DashboardPage> with RouteAware {
-  late List<ProjectCard> _projects;
-  bool _projectsLoaded = false;
-  String _projectsSearchString = "";
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadProjects();
+extension ProjectCardList on DashboardPageState {
+  void _onPressProjectThumbnail(String projectName) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PhotoTakingPage(projectName)));
   }
 
-  @override
-  void didChangeDependencies() {
-    // (benny) Example called routeObserver.subscribe() in this function rather than initState, I don't know why
-    super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context)!);
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
-  void didPopNext() {
-    // Called when this page is returned to via the back button
-    // In this situation we need to reload the projects in case a new project has
-    // been created
-    super.didPopNext();
-    _loadProjects();
-  }
-
-  Future<void> _loadProjects() async {
-    _projects = await ProjectCard.getProjects();
-    _projectsLoaded = true;
-
-    if (mounted) {
-      setState(() {});
-    }
+  void _onPressProjectEdit(String projectName) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
   }
 
   List<ProjectCard> _getFilteredProjects() {
@@ -96,216 +21,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
         .toList();
   }
 
-  void _onSearchFieldChanged(String value) {
-    _projectsSearchString = value;
-    setState(() {});
-  }
-
-  void _onPressProjectThumbnail(String projectName) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => PhotoTakingPage(projectName)));
-  }
-
-  void _onPressProjectEdit(String projectName) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
-  }
-
-  Future<void> _onCompleteCreateProjectDialogue(String projectName) async {
-    // create the project in the backend
-    await TimelapseStore.createProject(projectName);
-
-    // reload project list
-    await _loadProjects();
-  }
-
-  TextEditingController projectNameController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        title: const Text(
-          "Dashboard",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-      ),
-      body: Column(
-        children: [
-          searchBar(),
-          const SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [createNewButton(), importButton()],
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Divider(
-            thickness: 1.2,
-            color: Theme.of(context).colorScheme.onPrimary,
-            indent: 20,
-            endIndent: 20,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Expanded(
-            child: projectsContainer(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: const DashboardNavigationBar(0),
-    );
-  }
-
-  Container importButton() {
-    return Container(
-      width: 120,
-      padding: const EdgeInsets.only(right: 25),
-      child: TextButton(
-        style: TextButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.inverseSurface),
-        onPressed: () {},
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(
-              DashboardPageIcons.import,
-              color: Theme.of(context).colorScheme.onInverseSurface,
-            ),
-            Text(
-              "Import",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onInverseSurface,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  String? get _errorText {
-    // at any time, we can get the text from _controller.value.text
-    final text = projectNameController.value.text;
-    // Note: you can do your own custom validation here
-    // Move this logic this outside the widget for more testable code
-    if (text.isEmpty) {
-      return 'Can\'t be empty';
-    }
-    // return null if the text is valid
-    return null;
-  }
-
-  SizedBox createNewButton() {
-    bool submitted = false;
-    return SizedBox(
-      width: 150,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 18),
-        child: TextButton(
-          style: TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondary),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return StatefulBuilder(
-                    builder: (context, StateSetter setState) {
-                      return AlertDialog(
-                          title: const Text("New Project"),
-                          actionsAlignment: MainAxisAlignment.spaceBetween,
-                          actions: [
-                            MaterialButton(
-                              onPressed: () {
-                                //pop the box
-                                Navigator.pop(context);
-                                setState(() {
-                                  submitted = false;
-                                });
-                                //clear the controller
-                                projectNameController.clear();
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                            MaterialButton(
-                              onPressed: () {
-                                setState(() {
-                                  submitted = true;
-                                });
-                                //check project name is not empty
-                                if (projectNameController.text.isNotEmpty) {
-                                  // close the box
-                                  Navigator.pop(context);
-                                  setState(() {
-                                    submitted = false;
-                                  });
-
-                                  // create the project in the backend
-                                  _onCompleteCreateProjectDialogue(
-                                      projectNameController.text);
-
-                                  // clear controller
-                                  projectNameController.clear();
-                                }
-                              },
-                              child: const Text("Create"),
-                            )
-                          ],
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              //User input for project name
-                              TextField(
-                                controller: projectNameController,
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                                decoration: InputDecoration(
-                                    hintText: "Enter project name",
-                                    hintStyle: const TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.white38),
-                                    errorText: submitted ? _errorText : null),
-                              )
-                            ],
-                          ));
-                    },
-                  );
-                });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                DashboardPageIcons.add,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              Text(
-                "Create New",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget projectsContainer() {
+  Widget _createProjectCardList() {
     if (!_projectsLoaded) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -322,10 +38,11 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
           scrollDirection: Axis.vertical,
           itemCount: projects.length,
           itemBuilder: (context, index) {
+            final project = projects[index];
             return Container(
                 height: 300,
                 decoration: BoxDecoration(
-                    color: projects[index].boxColor,
+                    color: project.boxColor,
                     borderRadius: BorderRadius.circular(18)),
                 child: LayoutBuilder(
                   builder: (BuildContext bContext, BoxConstraints constraints) {
@@ -337,16 +54,14 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                         ),
                         InkWell(
                             onTap: () {
-                              _onPressProjectThumbnail(
-                                  projects[index].projectName);
+                              _onPressProjectThumbnail(project.projectName);
                             },
                             child: SizedBox(
                                 width: constraints.maxWidth * 0.9,
                                 height: constraints.maxHeight * 0.65,
-                                child: projects[index].previewPicturePath !=
-                                        null
-                                    ? Image.file(File(
-                                        projects[index].previewPicturePath!))
+                                child: project.previewPicturePath != null
+                                    ? Image.file(
+                                        File(project.previewPicturePath!))
                                     : const Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -370,7 +85,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               padding: EdgeInsets.only(
                                   left: constraints.maxWidth * 0.1),
                               child: Text(
-                                projects[index].projectName,
+                                project.projectName,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontSize: 20,
@@ -386,7 +101,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Last edited ${projects[index].lastEdited} ago",
+                                project.lastEdited,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(
                                   fontSize: 13,
@@ -410,8 +125,7 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                     left: constraints.maxWidth * 0.1),
                                 child: TextButton(
                                   onPressed: () {
-                                    _onPressProjectEdit(
-                                        projects[index].projectName);
+                                    _onPressProjectEdit(project.projectName);
                                   },
                                   style: TextButton.styleFrom(
                                       backgroundColor: Theme.of(context)
@@ -495,8 +209,8 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ExportPage(projects[index]
-                                                          .projectName)))
+                                                      ExportPage(
+                                                          project.projectName)))
                                         },
                                         child: Row(
                                           mainAxisAlignment:
@@ -534,8 +248,10 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                                               const WidgetStatePropertyAll(
                                                   Size(100, 40)),
                                         ),
-                                        onPressed: () {
-                                          //Add delete functionality here
+                                        onPressed: () async {
+                                          await TimelapseStore.deleteProject(
+                                              project.projectName);
+                                          await _loadProjects();
                                         },
                                         child: Row(
                                           mainAxisAlignment:
@@ -569,33 +285,5 @@ class _DashboardPageState extends State<DashboardPage> with RouteAware {
                 ));
           },
         ));
-  }
-
-  Container searchBar() {
-    return Container(
-      margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
-      child: TextField(
-        onChanged: _onSearchFieldChanged,
-        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-        cursorColor: Theme.of(context).colorScheme.onPrimary,
-        decoration: InputDecoration(
-            filled: true,
-            fillColor: blackColour,
-            hintText: "Search Project",
-            hintStyle:
-                TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            hoverColor: Theme.of(context).colorScheme.onPrimary,
-            prefixIcon: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Icon(
-                  DashboardPageIcons.search,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                )),
-            contentPadding: const EdgeInsets.all(15),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none)),
-      ),
-    );
   }
 }

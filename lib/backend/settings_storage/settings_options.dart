@@ -15,6 +15,7 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
   const WidgetSettingRequiresProject(TitleNoSetting("Project Settings")),
   exampleToggleSettingTwo.asWidgetOnly(),
   const WidgetSettingRequiresProject(DividerNoSetting()),
+  notificationFrequencySetting.asWidgetOnly()
 ];
 
 // ! Use only alphanumeric characters in setting keys!
@@ -26,3 +27,9 @@ const exampleToggleSetting = Global(
 // Project Settings
 const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
     "exampleToggleTwo", true, "Example Toggle Two", "Also does nothing"));
+
+const notificationFrequencySetting = RequiresProject(
+    NotificationFrequencySetting("notificationFrequency", null));
+
+const lastModifiedProject =
+    RequiresProject(LastModifiedNoWidget("lastModified"));

@@ -2,19 +2,15 @@ import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'backend/image_transformer/image_transformer_test.dart';
-import 'backend/video_generator/video_generator_test.dart';
-
-String? currentProject = "sampleProject";
 
 // Used by DashboardPage to reload projects when it is returned to
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
 
 late List<CameraDescription> cameras;
+
+late NotificationService notificationService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,19 +20,8 @@ void main() async {
   print("Initialising TimelapseStore");
   await TimelapseStore.initialise();
   print("Initialising NotificationService");
-  NotificationService().initialise();
-
-  // ! TEST CODE START
-
-  final platform = MethodChannel('com.example.chronolapse/channel');
-  final result = await platform.invokeMethod('testFunction', {'count': 4});
-  print(result);
-
-  await platform.invokeMethod("testMediaCodec");
-
-  //await testImageTransformerBreaksEverything();
-  //await testVideoGenerator();
-  //await test_ffmpeg();
+  notificationService = NotificationService();
+  await notificationService.initialise();
 
   // List available cameras
   try {
@@ -45,8 +30,6 @@ void main() async {
     // TODO: work out how to best report error
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
-
-  // ! TEST CODE END
 
   runApp(const MyApp());
 }
@@ -76,9 +59,9 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: const ColorScheme(
-          primary: Color(0xff08070B),
+          primary: Color(0xff3e3655),
           onPrimary: Color(0xffCCCCCC),
-          secondary: Color(0xff11373B),
+          secondary: Color(0xff0a616a),
           onSecondary: Color(0xffCCCCCC),
           surface: Color(0xff131316),
           onSurface: Color(0xffaacfd5),
@@ -89,6 +72,7 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
+      // home: const PhotoTakingPage("sampleProject"),
       home: const DashboardPage(),
       navigatorObservers: [routeObserver],
     );

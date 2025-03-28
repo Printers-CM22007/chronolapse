@@ -1,7 +1,9 @@
-import 'package:chronolapse/ui/dashboard_page.dart';
-import 'package:chronolapse/ui/settings_page.dart';
+import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
+import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
+
+import '../pages/dashboard_page/dashboard_icons.dart';
 
 class DashboardNavigationBar extends StatelessWidget {
   final int selectedIndex;

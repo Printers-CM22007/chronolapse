@@ -1,14 +1,16 @@
-import 'package:chronolapse/ui/photo_taking_page.dart';
-import 'package:chronolapse/ui/project_edit_page.dart';
+import 'package:chronolapse/ui/pages/export_page.dart';
+import 'package:chronolapse/ui/pages/photo_taking_page.dart';
+import 'package:chronolapse/ui/pages/project_edit_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
 
 class ProjectNavigationBar extends StatelessWidget {
   final String _projectName;
   final int _selectedIndex;
+  final bool disabled;
 
   const ProjectNavigationBar(this._projectName, this._selectedIndex,
-      {super.key});
+      {this.disabled = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,9 @@ class ProjectNavigationBar extends StatelessWidget {
           selectedIndex: _selectedIndex,
           indicatorColor: Theme.of(context).colorScheme.secondary,
           onDestinationSelected: (index) {
+            if (index == _selectedIndex) {
+              return;
+            }
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
@@ -36,22 +41,34 @@ class ProjectNavigationBar extends StatelessWidget {
                 Navigator.of(context).pushReplacement(InstantPageRoute(
                     builder: (context) => ProjectEditPage(_projectName)));
                 break;
+
+              case 2:
+                Navigator.of(context).pushReplacement(InstantPageRoute(
+                    builder: (context) => ExportPage(_projectName)));
+                break;
             }
           },
           destinations: [
             NavigationDestination(
-              icon: Icon(
+              icon: const Icon(
                 Icons.camera_alt,
-                color: Theme.of(context).colorScheme.inverseSurface,
               ),
               label: "Take photo",
+              enabled: !disabled,
             ),
             NavigationDestination(
-              icon: Icon(
+              icon: const Icon(
                 Icons.edit,
-                color: Theme.of(context).colorScheme.inverseSurface,
               ),
-              label: "Edit",
+              label: "Edit frames",
+              enabled: !disabled,
+            ),
+            NavigationDestination(
+              icon: const Icon(
+                Icons.arrow_upward,
+              ),
+              label: "Export",
+              enabled: !disabled,
             ),
           ]),
     );

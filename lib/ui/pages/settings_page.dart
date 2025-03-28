@@ -1,3 +1,4 @@
+import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
 import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,8 @@ class _SettingsPageState extends State<SettingsPage> {
     final projectWidgets = widget._project == null
         ? <Widget>[]
         : availableProjectSettings
-            .map((e) => e.withProject(widget._project!).getWidget())
+            .map(
+                (e) => e.withProject(ProjectName(widget._project!)).getWidget())
             .toList();
 
     return Scaffold(

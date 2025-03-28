@@ -1,25 +1,51 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as ltz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
-enum NotificationFrequency{
-  daily,
-  weekly,
+enum NotificationFrequency { daily, weekly }
+
+extension NotificationFrequencyExt on NotificationFrequency {
+  String stringRepresentation() {
+    switch (this) {
+      case NotificationFrequency.daily:
+        return "Daily";
+      case NotificationFrequency.weekly:
+        return "Weekly";
+    }
+  }
+
+  static NotificationFrequency? getOptionFromString(String option) {
+    if (option.isEmpty) {
+      return null;
+    }
+    for (final possible in NotificationFrequency.values) {
+      if (possible.stringRepresentation() == option) {
+        return possible;
+      }
+    }
+    throw Exception("`$option` isn't a valid NotificationFrequencyOption");
+  }
 }
 
 class NotificationService {
-  final notificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final NotificationService _notificationService =
+      NotificationService._internal();
 
-  final bool _isInit = false;
+  late FlutterLocalNotificationsPlugin notificationsPlugin;
 
-  bool get isInit => _isInit;
+  factory NotificationService({FlutterLocalNotificationsPlugin? plugin}) {
+    _notificationService.notificationsPlugin =
+        plugin ?? FlutterLocalNotificationsPlugin();
+    return _notificationService;
+  }
+
+  NotificationService._internal();
 
   //INITIALIZE
   Future<void> initialise() async {
-    if (_isInit) return;
-
     //initialize timezone handling
     ltz.initializeTimeZones();
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
@@ -52,10 +78,11 @@ class NotificationService {
   }
 
   //SHOW NOTIFICATION
-  Future<void> showNotification(
-      {int id = 0, String? title, String? body}) async {
+  Future<void> showNotification({int? id, String? title, String? body}) async {
+    var random = Random();
+    int randomId = random.nextInt(100000);
     return notificationsPlugin.show(
-      id,
+      id ?? randomId,
       title,
       body,
       const NotificationDetails(),
@@ -64,41 +91,55 @@ class NotificationService {
 
   //SCHEDULE NOTIFICATIONS
   Future<void> scheduleNotification(
-      {int id = 1,
+      {int? id,
       required String title,
       required String body,
-      required int hour,
-      required int minute,
-      NotificationFrequency notificationFrequency = NotificationFrequency.daily}) async {
+      required NotificationFrequency notificationFrequency}) async {
     final now = tz.TZDateTime.now(tz.local); //current date time
+    now.add(const Duration(minutes: 2));
 
-    var scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-
+    var scheduledDate = tz.TZDateTime(
+        tz.local, now.year, now.month, now.day, now.hour, now.minute);
+    var random = Random();
+    int randomId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduledDate,
-      NotificationDetails(),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        id ?? randomId, //if no Id passed in use random id
+        title,
+        body,
+        scheduledDate,
+        const NotificationDetails(),
+        /*
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+         */
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
 
-      // REPEATS THE NOTIFICATION DAILY
-      matchDateTimeComponents: resolveNotificationFrequency(notificationFrequency)
-      //if daily is passed repeat it daily otherwise repeat weekly
-    );
+        // REPEATS THE NOTIFICATION DAILY
+        matchDateTimeComponents:
+            resolveNotificationFrequency(notificationFrequency)
+        //if daily is passed repeat it daily otherwise repeat weekly
+        );
   }
 
-  DateTimeComponents resolveNotificationFrequency(NotificationFrequency nf){
-    switch(nf){
-      case NotificationFrequency.daily : {
-        return DateTimeComponents.time;
-      }
+  DateTimeComponents resolveNotificationFrequency(NotificationFrequency nf) {
+    switch (nf) {
+      case NotificationFrequency.daily:
+        {
+          return DateTimeComponents.time;
+        }
       case NotificationFrequency.weekly:
-        return DateTimeComponents.dayOfWeekAndTime; //not sure if this actually makes it repeat weekly, need to look into it more
+        return DateTimeComponents
+            .dayOfWeekAndTime; //not sure if this actually makes it repeat weekly, need to look into it more
     }
+  }
+
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    print("Inside getPendingNotifications()"); // Debugging print
+    return await notificationsPlugin.pendingNotificationRequests();
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await notificationsPlugin.cancel(id);
   }
 
   Future<void> cancelAllNotifications() async {

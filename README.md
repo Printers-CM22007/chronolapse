@@ -47,14 +47,6 @@ https://github.com/rainyl/dartcv
 - Create a folder somewhere e.g C:/dev/dartcv and put dartcv.dll in there
 - Go to edit environment variables and add the folder to path
 
-### Linux or Mac
-
-- idfk you're cooked
-
----
-
-- DM Alec if shit doesnt work
-
 ## Commands
 
 ### Building an Apk
@@ -85,29 +77,28 @@ flutter pub run build_runner build
 ```
 
 ## Testing
-### Unit Tests
-Unit tests in `test` run without Android and can generate coverage reports:
+
+To run all tests, merge their coverage reports, then show them run
 ```bash
-flutter test --coverage
+python test.py
 ```
-The coverage report needs to be converted to html with this command from the `lcov` tool:
+
+If you want to use a specific shell to run commands, e.g. fish, run
+```
+python test.py fish
+```
+
+To run an individual test run
+```bash
+flutter test [path to test] --coverage
+```
+
+... then to view the coverage report
 ```bash
 genhtml coverage/lcov.info -o coverage/html
-```
-The report can then be opened:
-```bash
 open coverage/html/index.html
 ```
 
-As these tests run without Android, they cannot test native code (i.e. code in the `android` folder)
-
-### Integration Tests
-Integration tests in `integration_tests` run with Android and cannot generate coverage reports
-however can run native code.
-Start an emulator normally and run:
-```
-flutter run integration_test/[TEST TO RUN]
-```
 ## Editing the presentation
 ### Downloading fonts
 There is a file called "computer-modern" which contains all of the fonts used in the presentation in the repository (somewhere, edit this)

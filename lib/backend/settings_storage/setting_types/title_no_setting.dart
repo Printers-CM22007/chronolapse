@@ -5,7 +5,7 @@ class TitleNoSetting extends SettingWidget<None> {
   const TitleNoSetting(this._title) : super("", const None());
 
   @override
-  Widget getWidget(String projectPrefix) {
+  Widget getWidget(ProjectName projectName) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
