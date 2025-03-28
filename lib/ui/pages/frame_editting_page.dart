@@ -3,19 +3,19 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:chronolapse/ui/export_page.dart';
+import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
-import 'package:chronolapse/ui/dashboard_page.dart';
-import 'package:chronolapse/ui/settings_page.dart';
+import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
+import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
-import 'package:chronolapse/ui/photo_taking_page.dart';
+import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
-import '../backend/timelapse_storage/frame/timelapse_frame.dart';
-import '../backend/timelapse_storage/timelapse_data.dart';
-import '../backend/timelapse_storage/timelapse_store.dart';
+import '../../backend/timelapse_storage/frame/timelapse_frame.dart';
+import '../../backend/timelapse_storage/timelapse_data.dart';
+import '../../backend/timelapse_storage/timelapse_store.dart';
 
 // OUTDATED-GOAL: the code crashes if a page with markers on it is deleted
 // TODO: there is an unhandled error when the project is exited sometimes
