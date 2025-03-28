@@ -7,30 +7,32 @@ class ToggleSetting extends PersistentSetting<bool> {
       super._key, super._defaultVal, this._title, this._subtitle);
 
   @override
-  bool getValue(String projectPrefix) {
-    return SettingsStore.sp().getBool(projectPrefix + super._key) ??
+  bool getValue(ProjectName projectName) {
+    return SettingsStore.sp()
+            .getBool(projectName.settingPrefix() + super._key) ??
         super._defaultVal;
   }
 
   @override
-  Future<void> setValue(String projectPrefix, bool value) async {
-    await SettingsStore.sp().setBool(projectPrefix + super._key, value);
+  Future<void> setValue(ProjectName projectName, bool value) async {
+    await SettingsStore.sp()
+        .setBool(projectName.settingPrefix() + super._key, value);
   }
 
   @override
-  Widget getWidget(String projectPrefix) {
-    return ToggleSettingWidget(this, projectPrefix, _title, _subtitle);
+  Widget getWidget(ProjectName projectName) {
+    return ToggleSettingWidget(this, projectName, _title, _subtitle);
   }
 }
 
 class ToggleSettingWidget extends StatefulWidget {
   final ToggleSetting _setting;
-  final String _projectPrefix;
+  final ProjectName _projectName;
   final String _title;
   final String _subtitle;
 
   const ToggleSettingWidget(
-      this._setting, this._projectPrefix, this._title, this._subtitle,
+      this._setting, this._projectName, this._title, this._subtitle,
       {super.key});
 
   @override
@@ -50,7 +52,7 @@ class _ToggleSettingWidgetState extends State<ToggleSettingWidget> {
 
   @override
   void initState() {
-    _value = widget._setting.getValue(widget._projectPrefix);
+    _value = widget._setting.getValue(widget._projectName);
     super.initState();
   }
 
@@ -62,7 +64,7 @@ class _ToggleSettingWidgetState extends State<ToggleSettingWidget> {
       subtitle: Text(widget._subtitle),
       value: _value,
       onChanged: (bool value) async {
-        await widget._setting.setValue(widget._projectPrefix, value);
+        await widget._setting.setValue(widget._projectName, value);
         setState(() {
           _value = value;
         });

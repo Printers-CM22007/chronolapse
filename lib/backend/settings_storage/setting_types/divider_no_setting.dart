@@ -4,7 +4,7 @@ class DividerNoSetting extends SettingWidget<None> {
   const DividerNoSetting() : super("", const None());
 
   @override
-  Widget getWidget(String projectPrefix) {
+  Widget getWidget(ProjectName projectName) {
     return const Divider();
   }
 }
