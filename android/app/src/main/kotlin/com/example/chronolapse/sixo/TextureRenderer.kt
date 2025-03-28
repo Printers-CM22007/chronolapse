@@ -1,4 +1,4 @@
-package com.example.chronolapse
+package com.example.chronolapse.sixo
 
 import android.graphics.Bitmap
 import android.opengl.GLES20

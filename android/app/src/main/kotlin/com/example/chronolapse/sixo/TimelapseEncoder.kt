@@ -1,8 +1,8 @@
+package com.example.chronolapse.sixo
+
 /**
  * Copyright (c) 2019 by Roman Sisik. All rights reserved.
  */
-
-package com.example.chronolapse
 
 import android.content.ContentResolver
 import android.media.MediaCodec
