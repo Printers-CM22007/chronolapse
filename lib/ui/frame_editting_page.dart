@@ -511,8 +511,9 @@ class _FrameEditorState extends State<FrameEditor>
               builder: (context, constraints) {
                 return GestureDetector(
                   onTapUp: (details) {
-                    if (!showMarkers || isDragging)
+                    if (!showMarkers || isDragging) {
                       return; // || !(currentImageIndex == 0)) return;
+                    }
                     RenderBox box = context.findRenderObject() as RenderBox;
                     Offset localPosition =
                         box.globalToLocal(details.globalPosition);
