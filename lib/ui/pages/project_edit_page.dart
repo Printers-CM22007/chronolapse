@@ -4,6 +4,8 @@ import 'package:chronolapse/ui/pages/frame_editting_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../shared/settings_cog.dart';
+
 class _Frame {
   final String uuid;
   final Image image;
@@ -44,6 +46,7 @@ class ProjectEditPageState extends State<ProjectEditPage> {
           "Edit frames - ${widget._projectName}",
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
+        actions: <Widget>[settingsCog(context, widget._projectName)],
       ),
       bottomNavigationBar: ProjectNavigationBar(widget._projectName, 1),
       body: _createFramesListView(),

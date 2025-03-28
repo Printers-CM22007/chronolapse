@@ -59,7 +59,6 @@ class MyApp extends StatelessWidget {
           onError: Color(0xffCCCCCC),
           brightness: Brightness.dark,
         ),
-
         useMaterial3: true,
       ),
       // home: const PhotoTakingPage("sampleProject"),
