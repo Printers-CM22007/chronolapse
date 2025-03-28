@@ -15,6 +15,7 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
   exampleToggleSettingTwo.asWidgetOnly(),
   notificationFrequencySetting.asWidgetOnly(),
   fpsSetting.asWidgetOnly(),
+  bitRateSetting.asWidgetOnly(),
 ];
 
 // ! Use only alphanumeric characters in setting keys!
@@ -31,6 +32,8 @@ const notificationFrequencySetting = RequiresProject(
     NotificationFrequencySetting("notificationFrequency", null));
 
 const fpsSetting = RequiresProject(MultistepSetting("videoFps", 6, [1, 2, 3, 5, 10, 20, 30, 45, 60, 90, 120], "Generated Video FPS", "", " FPS selected"));
+
+const bitRateSetting = RequiresProject(MultistepSetting("videoBitrate", 3, [1024, 2048, 4096, 8192, 16384], "Generated Video Bitrate", "", " bits/s selected"));
 
 // ! Do not show these in the settings page
 // Hidden Setting
