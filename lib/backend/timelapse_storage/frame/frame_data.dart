@@ -1,4 +1,3 @@
-import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -13,18 +12,19 @@ part 'frame_data.g.dart';
 class FrameData {
   FrameMetaData metaData;
 
-  FrameTransform? frameTransform;
   List<FeaturePoint> featurePoints;
+  FrameTransform frameTransform;
 
   FrameData(
       {required this.metaData,
       required this.frameTransform,
       required this.featurePoints});
 
-  factory FrameData.initial(String projectName) {
+  factory FrameData.initial(
+      String projectName, FrameTransform frameTransformation) {
     return FrameData(
         metaData: FrameMetaData.initial(projectName),
-        frameTransform: null,
+        frameTransform: frameTransformation,
         featurePoints: []);
   }
 

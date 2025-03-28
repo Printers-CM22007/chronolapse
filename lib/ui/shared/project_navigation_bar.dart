@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 class ProjectNavigationBar extends StatelessWidget {
   final String _projectName;
   final int _selectedIndex;
+  final bool disabled;
 
   const ProjectNavigationBar(this._projectName, this._selectedIndex,
-      {super.key});
+      {this.disabled = false, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,9 @@ class ProjectNavigationBar extends StatelessWidget {
           selectedIndex: _selectedIndex,
           indicatorColor: Theme.of(context).colorScheme.secondary,
           onDestinationSelected: (index) {
+            if (index == _selectedIndex) {
+              return;
+            }
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
@@ -46,25 +50,25 @@ class ProjectNavigationBar extends StatelessWidget {
           },
           destinations: [
             NavigationDestination(
-              icon: Icon(
+              icon: const Icon(
                 Icons.camera_alt,
-                color: Theme.of(context).colorScheme.inverseSurface,
               ),
               label: "Take photo",
+              enabled: !disabled,
             ),
             NavigationDestination(
-              icon: Icon(
+              icon: const Icon(
                 Icons.edit,
-                color: Theme.of(context).colorScheme.inverseSurface,
               ),
               label: "Edit frames",
+              enabled: !disabled,
             ),
             NavigationDestination(
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_upward,
-                color: Theme.of(context).colorScheme.inverseSurface,
               ),
               label: "Export",
+              enabled: !disabled,
             ),
           ]),
     );

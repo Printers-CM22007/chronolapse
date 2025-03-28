@@ -2,8 +2,11 @@ import 'package:camera/camera.dart';
 import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:chronolapse/backend/video_generator/video_generator.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
+import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Used by DashboardPage to reload projects when it is returned to
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
@@ -15,6 +18,11 @@ late NotificationService notificationService;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
+
+  print("Cleaning up cache");
+  await cleanupGeneratedVideo();
+  await cleanUpTakenImages();
   print("Initialising SettingsStore");
   await SettingsStore.initialise();
   print("Initialising TimelapseStore");
@@ -40,24 +48,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Chronolapse',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: const ColorScheme(
           primary: Color(0xff3e3655),
           onPrimary: Color(0xffCCCCCC),
@@ -69,12 +66,71 @@ class MyApp extends StatelessWidget {
           onError: Color(0xffCCCCCC),
           brightness: Brightness.dark,
         ),
-
         useMaterial3: true,
       ),
       // home: const PhotoTakingPage("sampleProject"),
       home: const DashboardPage(),
       navigatorObservers: [routeObserver],
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dot Menu with Icons'),
+        actions: [
+          // Dot menu icon
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              // Handle the selected option
+              print('Selected option: $value');
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'Option 1',
+                  child: Row(
+                    children: [
+                      Icon(Icons.access_alarm), // Icon for Option 1
+                      SizedBox(width: 8),
+                      Text('Option 1'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'Option 2',
+                  child: Row(
+                    children: [
+                      Icon(Icons.account_circle), // Icon for Option 2
+                      SizedBox(width: 8),
+                      Text('Option 2'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'Option 3',
+                  child: Row(
+                    children: [
+                      Icon(Icons.archive), // Icon for Option 3
+                      SizedBox(width: 8),
+                      Text('Option 3'),
+                    ],
+                  ),
+                ),
+              ];
+            },
+            icon: const Icon(Icons.more_vert), // The "three dots" icon
+          ),
+        ],
+      ),
+      body: const Center(
+        child: Text('Press the menu icon on the AppBar'),
+      ),
     );
   }
 }

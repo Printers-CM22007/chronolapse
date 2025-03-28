@@ -15,14 +15,15 @@ Color redColour = const Color(0xff3A0101);
 class ProjectCard {
   String projectName;
   String? previewPicturePath;
-  String lastEdited;
+  String lastEditedText;
+  int lastEdited;
   Color boxColor = blackColour;
 
-  ProjectCard({
-    required this.projectName,
-    required this.previewPicturePath,
-    required this.lastEdited,
-  });
+  ProjectCard(
+      {required this.projectName,
+      required this.previewPicturePath,
+      required this.lastEditedText,
+      required this.lastEdited});
 
   static Future<List<ProjectCard>> getProjects() async {
     final projectNames = TimelapseStore.getProjectList();
@@ -53,7 +54,8 @@ class ProjectCard {
       return ProjectCard(
           projectName: name,
           previewPicturePath: firstFramePath,
-          lastEdited: lastEditedString);
+          lastEditedText: lastEditedString,
+          lastEdited: lastEdited);
     }).wait;
   }
 }
