@@ -45,8 +45,6 @@ void main() async {
       any,
       any,
       any,
-      uiLocalNotificationDateInterpretation:
-          anyNamed('uiLocalNotificationDateInterpretation'),
       androidScheduleMode: anyNamed('androidScheduleMode'),
       matchDateTimeComponents: anyNamed('matchDateTimeComponents'),
     )).thenAnswer((invocation) async {

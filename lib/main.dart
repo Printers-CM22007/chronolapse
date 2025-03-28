@@ -3,6 +3,9 @@ import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/dashboard_page.dart';
+import 'package:chronolapse/ui/photo_taking_page.dart';
+import 'package:chronolapse/ui/project_edit_page.dart';
+import 'package:chronolapse/ui/frame_editting_page.dart';
 import 'package:flutter/material.dart';
 
 import 'backend/image_transformer/image_transformer_test.dart';
@@ -25,10 +28,6 @@ void main() async {
   NotificationService notificationService = NotificationService();
   await notificationService.initialise();
 
-  // ! TEST CODE START
-
-  await testImageTransformerBreaksEverything();
-
   // List available cameras
   try {
     cameras = await availableCameras();
@@ -36,8 +35,6 @@ void main() async {
     // TODO: work out how to best report error
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
-
-  // ! TEST CODE END
 
   runApp(const MyApp());
 }
@@ -67,9 +64,9 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: const ColorScheme(
-          primary: Color(0xff08070B),
+          primary: Color(0xff3e3655),
           onPrimary: Color(0xffCCCCCC),
-          secondary: Color(0xff11373B),
+          secondary: Color(0xff0a616a),
           onSecondary: Color(0xffCCCCCC),
           surface: Color(0xff131316),
           onSurface: Color(0xffaacfd5),
@@ -80,6 +77,7 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
+      // home: const PhotoTakingPage("sampleProject"),
       home: const DashboardPage(),
       navigatorObservers: [routeObserver],
     );

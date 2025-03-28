@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/ui/frame_editting_page.dart';
 import 'package:flutter/material.dart';
 
 class PhotoPreviewPage extends StatefulWidget {
@@ -26,8 +27,13 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
     final frame = TimelapseFrame.createNew(widget._projectName);
     await frame.saveFrameFromPngFile(File(widget._picturePath));
 
+    String validUuid = frame.uuid() ?? "";
+
     if (mounted) {
-      Navigator.pop(context, true);
+      // Navigator.pop(context, true);
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => FrameEditor(widget._projectName, validUuid)));
     }
   }
 
@@ -46,16 +52,16 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
           TextButton(
             style: TextButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.inverseSurface),
-            onPressed: _onAcceptPressed,
+            onPressed: _onRejectPressed,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                  Icons.check,
+                  Icons.close,
                   color: Theme.of(context).colorScheme.onInverseSurface,
                 ),
                 Text(
-                  "Accept",
+                  "Cancel",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
@@ -66,16 +72,16 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
           TextButton(
             style: TextButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.inverseSurface),
-            onPressed: _onRejectPressed,
+            onPressed: _onAcceptPressed,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                  Icons.close,
+                  Icons.check,
                   color: Theme.of(context).colorScheme.onInverseSurface,
                 ),
                 Text(
-                  "Reject",
+                  "Continue",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
