@@ -66,17 +66,28 @@ class FrameEditorState extends State<FrameEditor>
     final frame =
         await TimelapseFrame.fromExisting(widget._projectName, widget._uuid);
 
+    // Get image and its dimensions
     final imagePath = frame.getFramePng().path;
 
     _frameImage = Image.file(File(imagePath));
-    _featurePoints = [const FeaturePoint("Test", FeaturePointPosition(0, 0))];
     _imageDimensions = await getImageDimensions(imagePath);
+
+    // Get feature points
+    _featurePoints = List.from(frame.data.featurePoints);
 
     if (mounted) {
       setState(() {
         _loaded = true;
       });
     }
+  }
+
+  Future<void> _saveChanges() async {
+    final frame =
+        await TimelapseFrame.fromExisting(widget._projectName, widget._uuid);
+
+    frame.data.featurePoints = _featurePoints;
+    frame.saveFrameDataOnly();
   }
 
   @override
@@ -414,7 +425,7 @@ class FrameEditorState extends State<FrameEditor>
               onPressed: () async {
                 print("Save button pressed");
 
-                // TODO: SAVE SAVE SAVE
+                await _saveChanges();
 
                 Navigator.of(context).pushReplacement(InstantPageRoute(
                     builder: (context) => const DashboardPage()));

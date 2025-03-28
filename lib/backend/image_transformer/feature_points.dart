@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'feature_points.g.dart';
@@ -25,9 +27,10 @@ class FeaturePointPosition {
 @JsonSerializable()
 class FeaturePoint {
   final String label;
+  final (int, int, int)? color;
   final FeaturePointPosition position;
 
-  const FeaturePoint(this.label, this.position);
+  const FeaturePoint(this.label, this.color, this.position);
 
   factory FeaturePoint.fromJson(Map<String, dynamic> json) =>
       _$FeaturePointFromJson(json);

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:chronolapse/ui/pages/feature_points_setup_page.dart';
 import 'package:chronolapse/ui/pages/frame_editting_page.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +25,9 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
   }
 
   void _onAcceptPressed() async {
+    final project = await TimelapseStore.getProject(widget._projectName);
+    final isFirstFrame = project.data.metaData.frames.isEmpty;
+
     // Save photo into timelapse storage
     final frame = TimelapseFrame.createNew(widget._projectName);
     await frame.saveFrameFromPngFile(File(widget._picturePath));
@@ -32,8 +37,16 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
     if (mounted) {
       // Navigator.pop(context, true);
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => FrameEditor(widget._projectName, validUuid)));
+      if (isFirstFrame) {
+        // Continue to feature points setup page
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) =>
+                FeaturePointsSetupPage(widget._projectName, validUuid)));
+      } else {
+        // Continue to frame editor page
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => FrameEditor(widget._projectName, validUuid)));
+      }
     }
   }
 
