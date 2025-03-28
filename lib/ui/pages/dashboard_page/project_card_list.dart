@@ -11,14 +11,20 @@ extension ProjectCardList on DashboardPageState {
         MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
   }
 
-  List<ProjectCard> _getFilteredProjects() {
+  List<ProjectCard> _getFilteredSortedProjects() {
     assert(_projectsLoaded);
 
-    return _projects
+    final filtered = _projects
         .where((project) => project.projectName
-            .toLowerCase()
-            .contains(_projectsSearchString.toLowerCase()))
+        .toLowerCase()
+        .contains(_projectsSearchString.toLowerCase()))
         .toList();
+    
+    filtered.sort((cardA, cardB) {
+      return cardB.lastEdited - cardA.lastEdited;
+    });
+    
+    return filtered;
   }
 
   Widget _createProjectCardList() {
@@ -26,7 +32,7 @@ extension ProjectCardList on DashboardPageState {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final projects = _getFilteredProjects();
+    final projects = _getFilteredSortedProjects();
 
     return Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
@@ -101,7 +107,7 @@ extension ProjectCardList on DashboardPageState {
                               height: constraints.maxHeight * 0.1,
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                project.lastEdited,
+                                project.lastEditedText,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(
                                   fontSize: 13,
