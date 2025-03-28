@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 
 import '../../settings_storage/project_requirements.dart';
@@ -44,9 +45,9 @@ class TimelapseFrame {
         data = pData;
 
   /// Creates a new frame (unsaved on disk) with initial `FrameData`
-  TimelapseFrame.createNew(String projectName)
+  TimelapseFrame.createNew(String projectName, FrameTransform frameTransform)
       : _projectName = projectName,
-        data = FrameData.initial(projectName);
+        data = FrameData.initial(projectName, frameTransform);
 
   /// Creates a new frame (unsaved on disk) from specified `FrameData`
   TimelapseFrame.createNewWithData(String projectName, FrameData pData)

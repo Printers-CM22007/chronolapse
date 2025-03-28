@@ -1,46 +1,56 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'package:chronolapse/backend/video_generator/frame_transformer.dart';
 import 'package:chronolapse/backend/video_generator/generator_options.dart';
 import 'package:chronolapse/backend/video_generator/video_compiler.dart';
+import 'package:chronolapse/native_methods/video_compiler.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
-class VideoGenerator {
-  late VideoCompiler compiler;
-  final GeneratorOptions options;
+class VideoGenerationResult {
+  final String? path;
+  final String? error;
 
-  VideoGenerator(this.options);
+  const VideoGenerationResult._(this.path, this.error);
+  const VideoGenerationResult.path(this.path) : error = null;
+  const VideoGenerationResult.error(this.error) : path = null;
+}
 
-  // VideoCompiler is currently cooked because cv.VideoWriter doesn't work on android :'(
-  // so for now, it will just place cat_video.mp4 into /data/data/com.example.chronolapse/files/timelapse.mp4
-  Future<void> generateVideoFromTimelapse(String projectName) async {
-    /*final projectData = await TimelapseStore.getProject(projectName);
-    final List<String> frameUUIDs = projectData.data.metaData.frames;
+const String framesFolderName = "frames";
+const String outputsFolderName = "outputs";
 
-    final referenceFrameUuid = projectData.data.knownFrameTransforms.frames[0];
-    final referenceFrame = await TimelapseFrame.fromExisting(projectData.projectName(), referenceFrameUuid);
+Future<VideoGenerationResult> generateVideo(String projectName, Function(String) progressCallback) async {
+  final projectData = await TimelapseStore.getProject(projectName);
+  final frameList = projectData.data.metaData.frames;
 
-    final referenceImg = cv2.imread(referenceFrame.getFramePng().path);
-    compiler = VideoCompiler(options.destination, options.codec, options.fps, referenceImg.width, referenceImg.height);
+  progressCallback("Setting up directory structure...");
 
-    for (var uuid in frameUUIDs) {
-      final frame = await TimelapseFrame.fromExisting(projectName, uuid);
-      final transform = await ImageTransformer.findHomography(projectData, frame);
+  final frameDir = Directory("${(await getApplicationCacheDirectory()).path}/$framesFolderName");
+  if (await frameDir.exists()) { await frameDir.delete(recursive: true); }
+  await frameDir.create(recursive: true);
 
-      final h = await ImageTransformer.applyHomography(referenceFrame.getFramePng(), transform!);
-      final resultingFrame = cv2.transpose(h);
-      if (resultingFrame.width != referenceImg.width || resultingFrame.height != referenceImg.height) {
-        throw Exception("Timelapse: $projectName contained frames with different sizes");
-      }
+  const int minId = 10^8;
+  const int maxId = 10^9;
+  final int outputId = minId + Random().nextInt(maxId - minId);
+  final outputDir = Directory("${(await getApplicationCacheDirectory()).path}/$outputsFolderName/$outputId");
+  if (await outputDir.exists()) { await outputDir.delete(recursive: true); }
+  await outputDir.create(recursive: true);
+  final outputFile = "${outputDir.path}/$projectName.mp4";
 
-      await compiler.WriteFrame(resultingFrame);
-    }
 
-    compiler.Finish();*/
-
-    final cat = await rootBundle.load("assets/cat_video.mp4");
-    final bytes = cat.buffer.asUint8List();
-
-    final file = File("/data/data/com.example.chronolapse/files/timelapse.mp4");
-    await file.writeAsBytes(bytes);
+  final transformResult = await transformFrames(projectName, frameList, frameDir.path, progressCallback);
+  if (!transformResult) {
+    return const VideoGenerationResult.error("Failed to transform frames");
   }
+
+  progressCallback("Compiling frames into video...");
+
+  final compileResult = await compileVideo(frameDir.path, frameList.length, outputFile);
+  if (compileResult == null) {
+    return const VideoGenerationResult.error("Failed to compile frames into video");
+  }
+
+  return VideoGenerationResult.path(compileResult);
 }

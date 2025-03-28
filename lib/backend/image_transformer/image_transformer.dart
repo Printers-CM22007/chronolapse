@@ -29,7 +29,7 @@ class ImageTransformer {
           " frame '${frame.uuid()}' with a automatically-generated one");
     }
 
-    final homography = await findHomography(projectData, frame);
+    final homography = await findHomography(projectData, frame.getFramePng().path);
 
     if (homography == null) {
       return false;
@@ -48,16 +48,16 @@ class ImageTransformer {
   /// should always be the case, however, as the first frame should have its
   /// `frameTransform` set to the identity matrix with `isKnown` set to true.
   static Future<Homography?> findHomography(
-      ProjectTimelapseData projectData, TimelapseFrame frame) async {
+      ProjectTimelapseData projectData, String framePath) async {
     // Ensure at least one reference frame exists
     if (projectData.data.knownFrameTransforms.frames.isEmpty) {
       throw Exception("Cannot transform image without any known transforms");
     }
 
-    if (frame.data.frameTransform?.isKnown ?? false) {
-      print("!! Attempted to find a homography automatically for a frame with a"
-          " known user-verified homography. This was probably done in error.");
-    }
+    // if (frame.data.frameTransform?.isKnown ?? false) {
+    //   print("!! Attempted to find a homography automatically for a frame with a"
+    //       " known user-verified homography. This was probably done in error.");
+    // }
 
     // Get which frame to try to align to
     // TODO: Apply better heuristics to this
@@ -72,8 +72,7 @@ class ImageTransformer {
         await cv.cvtColorAsync(referenceImg, cv.COLOR_BGR2GRAY);
 
     // Ensure frame is a reference frame
-    if (referenceFrame.data.frameTransform == null ||
-        !referenceFrame.data.frameTransform!.isKnown) {
+    if (!referenceFrame.data.frameTransform.isKnown) {
       throw Exception("Reference frame '${referenceFrame.uuid()}' marked as "
           "having known transform in project '${projectData.projectName()}' "
           "however it is not present in the frame data");
@@ -82,10 +81,10 @@ class ImageTransformer {
     // Get homography from the initial frame (absolute truth) to the reference
     // frame
     final referenceHomography =
-        referenceFrame.data.frameTransform!.transform.getMatrix();
+        referenceFrame.data.frameTransform.transform.getMatrix();
 
     // Get frame needing a homography
-    final img = await cv.imreadAsync(frame.getFramePng().path);
+    final img = await cv.imreadAsync(framePath);
     final imgGray = await cv.cvtColorAsync(img, cv.COLOR_BGR2GRAY);
 
     // Have to provide mask including all pixels as mask argument is

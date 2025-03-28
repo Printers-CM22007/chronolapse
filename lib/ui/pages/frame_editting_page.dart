@@ -312,15 +312,16 @@ class _FrameEditorState extends State<FrameEditor>
 
   Future<void> addPhotoBackend(
       ProjectTimelapseData tProject, String imagePath) async {
-    final baseFrame = TimelapseFrame.createNewWithData(
-        tProject.projectName(), FrameData.initial(tProject.projectName()));
-    await baseFrame.saveFrameFromPngBytes(
-        (await rootBundle.load(imagePath)).buffer.asUint8List());
-
-    // * Add frame to list of known frames
-    tProject.data.knownFrameTransforms.frames.add(
-        baseFrame.uuid()!); // uuid is known here as the frame has been saved
-    await tProject.saveChanges();
+    throw UnimplementedError();
+    // final baseFrame = TimelapseFrame.createNewWithData(
+    //     tProject.projectName(), FrameData.initial(tProject.projectName()));
+    // await baseFrame.saveFrameFromPngBytes(
+    //     (await rootBundle.load(imagePath)).buffer.asUint8List());
+    //
+    // // * Add frame to list of known frames
+    // tProject.data.knownFrameTransforms.frames.add(
+    //     baseFrame.uuid()!); // uuid is known here as the frame has been saved
+    // await tProject.saveChanges();
   }
 
   Future<void> accessBackendPhotos() async {
