@@ -68,12 +68,11 @@ class NotificationService {
   NotificationDetails notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'daily_channel_id',
-        "Daily Notifications",
-        channelDescription: 'Daily Notifications Channel',
-        importance: Importance.max,
-        priority: Priority.high,
-      ),
+          'daily_channel_id', "Daily Notifications",
+          channelDescription: 'Daily Notifications Channel',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon'),
     );
   }
 
@@ -85,7 +84,7 @@ class NotificationService {
       id ?? randomId,
       title,
       body,
-      const NotificationDetails(),
+      notificationDetails(),
     );
   }
 
@@ -95,11 +94,10 @@ class NotificationService {
       required String title,
       required String body,
       required NotificationFrequency notificationFrequency}) async {
-    final now = tz.TZDateTime.now(tz.local); //current date time
-    now.add(const Duration(minutes: 2));
+    final now = tz.TZDateTime.now(tz.local);
 
-    var scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, now.hour, now.minute);
+    var scheduledDate = now.add(const Duration(seconds: 5));
+
     var random = Random();
     int randomId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
@@ -107,7 +105,7 @@ class NotificationService {
         title,
         body,
         scheduledDate,
-        const NotificationDetails(),
+        notificationDetails(),
         /*
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,

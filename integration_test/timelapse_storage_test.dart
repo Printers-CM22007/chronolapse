@@ -8,7 +8,8 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('A', (WidgetTester tester) async {
-    expect(() async => await TimelapseStore.getProject("testProject"), throwsA(isA<UninitialisedException>()));
+    expect(() async => await TimelapseStore.getProject("testProject"),
+        throwsA(isA<UninitialisedException>()));
   });
   testWidgets('B', (WidgetTester tester) async {
     await SettingsStore.initialise();

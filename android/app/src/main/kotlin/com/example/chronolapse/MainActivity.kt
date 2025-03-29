@@ -28,30 +28,49 @@ class MainActivity: FlutterActivity() {
             if (call.method == "testFunction") {
                 val count = call.argument<Int>("count")!!
                 result.success(count + 1)
-            } else if (call.method == "compileTimelapse") {
-                val dirPath = call.argument<String>("framesDirPath")!!
-                val outputPath = call.argument<String>("outputPath")!!
-                val nFrames = call.argument<Int>("nFrames")!!
+            } else if (call.method == "compileVideo") {
+                val frameDir = call.argument<String>("frameDir")!!
+                val frameCount = call.argument<Int>("frameCount")!!
                 val projectName = call.argument<String>("projectName")!!
                 val frameRate = call.argument<Int>("frameRate")!!
                 val bitRate = call.argument<Int>("bitRate")!!
-                compileTimelapse(dirPath, outputPath, nFrames, projectName, frameRate, bitRate)
+                try {
+                    var outputPath = compileVideo(frameDir, frameCount, projectName, frameRate, bitRate)
+                    result.success(outputPath)
+                } catch (e: Exception) {
+                    Log.e("Chronolapse: VideoCompilation", "compileVideo encountered an exception", e)
+                    result.error("Chronolapse: VideoCompilation", "compileVideo encountered an exception", e)
+                }
+
             } else {
                 result.notImplemented()
             }
         }
     }
 
-    private fun compileTimelapse(dirPath: String, outputPath: String, nFrames: Int, projectName: String, frameRate: Int, bitRate: Int): File {
+    private fun compileVideo(dirPath: String, frameCount: Int, projectName: String, frameRate: Int, bitRate: Int): String {
         val uriList: MutableList<Uri> = ArrayList()
-        for (i in 0..nFrames) {
+        for (i in 0..frameCount) {
             val file = File("$dirPath/$i.png")
 
             val uri = Uri.fromFile(file);
             uriList.add(uri)
         }
-        TimeLapseEncoder(frameRate, bitRate).encode(cacheDir.path + "/$projectName.mp4", uriList, contentResolver);
+        var outputPath = "${cacheDir.path}/$projectName.mp4"
+        TimeLapseEncoder(frameRate, bitRate).encode(outputPath, uriList, contentResolver);
+        return outputPath
+    }
 
-        return File(cacheDir, "output.mp4")
+    private fun testMediaCodec() {
+
+        val uriList: MutableList<Uri> = ArrayList()
+        for (i in 0..60) {
+            val file = File(cacheDir, "CAT.png")
+
+            val uri = Uri.fromFile(file);
+            Log.d("DEBUG", uri.path.toString())
+            uriList.add(uri)
+        }
+        TimeLapseEncoder(60, 20000).encode(cacheDir.path + "/video.mp4", uriList, contentResolver);
     }
 }

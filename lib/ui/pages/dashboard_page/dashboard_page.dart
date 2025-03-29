@@ -4,7 +4,7 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
-import 'package:chronolapse/ui/pages/project_edit_page.dart';
+import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -98,8 +98,6 @@ class DashboardPageState extends State<DashboardPage> with RouteAware {
           "Dashboard",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
       ),
       body: Column(
         children: [
@@ -124,10 +122,10 @@ class DashboardPageState extends State<DashboardPage> with RouteAware {
             height: 15,
           ),
           Expanded(
-            child: _projectsLoaded && _projects.isEmpty
-                ? const Text("No projects - click 'Create New' to get started")
-                : _createProjectCardList(),
-          ),
+              child: _projectsLoaded && _projects.isEmpty
+                  ? const Text(
+                      "No projects - click 'Create New' to get started")
+                  : _createProjectCardList()),
         ],
       ),
       bottomNavigationBar: const DashboardNavigationBar(0),

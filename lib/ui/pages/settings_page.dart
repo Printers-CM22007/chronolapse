@@ -9,7 +9,10 @@ class SettingsPage extends StatefulWidget {
   final List<WidgetSettingGlobal>? _globalSettings;
   final List<WidgetSettingRequiresProject>? _projectSettings;
 
-  const SettingsPage(this._project, {globalSettings, projectSettings, super.key}): _globalSettings = globalSettings, _projectSettings = projectSettings;
+  const SettingsPage(this._project,
+      {globalSettings, projectSettings, super.key})
+      : _globalSettings = globalSettings,
+        _projectSettings = projectSettings;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -18,8 +21,10 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    final currentProjectWidgets = widget._projectSettings ?? availableProjectSettings;
-    final currentGlobalWidgets = widget._globalSettings ?? availableGlobalSettings;
+    final currentProjectWidgets =
+        widget._projectSettings ?? availableProjectSettings;
+    final currentGlobalWidgets =
+        widget._globalSettings ?? availableGlobalSettings;
 
     final globalWidgets =
         currentGlobalWidgets.map((e) => e.getWidget()).toList();

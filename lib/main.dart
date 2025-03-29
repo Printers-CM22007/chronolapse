@@ -42,7 +42,7 @@ void main() async {
 
 class AppRoot extends StatelessWidget {
   final Widget _homePage;
-  
+
   const AppRoot(this._homePage, {super.key});
 
   // This widget is the root of your application.
