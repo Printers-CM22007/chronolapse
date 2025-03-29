@@ -86,34 +86,40 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Column(children: [
+      body:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        SizedBox(
+            // box shouldn't be needed but it throws without an explicit height
+            height: MediaQuery.of(context).size.width *
+                (_frameImageDimensions.$2.toDouble() /
+                    _frameImageDimensions.$1.toDouble()),
+            child: FeaturePointsEditor(
+              featurePoints: _featurePoints,
+              backgroundImage: _frameImage,
+              backgroundImageKey: _frameImageKey,
+              backgroundImageDimensions: _frameImageDimensions,
+              allowAdding: true,
+              onPointAdded: () {
+                setState(() {});
+              },
+            )),
         const Padding(
-            padding: EdgeInsets.all(30.0),
+            padding: EdgeInsets.all(10.0),
             child: Text(
-              "Please mark up to 3 feature points on the image",
-              style: TextStyle(color: Colors.white, fontSize: 30),
+              "Mark up to 3 feature points on the image",
+              style: TextStyle(color: Colors.white, fontSize: 20),
               textAlign: TextAlign.center,
             )),
-        SizedBox(
-          height: _imageViewHeight,
-          child: FeaturePointsEditor(
-            featurePoints: _featurePoints,
-            backgroundImage: _frameImage,
-            backgroundImageKey: _frameImageKey,
-            backgroundImageDimensions: _frameImageDimensions,
-            allowAdding: true,
-            onPointAdded: () {
-              setState(() {});
-            },
-          ),
-        ),
-        ElevatedButton(
-          onPressed: allowSaveAndExit ? _saveAndExit : null,
-          style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black,
-              backgroundColor: Theme.of(context).colorScheme.onSurface),
-          child: const Text("Save and continue"),
-        )
+        Container(
+            alignment: Alignment.bottomCenter,
+            padding: const EdgeInsets.all(25.0),
+            child: ElevatedButton(
+              onPressed: allowSaveAndExit ? _saveAndExit : null,
+              style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Theme.of(context).colorScheme.onSurface),
+              child: const Text("Save and continue"),
+            ))
       ]),
     );
   }
