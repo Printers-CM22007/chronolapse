@@ -11,14 +11,11 @@ import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import '../../backend/timelapse_storage/frame/timelapse_frame.dart';
-import '../../backend/timelapse_storage/timelapse_data.dart';
-import '../../backend/timelapse_storage/timelapse_store.dart';
 
 class FrameEditor extends StatefulWidget {
   final String _projectName;
@@ -299,7 +296,7 @@ class FrameEditorState extends State<FrameEditor>
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_pageTitle),
+          title: const Text(_pageTitle),
           actions: [
             IconButton(
                 onPressed: () => setState(() {

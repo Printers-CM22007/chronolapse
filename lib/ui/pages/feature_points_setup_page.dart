@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/frame_editor_page.dart';
@@ -14,7 +13,7 @@ class FeaturePointsSetupPage extends StatefulWidget {
   final PendingFrame _pendingFrame;
   final bool isFirstFrame;
 
-  FeaturePointsSetupPage(this._pendingFrame,
+  const FeaturePointsSetupPage(this._pendingFrame,
       {this.isFirstFrame = false, super.key});
 
   @override
@@ -27,7 +26,7 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   static const double _imageViewHeight = 600;
   static const int _minimumFeaturePoints = 3;
 
-  List<FeaturePoint> _featurePoints = [];
+  final List<FeaturePoint> _featurePoints = [];
 
   late Image _frameImage;
   late GlobalKey _frameImageKey;

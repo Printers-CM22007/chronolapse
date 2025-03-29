@@ -50,7 +50,7 @@ class PersistentSettingWithProject<T> {
 /// A project-less setting
 class Global<T> extends PersistentSettingWithProject<T> {
   const Global(PersistentSetting<T> setting)
-  // LCOV incorrectly believes the next line is separate from the previous
+      // LCOV incorrectly believes the next line is separate from the previous
       : super(const ProjectName.global(), setting); // coverage:ignore-line
 
   @override
