@@ -8,6 +8,18 @@ import '../../settings_storage/project_requirements.dart';
 import '../../settings_storage/settings_options.dart';
 import 'frame_data.dart';
 
+class NoUuidException implements Exception {
+  NoUuidException();
+
+  // Ignored because trivial and will not be covered by tests
+  // coverage:ignore-start
+  @override
+  String toString() {
+    return "NoUuidException: Uuid not set as frame hasn't been loaded from disc and hasn't been saved";
+  }
+  // coverage:ignore-end
+}
+
 /// An interface for interacting with timelapse frames on-disk
 class TimelapseFrame {
   String? _uuid;
@@ -20,8 +32,7 @@ class TimelapseFrame {
 
   String _getUuid() {
     if (_uuid == null) {
-      throw Exception(
-          "Uuid not set as frame hasn't been loaded from disc and hasn't been saved");
+      throw NoUuidException();
     }
     return _uuid!;
   }
@@ -98,7 +109,7 @@ class TimelapseFrame {
   }
 
   /// Updates the `FrameData` with data from disk
-  Future<void> updateDataFromDisk() async {
+  Future<void> reloadFromDisk() async {
     final file = _getFrameDataFile(_projectName, _getUuid());
 
     final jsonString = await file.readAsString();
@@ -109,8 +120,8 @@ class TimelapseFrame {
   /// Deletes the frame
   Future<void> deleteFrame() async {
     await TimelapseStore.deleteFrameUuid(_projectName, _getUuid());
-    _uuid = null;
     await _getFrameImageFile(_projectName, _getUuid()).delete();
+    _uuid = null;
   }
 
   /// Returns the frame data file

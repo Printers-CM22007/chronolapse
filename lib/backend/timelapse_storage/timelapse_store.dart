@@ -156,7 +156,8 @@ class TimelapseStore {
   static String _getNewUuid(ProjectTimelapseData data) {
     var uuid = const Uuid().v4();
     while (data.data.metaData.frames.contains(uuid)) {
-      uuid = const Uuid().v4();
+      // Coverage disabled because this should never run unless entropy source sucks
+      uuid = const Uuid().v4(); // coverage:ignore-line
     }
     return uuid;
   }
@@ -177,16 +178,16 @@ class TimelapseStore {
   /// Creates a new uuid, insets it into the frames list, and returns it.
   /// `TimelapseStore.initialise()` must have been called (and awaited) before
   /// this can be used.
-  static Future<String> getAndInsertFrameUuid(
-      String projectName, int position) async {
-    final data = await getProject(projectName);
-    final uuid = _getNewUuid(data);
-
-    data.data.metaData.frames.insert(position, uuid);
-    await data.saveChanges();
-
-    return uuid;
-  }
+  // static Future<String> getAndInsertFrameUuid(
+  //     String projectName, int position) async {
+  //   final data = await getProject(projectName);
+  //   final uuid = _getNewUuid(data);
+  //
+  //   data.data.metaData.frames.insert(position, uuid);
+  //   await data.saveChanges();
+  //
+  //   return uuid;
+  // }
 
   /// Deletes a given frame
   /// `TimelapseStore.initialise()` must have been called (and awaited) before
