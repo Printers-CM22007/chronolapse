@@ -1,6 +1,5 @@
 import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
-import 'package:chronolapse/main.dart';
 import 'package:flutter/material.dart';
 
 import '../../../util/util.dart';
@@ -34,6 +33,8 @@ abstract class SettingWidget<T> extends APersistentSetting<T> {
 /// A persistent setting
 abstract class PersistentSetting<T> extends SettingWidget<T> {
   const PersistentSetting(super._key, super._defaultVal);
+
+  String key() => _key;
 
   /// Returns the value of the setting it is tied to
   T getValue(ProjectName projectName);

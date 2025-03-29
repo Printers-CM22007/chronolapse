@@ -57,7 +57,6 @@ class _MultistepWidgetState extends State<MultistepWidget> {
   int _findClosestValue(double value) {
     value /= 100;
     value *= widget._setting._allowedValues.length.toDouble() - 1;
-    print(value);
     return widget._setting._allowedValues[value.round()];
   }
 
@@ -81,6 +80,7 @@ class _MultistepWidgetState extends State<MultistepWidget> {
                 widget._setting.setValue(widget._projectName, _value);
               });
             },
+            key: Key("${widget._setting._key}Slider"),
           ),
           Text(
               '${widget._setting._valuePrefix}${_value.toInt()}${widget._setting._valueSuffix}'),
