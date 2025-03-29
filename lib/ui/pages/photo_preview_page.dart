@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:chronolapse/ui/models/pending_frame.dart';
+import 'package:chronolapse/ui/pages/feature_points_setup_page.dart';
 import 'package:flutter/material.dart';
 
 class PhotoPreviewPage extends StatefulWidget {
-  final String _projectName;
-  final String _picturePath;
+  final PendingFrame _pendingFrame;
 
-  const PhotoPreviewPage(this._projectName, this._picturePath, {super.key});
+  const PhotoPreviewPage(this._pendingFrame, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,21 +22,14 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
   }
 
   void _onAcceptPressed() async {
-    // Save photo into timelapse storage
+    final isFirstFrame = widget._pendingFrame.frameIndex == 0;
 
-    throw UnimplementedError();
-
-    // final frame = TimelapseFrame.createNew(widget._projectName);
-    // await frame.saveFrameFromPngFile(File(widget._picturePath));
-    //
-    // String validUuid = frame.uuid() ?? "";
-    //
-    // if (mounted) {
-    //   // Navigator.pop(context, true);
-    //
-    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //       builder: (context) => FrameEditor(widget._projectName, validUuid)));
-    // }
+    if (isFirstFrame) {
+      // Continue to feature points setup page
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => FeaturePointsSetupPage(widget._pendingFrame,
+              isFirstFrame: isFirstFrame)));
+    }
   }
 
   void _onRejectPressed() {
@@ -45,7 +39,7 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Image(image: FileImage(File(widget._picturePath))),
+      Image(image: FileImage(File(widget._pendingFrame.temporaryImagePath))),
       Container(
         alignment: Alignment.bottomCenter,
         padding: const EdgeInsets.all(25.0),

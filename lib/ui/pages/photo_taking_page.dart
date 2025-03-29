@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
+import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/photo_preview_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -143,9 +145,16 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
         // Transition to PicturePreviewPage
         if (mounted) {
+          final project = await TimelapseStore.getProject(widget._projectName);
+          final frameIndex = project.data.metaData.frames.length;
+
+          final pendingFrame = PendingFrame(
+              projectName: widget._projectName,
+              frameIndex: frameIndex,
+              temporaryImagePath: imagePath);
+
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  PhotoPreviewPage(widget._projectName, imagePath)));
+              builder: (context) => PhotoPreviewPage(pendingFrame)));
         }
       }).timeout(_pictureTakingTimeoutDuration);
     } on TimeoutException catch (_) {
@@ -186,6 +195,11 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
       final temporaryDir = await getApplicationCacheDirectory();
       final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
+
+      if (!await cameraDir.exists()) {
+        await cameraDir.create();
+      }
+
       final imagePath = "${cameraDir.path}/${DateTime.now().hashCode}.png";
 
       final file = File(imagePath);
