@@ -30,16 +30,22 @@ void main() async {
     await SettingsStore.initialise();
     await SettingsStore.deleteAllSettings();
 
-    const exampleToggleSetting = Global(
-        ToggleSetting("exampleToggle", false, "Example Toggle One", "Does nothing"));
+    const exampleToggleSetting = Global(ToggleSetting(
+        "exampleToggle", false, "Example Toggle One", "Does nothing"));
     const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
         "exampleToggleTwo", true, "Example Toggle Two", "Also does nothing"));
 
-    await tester.pumpWidget(AppRoot(SettingsPage("exampleProject", globalSettings: [exampleToggleSetting.asWidgetOnly()], projectSettings: [exampleToggleSettingTwo.asWidgetOnly()])));
+    await tester.pumpWidget(AppRoot(SettingsPage("exampleProject",
+        globalSettings: [exampleToggleSetting.asWidgetOnly()],
+        projectSettings: [exampleToggleSettingTwo.asWidgetOnly()])));
     await tester.pumpAndSettle();
 
     expect(exampleToggleSetting.getValue(), false);
-    expect(exampleToggleSettingTwo.withProject(const ProjectName("exampleProject")).getValue(), true);
+    expect(
+        exampleToggleSettingTwo
+            .withProject(const ProjectName("exampleProject"))
+            .getValue(),
+        true);
 
     final toggleOneFinder = find.text("Example Toggle One");
     final toggleTwoFinder = find.text("Example Toggle Two");
@@ -53,6 +59,10 @@ void main() async {
 
     await tester.tap(toggleTwoFinder);
     await tester.pumpAndSettle();
-    expect(exampleToggleSettingTwo.withProject(const ProjectName("exampleProject")).getValue(), false);
+    expect(
+        exampleToggleSettingTwo
+            .withProject(const ProjectName("exampleProject"))
+            .getValue(),
+        false);
   });
 }

@@ -5,8 +5,6 @@ import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/frame_data.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/frame_metadata.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
-import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:flutter/material.dart';
 
 class PendingFrame {
   final String projectName;
