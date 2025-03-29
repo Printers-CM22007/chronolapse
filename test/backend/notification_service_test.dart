@@ -10,7 +10,6 @@ import 'mocks/mock_notification_plugin.mocks.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
-  late NotificationService notificationService;
   late MockFlutterLocalNotificationsPlugin mockFlutterLocalNotificationsPlugin;
 
   List<PendingNotificationRequest> scheduledNotifications = [];
@@ -67,48 +66,46 @@ void main() async {
 
     // Inject the mock plugin into NotificationService
     print("Injecting mock plugin...");
-    notificationService =
-        NotificationService(plugin: mockFlutterLocalNotificationsPlugin);
-    await notificationService.initialise();
+    await NotificationService.initialise(notificationPlugin: mockFlutterLocalNotificationsPlugin);
   });
 
   group('Notification Service', () {
     test('Should have 0 notifications scheduled', () async {
       List<PendingNotificationRequest> pendingNotifications =
-          await notificationService.getPendingNotifications();
+          await NotificationService.getPendingNotifications();
 
       expect(pendingNotifications.length, 0);
     });
     test('should have 2 notifications scheduled', () async {
-      await notificationService.scheduleNotification(
+      await NotificationService.scheduleNotification(
           title: "n1",
           body: "test noti_1",
           notificationFrequency: NotificationFrequency.daily);
-      await notificationService.scheduleNotification(
+      await NotificationService.scheduleNotification(
           title: "n2",
           body: "test noti_2",
           notificationFrequency: NotificationFrequency.weekly);
 
       List<PendingNotificationRequest> pendingNotifications =
-          await notificationService.getPendingNotifications();
+          await NotificationService.getPendingNotifications();
 
       expect(pendingNotifications.length, 2);
     });
     test('Cancelling notifications should set pendingNotifications to 0',
         () async {
-      await notificationService.scheduleNotification(
+      await NotificationService.scheduleNotification(
           title: "n1",
           body: "test noti_1",
           notificationFrequency: NotificationFrequency.daily);
-      await notificationService.scheduleNotification(
+      await NotificationService.scheduleNotification(
           title: "n2",
           body: "test noti_2",
           notificationFrequency: NotificationFrequency.weekly);
 
-      notificationService.cancelAllNotifications();
+      NotificationService.cancelAllNotifications();
 
       List<PendingNotificationRequest> pendingNotifications =
-          await notificationService.getPendingNotifications();
+          await NotificationService.getPendingNotifications();
 
       expect(pendingNotifications.length, 0);
     });

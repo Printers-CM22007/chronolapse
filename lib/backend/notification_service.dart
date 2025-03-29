@@ -5,6 +5,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as ltz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
+import '../util/uninitialised_exception.dart';
+
 enum NotificationFrequency { daily, weekly }
 
 extension NotificationFrequencyExt on NotificationFrequency {
@@ -31,21 +33,25 @@ extension NotificationFrequencyExt on NotificationFrequency {
 }
 
 class NotificationService {
-  static final NotificationService _notificationService =
-      NotificationService._internal();
+  static NotificationService? _instance;
+  final FlutterLocalNotificationsPlugin _notificationsPlugin;
 
-  late FlutterLocalNotificationsPlugin notificationsPlugin;
-
-  factory NotificationService({FlutterLocalNotificationsPlugin? plugin}) {
-    _notificationService.notificationsPlugin =
-        plugin ?? FlutterLocalNotificationsPlugin();
-    return _notificationService;
+  NotificationService._(this._notificationsPlugin);
+  
+  static NotificationService _getInstance() {
+    if (_instance == null) {
+      throw UninitialisedException(
+          "Notification.initialise() has not been called (must be awaited)");
+    }
+    return _instance!;
   }
 
-  NotificationService._internal();
-
   //INITIALIZE
-  Future<void> initialise() async {
+  static Future<void> initialise({FlutterLocalNotificationsPlugin? notificationPlugin}) async {
+    if (_instance != null) { return; }
+    
+    final instance = NotificationService._(notificationPlugin ?? FlutterLocalNotificationsPlugin());
+    
     //initialize timezone handling
     ltz.initializeTimeZones();
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
@@ -61,11 +67,13 @@ class NotificationService {
     );
 
     //initialize the plugin
-    await notificationsPlugin.initialize(initSettings);
+    await instance._notificationsPlugin.initialize(initSettings);
+    
+    _instance = instance;
   }
 
   //NOTIFICATION DETAILS
-  NotificationDetails notificationDetails() {
+  static NotificationDetails notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
           'daily_channel_id', "Daily Notifications",
@@ -77,10 +85,10 @@ class NotificationService {
   }
 
   //SHOW NOTIFICATION
-  Future<void> showNotification({int? id, String? title, String? body}) async {
+  static Future<void> showNotification({int? id, String? title, String? body}) async {
     var random = Random();
     int randomId = random.nextInt(100000);
-    return notificationsPlugin.show(
+    return _getInstance()._notificationsPlugin.show(
       id ?? randomId,
       title,
       body,
@@ -89,7 +97,7 @@ class NotificationService {
   }
 
   //SCHEDULE NOTIFICATIONS
-  Future<void> scheduleNotification(
+  static Future<void> scheduleNotification(
       {int? id,
       required String title,
       required String body,
@@ -100,7 +108,7 @@ class NotificationService {
 
     var random = Random();
     int randomId = random.nextInt(100000);
-    await notificationsPlugin.zonedSchedule(
+    await _getInstance()._notificationsPlugin.zonedSchedule(
         id ?? randomId, //if no Id passed in use random id
         title,
         body,
@@ -114,12 +122,12 @@ class NotificationService {
 
         // REPEATS THE NOTIFICATION DAILY
         matchDateTimeComponents:
-            resolveNotificationFrequency(notificationFrequency)
+            _resolveNotificationFrequency(notificationFrequency)
         //if daily is passed repeat it daily otherwise repeat weekly
         );
   }
 
-  DateTimeComponents resolveNotificationFrequency(NotificationFrequency nf) {
+  static DateTimeComponents _resolveNotificationFrequency(NotificationFrequency nf) {
     switch (nf) {
       case NotificationFrequency.daily:
         {
@@ -131,16 +139,16 @@ class NotificationService {
     }
   }
 
-  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+  static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     print("Inside getPendingNotifications()"); // Debugging print
-    return await notificationsPlugin.pendingNotificationRequests();
+    return await _getInstance()._notificationsPlugin.pendingNotificationRequests();
   }
 
-  Future<void> cancelNotification(int id) async {
-    await notificationsPlugin.cancel(id);
+  static Future<void> cancelNotification(int id) async {
+    await _getInstance()._notificationsPlugin.cancel(id);
   }
 
-  Future<void> cancelAllNotifications() async {
-    await notificationsPlugin.cancelAll();
+  static Future<void> cancelAllNotifications() async {
+    await _getInstance()._notificationsPlugin.cancelAll();
   }
 }

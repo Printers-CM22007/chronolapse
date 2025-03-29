@@ -17,9 +17,9 @@ class NotificationFrequencySetting
   Future<void> setValue(
       ProjectName projectName, NotificationFrequency? value) async {
     if (value == null) {
-      notificationService.cancelNotification(projectName.name().hashCode);
+      NotificationService.cancelNotification(projectName.name().hashCode);
     } else {
-      notificationService.scheduleNotification(
+      NotificationService.scheduleNotification(
           id: projectName.name().hashCode,
           title: "'${projectName.name()!}' Reminder",
           body: 'Remember to take a photo!',
