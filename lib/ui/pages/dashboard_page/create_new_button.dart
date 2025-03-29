@@ -53,6 +53,7 @@ extension CreateNewButton on DashboardPageState {
                     children: [
                       //User input for project name
                       TextField(
+                        key: const Key("newProjectTextField"),
                         controller: _projectNameController,
                         onChanged: (newVal) {
                           setState(() {

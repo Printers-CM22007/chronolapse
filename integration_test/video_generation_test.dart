@@ -13,7 +13,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() async {
-
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Generate Video', (WidgetTester tester) async {
     await setup();
@@ -21,7 +20,7 @@ void main() async {
     await tester.pumpAndSettle();
 
     final buttonFinder = //find.byKey(const Key("create_new_project"));//text("Create New");
-    find.text("Create New");
+        find.text("Create New");
     expect(buttonFinder, findsOneWidget);
 
     await tester.tap(buttonFinder);
@@ -36,8 +35,5 @@ void main() async {
     //MAYBE TAP???
     await tester.enterText(projectNameFinder, "video_generation_test_project");
     */
-
   });
-
-
 }
