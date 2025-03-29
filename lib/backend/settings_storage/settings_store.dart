@@ -1,3 +1,4 @@
+import 'package:chronolapse/util/uninitialised_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// An interface to `SharedPreferences` - persistent storage of settings
@@ -6,7 +7,7 @@ class SettingsStore {
 
   static SettingsStore _getInstance() {
     if (_instance == null) {
-      throw Exception(
+      throw UninitialisedException(
           "SettingsStore.initialise() has not been called (must be awaited)");
     }
     return _instance!;

@@ -18,8 +18,6 @@ late NotificationService notificationService;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
-
   print("Cleaning up cache");
   await cleanupGeneratedVideo();
   await cleanUpTakenImages();
@@ -39,11 +37,13 @@ void main() async {
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
 
-  runApp(const MyApp());
+  runApp(const AppRoot(DashboardPage()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AppRoot extends StatelessWidget {
+  final Widget _homePage;
+  
+  const AppRoot(this._homePage, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -69,68 +69,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: const PhotoTakingPage("sampleProject"),
-      home: const DashboardPage(),
+      home: _homePage,
       navigatorObservers: [routeObserver],
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dot Menu with Icons'),
-        actions: [
-          // Dot menu icon
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              // Handle the selected option
-              print('Selected option: $value');
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                const PopupMenuItem<String>(
-                  value: 'Option 1',
-                  child: Row(
-                    children: [
-                      Icon(Icons.access_alarm), // Icon for Option 1
-                      SizedBox(width: 8),
-                      Text('Option 1'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Option 2',
-                  child: Row(
-                    children: [
-                      Icon(Icons.account_circle), // Icon for Option 2
-                      SizedBox(width: 8),
-                      Text('Option 2'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Option 3',
-                  child: Row(
-                    children: [
-                      Icon(Icons.archive), // Icon for Option 3
-                      SizedBox(width: 8),
-                      Text('Option 3'),
-                    ],
-                  ),
-                ),
-              ];
-            },
-            icon: const Icon(Icons.more_vert), // The "three dots" icon
-          ),
-        ],
-      ),
-      body: const Center(
-        child: Text('Press the menu icon on the AppBar'),
-      ),
     );
   }
 }

@@ -3,9 +3,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
+import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
+import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/photo_preview_page.dart';
+import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
+import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
@@ -29,8 +35,16 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     with WidgetsBindingObserver {
   static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
   static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
+  static const double _referenceOverlayOpacity = 0.33;
 
   late CameraController _cameraController;
+
+  // Reference frame information
+  late Image _referenceFrameImage;
+  late GlobalKey _referenceFrameImageKey;
+  late (int, int) _referenceFrameDimensions;
+  late List<FeaturePoint> _referenceFrameFeaturePoints;
+  bool _hasReferenceFrame = false;
 
   @override
   void initState() {
@@ -40,6 +54,9 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     _cameraController = CameraController(cameras.first, _resolutionPreset);
 
     _initializeCameraController();
+
+    // Get reference frame
+    _getReferenceFrame();
   }
 
   @override
@@ -78,7 +95,9 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
       ),
       body: Stack(children: [
         // Camera preview
-        Center(child: CameraPreview(_cameraController)),
+        Center(
+            child:
+                _createReferenceFrameOverlay(CameraPreview(_cameraController))),
         // Take photo button
         Container(
             alignment: Alignment.bottomCenter,
@@ -126,6 +145,27 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     }
   }
 
+  Future<void> _getReferenceFrame() async {
+    final project = await TimelapseStore.getProject(widget._projectName);
+
+    if (project.data.metaData.frames.isEmpty) return;
+
+    final referenceFrame = await TimelapseFrame.fromExisting(
+        project.projectName(), project.data.metaData.frames[0]);
+
+    _referenceFrameImageKey = GlobalKey();
+    _referenceFrameImage =
+        Image.file(referenceFrame.getFramePng(), key: _referenceFrameImageKey);
+    _referenceFrameFeaturePoints = referenceFrame.data.featurePoints;
+    _referenceFrameDimensions =
+        await getImageDimensions(referenceFrame.getFramePng().path);
+    _hasReferenceFrame = true;
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   Future<void> _onShutterButtonPressed() async {
     if (!_cameraController.value.isInitialized) {
       print("Error: _takePhoto called before camera controller is initialized");
@@ -143,9 +183,16 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
         // Transition to PicturePreviewPage
         if (mounted) {
+          final project = await TimelapseStore.getProject(widget._projectName);
+          final frameIndex = project.data.metaData.frames.length;
+
+          final pendingFrame = PendingFrame(
+              projectName: widget._projectName,
+              frameIndex: frameIndex,
+              temporaryImagePath: imagePath);
+
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  PhotoPreviewPage(widget._projectName, imagePath)));
+              builder: (context) => PhotoPreviewPage(pendingFrame)));
         }
       }).timeout(_pictureTakingTimeoutDuration);
     } on TimeoutException catch (_) {
@@ -155,6 +202,22 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     } finally {
       await _cameraController.resumePreview();
     }
+  }
+
+  Widget _createReferenceFrameOverlay(Widget background) {
+    if (!_hasReferenceFrame) return background;
+
+    return Stack(children: [
+      background,
+      FeaturePointsEditor(
+        featurePoints: _referenceFrameFeaturePoints,
+        backgroundImage: Opacity(
+            opacity: _referenceOverlayOpacity, child: _referenceFrameImage),
+        backgroundImageKey: _referenceFrameImageKey,
+        backgroundImageDimensions: _referenceFrameDimensions,
+        allowDragging: false,
+      ),
+    ]);
   }
 
   // Workaround for issue with CameraController.takePicture()
@@ -186,6 +249,11 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
       final temporaryDir = await getApplicationCacheDirectory();
       final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
+
+      if (!await cameraDir.exists()) {
+        await cameraDir.create();
+      }
+
       final imagePath = "${cameraDir.path}/${DateTime.now().hashCode}.png";
 
       final file = File(imagePath);
@@ -266,7 +334,9 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 Future<void> cleanUpTakenImages() async {
   final temporaryDir = await getApplicationCacheDirectory();
   final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
-  if (!await cameraDir.exists()) { return; }
+  if (!await cameraDir.exists()) {
+    return;
+  }
 
   for (final entry in await cameraDir.list().toList()) {
     entry.delete(recursive: true);

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Ignoring because example file
+// coverage:ignore-start
 class ScratchPage extends StatefulWidget {
   const ScratchPage({super.key});
 
@@ -48,3 +50,4 @@ class _ScratchPageState extends State<ScratchPage> {
     );
   }
 }
+// coverage:ignore-end

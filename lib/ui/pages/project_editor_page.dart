@@ -1,6 +1,6 @@
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/ui/pages/frame_editting_page.dart';
+import 'package:chronolapse/ui/pages/frame_editor_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -14,18 +14,18 @@ class _Frame {
   const _Frame(this.uuid, this.image, this.imageKey);
 }
 
-class ProjectEditPage extends StatefulWidget {
+class ProjectEditorPage extends StatefulWidget {
   final String _projectName;
 
-  const ProjectEditPage(this._projectName, {super.key});
+  const ProjectEditorPage(this._projectName, {super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return ProjectEditPageState();
+    return ProjectEditorPageState();
   }
 }
 
-class ProjectEditPageState extends State<ProjectEditPage> {
+class ProjectEditorPageState extends State<ProjectEditorPage> {
   late List<_Frame> _frames;
   bool _framesLoaded = false;
 

@@ -19,9 +19,12 @@ const String framesFolderName = "frames";
 const String outputsFolderName = "outputs";
 
 Future<void> cleanupGeneratedVideo() async {
-  final videoDirectory = Directory("${(await getApplicationCacheDirectory()).path}/$outputsFolderName");
+  final videoDirectory = Directory(
+      "${(await getApplicationCacheDirectory()).path}/$outputsFolderName");
 
-  if (!await videoDirectory.exists()) { return; }
+  if (!await videoDirectory.exists()) {
+    return;
+  }
 
   final videoDirs = await videoDirectory.list().toList();
 
@@ -63,8 +66,8 @@ Future<VideoGenerationResult> generateVideo(
 
   progressCallback("Compiling frames into video...");
 
-  final compileResult =
-      await compileVideo(frameDir.path, frameList.length, outputFile, projectName);
+  final compileResult = await compileVideo(
+      frameDir.path, frameList.length, outputFile, projectName);
   if (compileResult == null) {
     return const VideoGenerationResult.error(
         "Failed to compile frames into video");
