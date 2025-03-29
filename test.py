@@ -61,8 +61,6 @@ integration_test_files = [os.path.join(root, file) for root, _, files in os.walk
 print(f"Unit tests: {', '.join(unit_test_files)}")
 print(f"Integration tests: {', '.join(integration_test_files)}")
 
-exit()
-
 all_tests = unit_test_files + integration_test_files
 
 for i, test in enumerate(all_tests):
