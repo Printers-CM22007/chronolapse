@@ -47,6 +47,8 @@ class NotificationFrequencyWidget extends StatefulWidget {
       _NotificationFrequencySettingWidgetState();
 }
 
+const String neverEntry = "Never";
+
 class _NotificationFrequencySettingWidgetState
     extends State<NotificationFrequencyWidget> {
   NotificationFrequency? _value;
@@ -59,7 +61,6 @@ class _NotificationFrequencySettingWidgetState
 
   @override
   Widget build(BuildContext context) {
-    const String neverEntry = "Never";
     return ListTile(
         title: const Text('Notification Frequency'),
         trailing: DropdownButton<String>(
@@ -79,7 +80,7 @@ class _NotificationFrequencySettingWidgetState
               _value = freqOpt;
             });
           },
-          items: (["Never"] +
+          items: ([neverEntry] +
                   NotificationFrequency.values.map<String>((vf) {
                     return vf.stringRepresentation();
                   }).toList())

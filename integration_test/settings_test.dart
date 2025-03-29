@@ -1,5 +1,7 @@
+import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
 import 'package:chronolapse/backend/settings_storage/setting_types/project_setting.dart';
+import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
@@ -19,12 +21,35 @@ void main() async {
   testWidgets('Active Settings Test', (WidgetTester tester) async {
     await SettingsStore.initialise();
     await SettingsStore.deleteAllSettings();
+    await NotificationService().initialise();
+
+    const testProjectName = ProjectName("testProject");
+
+    // Test default values
+    expect(notificationFrequencySetting.withProject(testProjectName).getValue(), null);
+    expect(fpsSetting.withProject(testProjectName).getValue(), 30);
+    expect(bitRateSetting.withProject(testProjectName).getValue(), 8192);
 
     await tester.pumpWidget(const AppRoot(SettingsPage("exampleProject")));
     await tester.pumpAndSettle();
 
     expect(find.text("Global Settings"), findsOneWidget);
     expect(find.text("Project Settings"), findsOneWidget);
+
+    await Future.delayed(const Duration(seconds: 30));
+
+    // Defaults shown
+    expect(find.textContaining("30"), findsOne);
+    expect(find.textContaining("8192"), findsOne);
+    expect(find.text(neverEntry), findsOne);
+
+    await tester.tap(find.text(neverEntry));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(NotificationFrequency.daily.stringRepresentation()));
+    await tester.pumpAndSettle();
+
+    expect(notificationFrequencySetting.withProject(testProjectName).getValue(), NotificationFrequency.daily);
   });
   testWidgets('Unused Settings Test', (WidgetTester tester) async {
     await SettingsStore.initialise();

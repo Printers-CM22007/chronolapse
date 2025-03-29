@@ -37,9 +37,12 @@ class PersistentSettingWithProject<T> {
   }
 
   /// Gets the widget for the settings page for this setting
+  // Ignored because it is a utility wrapper, .getWidget implementation will have to be covered
+  // coverage:ignore-start
   Widget getWidget() {
     return _setting.getWidget(_project);
   }
+  // coverage:ignore-end
 
   /// Restricts usage to only being able to get the widget
   WidgetSettingWithProject<T> asWidgetOnly() {
