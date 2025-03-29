@@ -1,3 +1,4 @@
+/*
 import 'package:opencv_dart/opencv.dart' as cv;
 
 class NativeImage {
@@ -5,3 +6,4 @@ class NativeImage {
 
   NativeImage(String path) : internal = cv.imread(path);
 }
+*/
