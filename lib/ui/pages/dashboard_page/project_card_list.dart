@@ -9,8 +9,8 @@ extension ProjectCardList on DashboardPageState {
   }
 
   void _onPressProjectEdit(String projectName) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ProjectEditPage(projectName)));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ProjectEditorPage(projectName)));
   }
 
   List<ProjectCard> _getFilteredSortedProjects() {

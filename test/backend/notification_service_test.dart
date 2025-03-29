@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:chronolapse/backend/notification_service.dart';
+import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';

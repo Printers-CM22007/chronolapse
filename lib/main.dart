@@ -37,11 +37,13 @@ void main() async {
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
 
-  runApp(const MyApp());
+  runApp(const AppRoot(DashboardPage()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AppRoot extends StatelessWidget {
+  final Widget _homePage;
+  
+  const AppRoot(this._homePage, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -67,7 +69,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: const PhotoTakingPage("sampleProject"),
-      home: const DashboardPage(),
+      home: _homePage,
       navigatorObservers: [routeObserver],
     );
   }

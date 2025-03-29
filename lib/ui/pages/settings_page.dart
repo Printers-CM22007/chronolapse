@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
   final String? _project;
+  final List<WidgetSettingGlobal>? _globalSettings;
+  final List<WidgetSettingRequiresProject>? _projectSettings;
 
-  const SettingsPage(this._project, {super.key});
+  const SettingsPage(this._project, {globalSettings, projectSettings, super.key}): _globalSettings = globalSettings, _projectSettings = projectSettings;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -16,11 +18,14 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final currentProjectWidgets = widget._projectSettings ?? availableProjectSettings;
+    final currentGlobalWidgets = widget._globalSettings ?? availableGlobalSettings;
+
     final globalWidgets =
-        availableGlobalSettings.map((e) => e.getWidget()).toList();
+        currentGlobalWidgets.map((e) => e.getWidget()).toList();
     final projectWidgets = widget._project == null
         ? <Widget>[]
-        : availableProjectSettings
+        : currentProjectWidgets
             .map(
                 (e) => e.withProject(ProjectName(widget._project!)).getWidget())
             .toList();

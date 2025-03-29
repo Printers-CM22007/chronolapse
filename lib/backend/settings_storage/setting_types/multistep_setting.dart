@@ -16,9 +16,6 @@ class MultistepSetting extends PersistentSetting<int> {
   int getValue(ProjectName projectName) {
     final val =
         SettingsStore.sp().getInt(projectName.settingPrefix() + super._key);
-    print(super._defaultVal);
-    print(_allowedValues[super._defaultVal]);
-    print(val);
     return val ?? _allowedValues[super._defaultVal];
   }
 
