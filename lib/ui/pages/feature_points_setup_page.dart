@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
+import 'package:chronolapse/backend/image_transformer/image_transformer.dart';
+import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/frame_editor_page.dart';
@@ -26,11 +28,12 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   static const double _imageViewHeight = 600;
   static const int _minimumFeaturePoints = 3;
 
-  final List<FeaturePoint> _featurePoints = [];
+  late final List<FeaturePoint> _featurePoints;
+  late final List<FeaturePoint> _referencePoints;
 
-  late Image _frameImage;
-  late GlobalKey _frameImageKey;
-  late (int, int) _frameImageDimensions;
+  late final Image _frameImage;
+  late final GlobalKey _frameImageKey;
+  late final (int, int) _frameImageDimensions;
   bool _loaded = false;
 
   @override
@@ -46,6 +49,24 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
         key: _frameImageKey);
     _frameImageDimensions =
         await getImageDimensions(widget._pendingFrame.temporaryImagePath);
+
+    // Get initial feature points
+    if (widget.isFirstFrame) {
+      // First frame, no feature points yet
+      _featurePoints = [];
+      _referencePoints = [];
+    } else {
+      // Use feature points from first frame as reference
+      final project =
+          await TimelapseStore.getProject(widget._pendingFrame.projectName);
+      final firstFrameUuid = project.data.metaData.frames[0];
+      final firstFrame = await TimelapseFrame.fromExisting(
+          widget._pendingFrame.projectName, firstFrameUuid);
+
+      _featurePoints = List.from(firstFrame.data.featurePoints);
+      _referencePoints = firstFrame.data.featurePoints;
+    }
+
     _loaded = true;
 
     if (mounted) {
@@ -57,9 +78,13 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
     // Create frame
     final pendingFrame = widget._pendingFrame;
     pendingFrame.featurePoints = _featurePoints;
-    pendingFrame.frameTransform = widget.isFirstFrame
-        ? FrameTransform.baseFrame()
-        : throw UnimplementedError();
+
+    if (widget.isFirstFrame) {
+      pendingFrame.frameTransform = FrameTransform.baseFrame();
+    } else {
+      pendingFrame.frameTransform = await FrameTransform.fromFeaturePoints(
+          _featurePoints, _referencePoints);
+    }
 
     final frame = await pendingFrame.saveInBackend();
 
@@ -98,16 +123,18 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
               backgroundImage: _frameImage,
               backgroundImageKey: _frameImageKey,
               backgroundImageDimensions: _frameImageDimensions,
-              allowAdding: true,
+              allowAdding: widget.isFirstFrame,
               onPointAdded: () {
                 setState(() {});
               },
             )),
-        const Padding(
-            padding: EdgeInsets.all(10.0),
+        Padding(
+            padding: const EdgeInsets.all(10.0),
             child: Text(
-              "Mark up to 3 feature points on the image",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              widget.isFirstFrame
+                  ? "Place at least 4 markers on the image"
+                  : "Move the markers to where they should appear on the image",
+              style: const TextStyle(color: Colors.white, fontSize: 20),
               textAlign: TextAlign.center,
             )),
         Container(
