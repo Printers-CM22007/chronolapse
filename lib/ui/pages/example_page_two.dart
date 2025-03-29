@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Ignoring because file is an example
+// coverage:ignore-start
 class ExamplePageTwo extends StatefulWidget {
   const ExamplePageTwo({super.key});
 
@@ -55,3 +57,4 @@ class _ExamplePageTwoState extends State<ExamplePageTwo> {
     );
   }
 }
+// coverage:ignore-end

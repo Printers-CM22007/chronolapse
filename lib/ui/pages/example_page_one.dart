@@ -1,6 +1,8 @@
 import 'package:chronolapse/ui/pages/example_page_two.dart';
 import 'package:flutter/material.dart';
 
+// Ignoring because this file is an example
+// coverage:ignore-start
 class ExamplePageOne extends StatefulWidget {
   const ExamplePageOne({super.key, required this.title});
 
@@ -98,3 +100,4 @@ class _ExamplePageOneState extends State<ExamplePageOne> {
     );
   }
 }
+// coverage:ignore-end

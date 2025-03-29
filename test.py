@@ -32,18 +32,17 @@ def is_part_of(file_path):
         contents = f.read()
         return "\npart of" in contents or contents.startswith("part of")
 
-
 print("YOU MUST HAVE LCOV INSTALLED")
 print("INTEGRATION TESTS WILL FAIL WITHOUT A RUNNING EMULATOR / CONNECTED DEVICE")
 
 if os.path.isdir("coverage"):
     shutil.rmtree("coverage")
 
-FILE_LOADER = "file_loader_5zwgxh9q6a8y_test.dart";
+FILE_LOADER = "file_loader_5zwgxh9q6a8y_test.dart"
 if os.path.isfile(f"test/{FILE_LOADER}"): os.remove(f"test/{FILE_LOADER}")
 with open(f"test/{FILE_LOADER}", "w+") as f:
     contents = "// ignore_for_file: unused_import\n"
-    dart_files = [os.path.join(root[4:], file) for root, _, files in os.walk("lib") for file in files if file.endswith(".dart")]
+    dart_files = [os.path.join(root[4:], file) for root, _, files in os.walk("lib") for file in files if file.endswith(".dart") and not file.endswith(".g.dart")]
     dart_files = filter(lambda p: not is_part_of(p), dart_files)
     for df in dart_files:
         contents += f"import 'package:chronolapse/{df}';\n"
@@ -66,6 +65,8 @@ os.remove(f"test/{FILE_LOADER}")
 
 run_command(f"lcov --add-tracefile {' -a '.join(map(lambda x: 'coverage/lcov-' + str(x) + '.info', range(len(all_tests))))} -o coverage/lcov-combined.info --ignore-errors empty")
 
-run_command("genhtml coverage/lcov-combined.info -o coverage/html")
+run_command(f"lcov --remove coverage/lcov-combined.info -o coverage/lcov-filtered.info '*.g.dart'")
+
+run_command("genhtml coverage/lcov-filtered.info -o coverage/html")
 
 open_file("coverage/html/index.html")
