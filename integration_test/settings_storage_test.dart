@@ -21,6 +21,7 @@ void main() async {
     final testLastModifiedProjectSetting = const RequiresProject(LastModifiedNoWidget("testLastModifiedProject")).withProject(const ProjectName("testProject"));
 
     expect(testLastModifiedProjectSetting.getValue(), 0);
+    expect(() => testLastModifiedProjectSetting.getWidget(), throwsA(isA<Exception>()));
 
     testToggleGlobalSetting.setValue(false);
     testToggleProjectSetting.setValue(false);
