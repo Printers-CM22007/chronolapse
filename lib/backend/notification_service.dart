@@ -96,11 +96,10 @@ class NotificationService {
       required String title,
       required String body,
       required NotificationFrequency notificationFrequency}) async {
-    final now = tz.TZDateTime.now(tz.local); //current date time
-    now.add(const Duration(minutes: 2));
+    final now = tz.TZDateTime.now(tz.local);
 
-    var scheduledDate = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, now.hour, now.minute);
+    var scheduledDate = now.add(const Duration(seconds: 5));
+
     var random = Random();
     int randomId = random.nextInt(100000);
     await notificationsPlugin.zonedSchedule(
