@@ -28,21 +28,28 @@ class MainActivity: FlutterActivity() {
             if (call.method == "testFunction") {
                 val count = call.argument<Int>("count")!!
                 result.success(count + 1)
-            } else if (call.method == "compileTimelapse") {
+            } else if (call.method == "compileVideo") {
                 val dirPath = call.argument<String>("framesDirPath")!!
                 val outputPath = call.argument<String>("outputPath")!!
                 val nFrames = call.argument<Int>("nFrames")!!
                 val projectName = call.argument<String>("projectName")!!
                 val frameRate = call.argument<Int>("frameRate")!!
                 val bitRate = call.argument<Int>("bitRate")!!
-                compileTimelapse(dirPath, outputPath, nFrames, projectName, frameRate, bitRate)
+                try {
+                    var outputPath = compileVideo(dirPath, outputPath, nFrames, projectName, frameRate, bitRate)
+                    result.success(outputPath)
+                } catch (e: Exception) {
+                    Log.e("Chronolapse: VideoCompilation", "compileVideo encountered an exception", e)
+                    result.error("Chronolapse: VideoCompilation", "compileVideo encountered an exception", e)
+                }
+
             } else {
                 result.notImplemented()
             }
         }
     }
 
-    private fun compileTimelapse(dirPath: String, outputPath: String, nFrames: Int, projectName: String, frameRate: Int, bitRate: Int): File {
+    private fun compileVideo(dirPath: String, outputPath: String, nFrames: Int, projectName: String, frameRate: Int, bitRate: Int): String {
         val uriList: MutableList<Uri> = ArrayList()
         for (i in 0..nFrames) {
             val file = File("$dirPath/$i.png")
@@ -50,8 +57,8 @@ class MainActivity: FlutterActivity() {
             val uri = Uri.fromFile(file);
             uriList.add(uri)
         }
-        TimeLapseEncoder(frameRate, bitRate).encode(cacheDir.path + "/$projectName.mp4", uriList, contentResolver);
+        TimeLapseEncoder(frameRate, bitRate).encode("{cacheDir.path}/$projectName.mp4", uriList, contentResolver);
 
-        return File(cacheDir, "output.mp4")
+        return "${cacheDir.path}/output.mp4"
     }
 }
