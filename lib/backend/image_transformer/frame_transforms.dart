@@ -1,3 +1,5 @@
+import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/backend/image_transformer/image_transformer.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:opencv_dart/opencv.dart' as cv;
 
@@ -72,6 +74,21 @@ class FrameTransform {
   factory FrameTransform.fromJson(Map<String, dynamic> json) =>
       _$FrameTransformFromJson(json);
   Map<String, dynamic> toJson() => _$FrameTransformToJson(this);
+
+  /// User verified transform from `fromPoints` to `toPoints`
+  static Future<FrameTransform> fromFeaturePoints(
+      List<FeaturePoint> featurePoints,
+      List<FeaturePoint> referencePoints) async {
+    final fromPoints =
+        featurePoints.map((p) => Point(p.position.x, p.position.y));
+    final toPoints =
+        featurePoints.map((p) => Point(p.position.x, p.position.y));
+
+    final homography =
+        await ImageTransformer.getHomographyFromPoints(fromPoints, toPoints);
+
+    return FrameTransform.userVerified(homography);
+  }
 }
 
 @JsonSerializable()
