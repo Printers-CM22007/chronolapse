@@ -1,8 +1,11 @@
+import 'package:chronolapse/backend/notification_service.dart';
 import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
 import 'package:chronolapse/backend/settings_storage/setting_types/project_setting.dart';
+import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -19,12 +22,45 @@ void main() async {
   testWidgets('Active Settings Test', (WidgetTester tester) async {
     await SettingsStore.initialise();
     await SettingsStore.deleteAllSettings();
+    await NotificationService.initialise();
 
-    await tester.pumpWidget(const AppRoot(SettingsPage("exampleProject")));
+    const testProjectName = ProjectName("testProject");
+
+    // Test default values
+    expect(notificationFrequencySetting.withProject(testProjectName).getValue(),
+        null);
+    expect(fpsSetting.withProject(testProjectName).getValue(), 30);
+    expect(bitRateSetting.withProject(testProjectName).getValue(), 8192);
+
+    await tester.pumpWidget(AppRoot(SettingsPage(testProjectName.name())));
     await tester.pumpAndSettle();
 
     expect(find.text("Global Settings"), findsOneWidget);
     expect(find.text("Project Settings"), findsOneWidget);
+
+    // Defaults shown
+    expect(find.textContaining("30"), findsOne);
+    expect(find.textContaining("8192"), findsOne);
+    expect(find.text(neverEntry), findsOne);
+
+    await tester.tap(find.text(neverEntry));
+    await tester.pumpAndSettle();
+
+    await tester
+        .tap(find.text(NotificationFrequency.daily.stringRepresentation()));
+    await tester.pumpAndSettle();
+
+    expect(notificationFrequencySetting.withProject(testProjectName).getValue(),
+        NotificationFrequency.daily);
+
+    final beforeVal = fpsSetting.withProject(testProjectName).getValue();
+    await tester.drag(
+        find.byKey(Key(
+            "${fpsSetting.withProject(testProjectName).setting().key()}Slider")),
+        const Offset(-1000, 0));
+    await tester.pumpAndSettle();
+    expect(fpsSetting.withProject(testProjectName).getValue(),
+        isNot(equals(beforeVal)));
   });
   testWidgets('Unused Settings Test', (WidgetTester tester) async {
     await SettingsStore.initialise();

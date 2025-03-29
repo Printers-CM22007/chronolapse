@@ -66,7 +66,8 @@ void main() async {
 
     // Inject the mock plugin into NotificationService
     print("Injecting mock plugin...");
-    await NotificationService.initialise(notificationPlugin: mockFlutterLocalNotificationsPlugin);
+    await NotificationService.initialise(
+        notificationPlugin: mockFlutterLocalNotificationsPlugin);
   });
 
   group('Notification Service', () {

@@ -37,7 +37,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin;
 
   NotificationService._(this._notificationsPlugin);
-  
+
   static NotificationService _getInstance() {
     if (_instance == null) {
       throw UninitialisedException(
@@ -47,11 +47,15 @@ class NotificationService {
   }
 
   //INITIALIZE
-  static Future<void> initialise({FlutterLocalNotificationsPlugin? notificationPlugin}) async {
-    if (_instance != null) { return; }
-    
-    final instance = NotificationService._(notificationPlugin ?? FlutterLocalNotificationsPlugin());
-    
+  static Future<void> initialise(
+      {FlutterLocalNotificationsPlugin? notificationPlugin}) async {
+    if (_instance != null) {
+      return;
+    }
+
+    final instance = NotificationService._(
+        notificationPlugin ?? FlutterLocalNotificationsPlugin());
+
     //initialize timezone handling
     ltz.initializeTimeZones();
     final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
@@ -68,7 +72,7 @@ class NotificationService {
 
     //initialize the plugin
     await instance._notificationsPlugin.initialize(initSettings);
-    
+
     _instance = instance;
   }
 
@@ -85,15 +89,16 @@ class NotificationService {
   }
 
   //SHOW NOTIFICATION
-  static Future<void> showNotification({int? id, String? title, String? body}) async {
+  static Future<void> showNotification(
+      {int? id, String? title, String? body}) async {
     var random = Random();
     int randomId = random.nextInt(100000);
     return _getInstance()._notificationsPlugin.show(
-      id ?? randomId,
-      title,
-      body,
-      notificationDetails(),
-    );
+          id ?? randomId,
+          title,
+          body,
+          notificationDetails(),
+        );
   }
 
   //SCHEDULE NOTIFICATIONS
@@ -127,7 +132,8 @@ class NotificationService {
         );
   }
 
-  static DateTimeComponents _resolveNotificationFrequency(NotificationFrequency nf) {
+  static DateTimeComponents _resolveNotificationFrequency(
+      NotificationFrequency nf) {
     switch (nf) {
       case NotificationFrequency.daily:
         {
@@ -139,9 +145,12 @@ class NotificationService {
     }
   }
 
-  static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+  static Future<List<PendingNotificationRequest>>
+      getPendingNotifications() async {
     print("Inside getPendingNotifications()"); // Debugging print
-    return await _getInstance()._notificationsPlugin.pendingNotificationRequests();
+    return await _getInstance()
+        ._notificationsPlugin
+        .pendingNotificationRequests();
   }
 
   static Future<void> cancelNotification(int id) async {

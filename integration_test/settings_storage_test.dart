@@ -8,11 +8,12 @@ import 'package:integration_test/integration_test.dart';
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('A', (WidgetTester tester) async {
+  testWidgets('Settings Store Uninitialised Test', (WidgetTester tester) async {
     expect(() async => await SettingsStore.deleteAllSettings(),
         throwsA(isA<UninitialisedException>()));
   });
-  testWidgets('B', (WidgetTester tester) async {
+  testWidgets('Settings Store Value Changing Tests',
+      (WidgetTester tester) async {
     await SettingsStore.initialise();
     const testToggleGlobalSetting = Global(ToggleSetting(
         "testToggleProjectSetting",
@@ -30,6 +31,8 @@ void main() async {
             .withProject(const ProjectName("testProject"));
 
     expect(testLastModifiedProjectSetting.getValue(), 0);
+    expect(() => testLastModifiedProjectSetting.getWidget(),
+        throwsA(isA<Exception>()));
 
     testToggleGlobalSetting.setValue(false);
     testToggleProjectSetting.setValue(false);
