@@ -1,6 +1,7 @@
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class FeaturePointsEditor extends StatefulWidget {
   final List<FeaturePoint> featurePoints;
@@ -33,8 +34,10 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
   bool _hasBackgroundConstraints = false;
 
   @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       // Get constraints of background image
       RenderBox box = widget.backgroundImageKey.currentContext!
           .findRenderObject() as RenderBox;
@@ -45,7 +48,10 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
         _hasBackgroundConstraints = true;
       });
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     // Create feature point marker widgets
     final List<FeaturePointMarker> featurePointMarkers =
         _hasBackgroundConstraints
@@ -189,12 +195,20 @@ class FeaturePointMarkerState extends State<FeaturePointMarker> {
                 child: Align(
                     alignment: Alignment.topCenter,
                     child: Column(children: [
-                      Icon(
-                        Icons.circle,
-                        color: Color.fromRGBO(r, g, b, 1.0),
-                        size: iconSize,
-                      ),
-                      //Text(featurePoint.label)
+                      Container(
+                          decoration: const BoxDecoration(boxShadow: [
+                            BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.33),
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              offset: Offset(0, 0),
+                            )
+                          ]),
+                          child: Icon(
+                            Icons.circle,
+                            color: Color.fromRGBO(r, g, b, 1.0),
+                            size: iconSize,
+                          )),
                     ])))),
       ],
     );
