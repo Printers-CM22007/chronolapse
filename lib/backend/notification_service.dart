@@ -68,13 +68,11 @@ class NotificationService {
   NotificationDetails notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
-        'daily_channel_id',
-        "Daily Notifications",
-        channelDescription: 'Daily Notifications Channel',
-        importance: Importance.max,
-        priority: Priority.high,
-        icon: '@mipmap/launcher_icon'
-      ),
+          'daily_channel_id', "Daily Notifications",
+          channelDescription: 'Daily Notifications Channel',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon'),
     );
   }
 
