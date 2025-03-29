@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/frame_editting_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
@@ -62,6 +63,11 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
         : throw UnimplementedError();
 
     final frame = await pendingFrame.saveInBackend();
+
+    // Add frame transform to known frame transforms
+    final project = await TimelapseStore.getProject(pendingFrame.projectName);
+    project.data.knownFrameTransforms.frames.add(frame.uuid()!);
+    project.saveChanges();
 
     // Continue to frame editor
     if (mounted) {

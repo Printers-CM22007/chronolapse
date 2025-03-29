@@ -25,8 +25,6 @@ class PendingFrame {
     assert(frameTransform != null);
     assert(featurePoints != null);
 
-    final project = await TimelapseStore.getProject(projectName);
-
     final frame = TimelapseFrame.createNewWithData(
         projectName,
         FrameData(
