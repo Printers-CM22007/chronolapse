@@ -37,7 +37,8 @@ class ProjectTimelapseData {
   TimelapseData data;
   final String _projectName;
 
-  String projectName() => _projectName;
+  // Not covered because it is a getter
+  String projectName() => _projectName; // coverage:ignore-line
 
   ProjectTimelapseData(this.data, this._projectName);
 

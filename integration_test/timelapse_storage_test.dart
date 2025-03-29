@@ -16,14 +16,33 @@ void main() async {
     await TimelapseStore.initialise();
 
     await TimelapseStore.deleteAllProjects();
+    await TimelapseStore.createProject("testProjectTwo");
+    await TimelapseStore.initialise();
+
+    expect(TimelapseStore.getProjectList(), isNotEmpty);
+
+    await TimelapseStore.deleteAllProjects();
     await SettingsStore.deleteAllSettings();
 
     expect(TimelapseStore.getProjectList(), isEmpty);
 
     await TimelapseStore.createProject("testProject");
 
+    expect(TimelapseStore.getProjectList(), isNotEmpty);
+
     final projectData = await TimelapseStore.getProject("testProject");
 
     expect(projectData.data.metaData.frames, isEmpty);
+
+    final projectDataTwo = await TimelapseStore.getProject("testProject");
+    projectDataTwo.data.metaData.frames.add("testID");
+    await projectDataTwo.saveChanges();
+
+    expect(projectData.data.metaData.frames, isEmpty);
+    await projectData.reloadFromDisk();
+    expect(projectData.data.metaData.frames, isNotEmpty);
+
+    await TimelapseStore.deleteProject("testProject");
+    expect(TimelapseStore.getProjectList(), isEmpty);
   });
 }
