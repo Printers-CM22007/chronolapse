@@ -20,22 +20,34 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
 
 // ! Use only alphanumeric characters in setting keys!
 
-// Global Settings
+// Global Settings **************
 const exampleToggleSetting = Global(
     ToggleSetting("exampleToggle", false, "Example Toggle", "Does nothing"));
 
-// Project Settings
+// Project Settings **************
 const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
     "exampleToggleTwo", true, "Example Toggle Two", "Also does nothing"));
 
 const notificationFrequencySetting = RequiresProject(
     NotificationFrequencySetting("notificationFrequency", null));
 
-const fpsSetting = RequiresProject(MultistepSetting("videoFps", 6, [1, 2, 3, 5, 10, 20, 30, 45, 60, 90, 120], "Generated Video FPS", "", " FPS selected"));
+const fpsSetting = RequiresProject(MultistepSetting(
+    "videoFps",
+    6,
+    [1, 2, 3, 5, 10, 20, 30, 45, 60, 90, 120],
+    "Generated Video FPS",
+    "",
+    " FPS selected"));
 
-const bitRateSetting = RequiresProject(MultistepSetting("videoBitrate", 3, [1024, 2048, 4096, 8192, 16384], "Generated Video Bitrate", "", " bits/s selected"));
+const bitRateSetting = RequiresProject(MultistepSetting(
+    "videoBitrate",
+    3,
+    [1024, 2048, 4096, 8192, 16384],
+    "Generated Video Bitrate",
+    "",
+    " bits/s selected"));
 
 // ! Do not show these in the settings page
-// Hidden Setting
+// Hidden Setting **************
 const lastModifiedProject =
     RequiresProject(LastModifiedNoWidget("lastModified"));

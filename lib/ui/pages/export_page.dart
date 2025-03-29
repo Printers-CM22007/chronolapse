@@ -64,7 +64,9 @@ class _ExportPageState extends State<ExportPage> {
         CircularProgressIndicator(
             color: Theme.of(context).secondaryHeaderColor),
         Text(
-          _generationProgress == null ? "Generating timelapse..." : _generationProgress!,
+          _generationProgress == null
+              ? "Generating timelapse..."
+              : _generationProgress!,
           style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
         ),
       ],

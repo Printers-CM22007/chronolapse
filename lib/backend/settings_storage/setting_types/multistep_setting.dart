@@ -1,16 +1,21 @@
 part of 'project_setting.dart';
 
-class MultistepSetting
-    extends PersistentSetting<int> {
+class MultistepSetting extends PersistentSetting<int> {
   final List<int> _allowedValues;
   final String _title;
   final String _valuePrefix;
   final String _valueSuffix;
-  const MultistepSetting(super._key, super._defaultValue, allowedValues, title, valuePrefix, valueSuffix): _allowedValues = allowedValues, _title = title, _valuePrefix = valuePrefix, _valueSuffix = valueSuffix;
+  const MultistepSetting(super._key, super._defaultValue, allowedValues, title,
+      valuePrefix, valueSuffix)
+      : _allowedValues = allowedValues,
+        _title = title,
+        _valuePrefix = valuePrefix,
+        _valueSuffix = valueSuffix;
 
   @override
   int getValue(ProjectName projectName) {
-    final val = SettingsStore.sp().getInt(projectName.settingPrefix() + super._key);
+    final val =
+        SettingsStore.sp().getInt(projectName.settingPrefix() + super._key);
     print(super._defaultVal);
     print(_allowedValues[super._defaultVal]);
     print(val);
@@ -18,9 +23,9 @@ class MultistepSetting
   }
 
   @override
-  Future<void> setValue(
-      ProjectName projectName, int value) async {
-    await SettingsStore.sp().setInt(projectName.settingPrefix() + super._key, value);
+  Future<void> setValue(ProjectName projectName, int value) async {
+    await SettingsStore.sp()
+        .setInt(projectName.settingPrefix() + super._key, value);
   }
 
   @override
@@ -33,23 +38,22 @@ class MultistepWidget extends StatefulWidget {
   final MultistepSetting _setting;
   final ProjectName _projectName;
 
-  const MultistepWidget(this._setting, this._projectName,
-      {super.key});
+  const MultistepWidget(this._setting, this._projectName, {super.key});
 
   @override
-  State<MultistepWidget> createState() =>
-      _MultistepWidgetState();
+  State<MultistepWidget> createState() => _MultistepWidgetState();
 }
 
-class _MultistepWidgetState
-    extends State<MultistepWidget> {
+class _MultistepWidgetState extends State<MultistepWidget> {
   late int _value;
   late double _fakeValue;
 
   @override
   void initState() {
     _value = widget._setting.getValue(widget._projectName);
-    _fakeValue = (widget._setting._allowedValues.indexOf(_value).toDouble() / (widget._setting._allowedValues.length.toDouble() - 1)) * 100;
+    _fakeValue = (widget._setting._allowedValues.indexOf(_value).toDouble() /
+            (widget._setting._allowedValues.length.toDouble() - 1)) *
+        100;
     super.initState();
   }
 
@@ -63,7 +67,7 @@ class _MultistepWidgetState
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        title: Text(widget._setting._title),
+      title: Text(widget._setting._title),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -81,7 +85,8 @@ class _MultistepWidgetState
               });
             },
           ),
-          Text('${widget._setting._valuePrefix}${_value.toInt()}${widget._setting._valueSuffix}'),
+          Text(
+              '${widget._setting._valuePrefix}${_value.toInt()}${widget._setting._valueSuffix}'),
         ],
       ),
     );

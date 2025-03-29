@@ -2,8 +2,8 @@ import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
 import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:flutter/services.dart';
 
-Future<String?> compileVideo(
-    String frameDir, int frameCount, String outputPath, String projectName) async {
+Future<String?> compileVideo(String frameDir, int frameCount, String outputPath,
+    String projectName) async {
   const MethodChannel platform =
       MethodChannel('com.example.chronolapse/channel');
 
