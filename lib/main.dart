@@ -15,7 +15,7 @@ late List<CameraDescription> cameras;
 
 late NotificationService notificationService;
 
-void main() async {
+Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   print("Cleaning up cache");
@@ -35,6 +35,10 @@ void main() async {
     // TODO: work out how to best report error
     debugPrint("Error listing available cameras: ${e.toString()}");
   }
+}
+
+void main() async {
+  await setup();
 
   runApp(const AppRoot(DashboardPage()));
 }
@@ -73,3 +77,5 @@ class AppRoot extends StatelessWidget {
     );
   }
 }
+
+
