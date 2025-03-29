@@ -3,7 +3,6 @@ import 'package:chronolapse/backend/settings_storage/setting_types/project_setti
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 

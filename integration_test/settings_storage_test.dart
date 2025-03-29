@@ -18,17 +18,24 @@ void main() async {
         "testToggleProjectSetting", true, "Example Toggle Two", "Also does nothing"));
     final testToggleProjectSetting = const RequiresProject(ToggleSetting(
         "testToggleGlobalSetting", true, "Example Toggle Two", "Also does nothing")).withProject(const ProjectName("testProject"));
+    final testLastModifiedProjectSetting = const RequiresProject(LastModifiedNoWidget("testLastModifiedProject")).withProject(const ProjectName("testProject"));
+
+    expect(testLastModifiedProjectSetting.getValue(), 0);
 
     testToggleGlobalSetting.setValue(false);
     testToggleProjectSetting.setValue(false);
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    testLastModifiedProjectSetting.setValue(nowMs);
 
     expect(testToggleGlobalSetting.getValue(), false);
     expect(testToggleProjectSetting.getValue(), false);
+    expect(testLastModifiedProjectSetting.getValue(), nowMs);
 
     await SettingsStore.deleteAllGlobalSettings();
 
     expect(testToggleGlobalSetting.getValue(), true);
     expect(testToggleProjectSetting.getValue(), false);
+    expect(testLastModifiedProjectSetting.getValue(), nowMs);
 
     testToggleGlobalSetting.setValue(false);
     testToggleProjectSetting.setValue(false);
@@ -37,10 +44,12 @@ void main() async {
 
     expect(testToggleGlobalSetting.getValue(), false);
     expect(testToggleProjectSetting.getValue(), true);
+    expect(testLastModifiedProjectSetting.getValue(), 0);
 
     await SettingsStore.deleteAllSettings();
 
     expect(testToggleGlobalSetting.getValue(), true);
     expect(testToggleProjectSetting.getValue(), true);
+    expect(testLastModifiedProjectSetting.getValue(), 0);
   });
 }
