@@ -6,7 +6,7 @@ import 'package:chronolapse/backend/image_transformer/image_transformer.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/feature_points_setup_page.dart';
-import 'package:chronolapse/ui/pages/frame_editting_page.dart';
+import 'package:chronolapse/ui/pages/frame_editor_page.dart';
 import 'package:flutter/material.dart';
 
 class PhotoPreviewPage extends StatefulWidget {

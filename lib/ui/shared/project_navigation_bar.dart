@@ -1,6 +1,6 @@
 import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
-import 'package:chronolapse/ui/pages/project_edit_page.dart';
+import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +39,7 @@ class ProjectNavigationBar extends StatelessWidget {
 
               case 1:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => ProjectEditPage(_projectName)));
+                    builder: (context) => ProjectEditorPage(_projectName)));
                 break;
 
               case 2:

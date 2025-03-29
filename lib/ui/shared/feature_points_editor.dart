@@ -8,6 +8,7 @@ class FeaturePointsEditor extends StatefulWidget {
   final GlobalKey backgroundImageKey;
   final (int, int) backgroundImageDimensions;
   final bool allowAdding;
+  final bool allowDragging;
   final void Function()? onPointAdded;
 
   const FeaturePointsEditor(
@@ -16,6 +17,7 @@ class FeaturePointsEditor extends StatefulWidget {
       required this.backgroundImageKey,
       required this.backgroundImageDimensions,
       this.allowAdding = false,
+      this.allowDragging = true,
       this.onPointAdded,
       super.key});
 
