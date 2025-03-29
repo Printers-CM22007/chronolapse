@@ -26,8 +26,7 @@ void main() async {
   print("Initialising TimelapseStore");
   await TimelapseStore.initialise();
   print("Initialising NotificationService");
-  notificationService = NotificationService();
-  await notificationService.initialise();
+  await NotificationService.initialise();
 
   // List available cameras
   try {
