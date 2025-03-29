@@ -128,13 +128,6 @@ class ImageTransformer {
         homography, 1.0, cv.Mat.zeros(3, 3, cv.MatType.CV_64FC1), 0.0));
   }
 
-  /// Try to find a matching point in `dstImage` for each of `srcPoints` in
-  /// `srcImage`
-  /*
-  static Future<List<Point>> getMatchingPoints(
-      String dstImagePath, String srcImage, List<Point> srcPoints) {}
-   */
-
   /// Returns a homography that maps an image from the `from` points to the `to`
   /// points. `addTo` may be specified to add the resulting homography onto an
   /// existing one
