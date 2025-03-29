@@ -124,7 +124,9 @@ class DashboardPageState extends State<DashboardPage> with RouteAware {
             height: 15,
           ),
           Expanded(
-            child: _projects.isEmpty ? const Text("No projects - click 'Create New' to get started") : _createProjectCardList(),
+            child: _projectsLoaded && _projects.isEmpty
+                ? const Text("No projects - click 'Create New' to get started")
+                : _createProjectCardList(),
           ),
         ],
       ),

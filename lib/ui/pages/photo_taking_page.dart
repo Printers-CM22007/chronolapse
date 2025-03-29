@@ -266,7 +266,9 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 Future<void> cleanUpTakenImages() async {
   final temporaryDir = await getApplicationCacheDirectory();
   final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
-  if (!await cameraDir.exists()) { return; }
+  if (!await cameraDir.exists()) {
+    return;
+  }
 
   for (final entry in await cameraDir.list().toList()) {
     entry.delete(recursive: true);
