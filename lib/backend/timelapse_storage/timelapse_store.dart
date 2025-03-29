@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_data.dart';
+import 'package:chronolapse/util/uninitialised_exception.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,7 +21,7 @@ class TimelapseStore {
 
   static TimelapseStore _getInstance() {
     if (_instance == null) {
-      throw Exception(
+      throw UninitialisedException(
           "TimelapseStore.initialise() has not been called (must be awaited)");
     }
     return _instance!;

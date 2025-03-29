@@ -8,7 +8,8 @@ class ProjectName {
 
   const ProjectName.global() : _projectName = null;
 
-  String? name() => _projectName;
+  // Ignored because it is a getter
+  String? name() => _projectName; // coverage:ignore-line
   String settingPrefix() =>
       _projectName == null ? "global/" : "project/$_projectName/";
 }
@@ -20,14 +21,15 @@ class PersistentSettingWithProject<T> {
 
   const PersistentSettingWithProject(this._project, this._setting);
 
-  ProjectName project() => _project;
+  // Ignored because it is a getter
+  ProjectName project() => _project; // coverage:ignore-line
 
-  PersistentSetting<T> setting() => _setting;
+  // Ignored because it is a getter
+  PersistentSetting<T> setting() => _setting; // coverage:ignore-line
 
   /// Gets the value of the setting
-  T getValue() {
-    return _setting.getValue(_project);
-  }
+  // Ignored because it is trivial - the underlying .getValue will be tested
+  T getValue() => _setting.getValue(_project); // coverage:ignore-line
 
   /// Sets the value of the setting
   Future<void> setValue(T value) async {
@@ -48,7 +50,8 @@ class PersistentSettingWithProject<T> {
 /// A project-less setting
 class Global<T> extends PersistentSettingWithProject<T> {
   const Global(PersistentSetting<T> setting)
-      : super(const ProjectName.global(), setting);
+  // LCOV incorrectly believes the next line is separate from the previous
+      : super(const ProjectName.global(), setting); // coverage:ignore-line
 
   @override
   WidgetSettingGlobal<T> asWidgetOnly() {
