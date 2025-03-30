@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 class DashboardPageIcons {
-  DashboardPageIcons();
-  DashboardPageIcons._();
-
   static const fontFamily = 'icomoon';
 
   static const IconData search = IconData(0xe986, fontFamily: fontFamily);
