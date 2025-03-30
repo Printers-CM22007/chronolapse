@@ -5,7 +5,7 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:opencv_dart/opencv.dart' as cv;
 
 /// Estimate where the feature points would end up on an automatically aligned
-/// frame by applying the frame transform in reverse to the reference feature
+/// frame by applying the frame transform to the reference feature points
 /// points
 List<FeaturePoint> getFeaturePointsForAutomaticallyAlignedFrame(
     List<FeaturePoint> referenceFeaturePoints, FrameTransform frameTransform) {
@@ -21,11 +21,9 @@ List<FeaturePoint> getFeaturePointsForAutomaticallyAlignedFrame(
         point.label, point.color, FeaturePointPosition(p.val[0], p.val[1]));
   }
 
-  final inverseMatrix = cv.invert(frameTransform.transform.getMatrix()).$2;
+  final m = frameTransform.transform.getMatrix();
 
-  return [
-    for (final p in referenceFeaturePoints) transformPoint(inverseMatrix, p)
-  ];
+  return [for (final p in referenceFeaturePoints) transformPoint(m, p)];
 }
 
 /// Helper class to get a frame's alignment
