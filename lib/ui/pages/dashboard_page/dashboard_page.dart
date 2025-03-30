@@ -7,6 +7,7 @@ import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:chronolapse/ui/shared/dashboard_navigation_bar.dart';
+import 'package:chronolapse/util/shared_keys.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/project_card.dart';

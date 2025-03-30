@@ -1,14 +1,5 @@
-import 'package:camera/camera.dart';
-import 'package:chronolapse/backend/notification_service.dart';
-import 'package:chronolapse/backend/settings_storage/settings_store.dart';
-import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/backend/video_generator/video_generator.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
-import 'package:chronolapse/ui/pages/photo_taking_page.dart';
-import 'package:chronolapse/util/uninitialised_exception.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 

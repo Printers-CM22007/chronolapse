@@ -277,6 +277,7 @@ extension ProjectCardList on DashboardPageState {
               ),
             ),
             TextButton(
+              key: dashboardConfirmDeleteKey,
               onPressed: () async {
                 Navigator.of(context).pop();
                 await TimelapseStore.deleteProject(project.projectName);
@@ -314,6 +315,7 @@ extension ProjectCardList on DashboardPageState {
       itemBuilder: (BuildContext context) {
         return [
           const PopupMenuItem<CardOptions>(
+            key: popupMenuSettingsIconKey,
             value: CardOptions.settings,
             child: Row(
               children: [
