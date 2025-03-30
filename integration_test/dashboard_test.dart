@@ -1,18 +1,32 @@
+import 'dart:io';
+
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:chronolapse/ui/pages/export_page.dart';
+import 'package:chronolapse/ui/pages/photo_taking_page.dart';
+import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:chronolapse/util/shared_keys.dart';
+import 'package:path/path.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  setUpAll(() async {
+    print("Waiting for ADB to grant permissions");
+    while (!(await Permission.camera.isGranted && await Permission.microphone.isGranted)) {
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
+    print("ADB permissions granted");
+  });
   testWidgets('Dashboard Page Test', (WidgetTester tester) async {
     await setup();
 
@@ -112,6 +126,37 @@ void main() async {
 
     // No projects text reappears
     expect(find.textContaining("No projects"), findsOne);
+
+    // Create two projects
+    await tester.tap(find.text("Create New"));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProjectTwo");
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Create"));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text("Create New"));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProjectThree");
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Create"));
+    await tester.pumpAndSettle();
+
+    // Edit project
+    await tester.tap(find.text("Edit").first);
+    await tester.pumpAndSettle();
+    expect(find.byType(ProjectEditorPage), findsOne);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    // Take photo
+    await tester.tap(find.textContaining("take photo").first);
+    await tester.pumpAndSettle();
+    expect(find.byType(PhotoTakingPage), findsOne);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    // Go to settings page
     await tester.tap(find.byKey(dashboardNavigationSettingsKey));
     await tester.pumpAndSettle();
     expect(find.byType(SettingsPage), findsOne);
