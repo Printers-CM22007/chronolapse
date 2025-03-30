@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
@@ -9,12 +7,10 @@ import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:chronolapse/util/shared_keys.dart';
-import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
@@ -22,7 +18,8 @@ void main() async {
 
   setUpAll(() async {
     print("Waiting for ADB to grant permissions");
-    while (!(await Permission.camera.isGranted && await Permission.microphone.isGranted)) {
+    while (!(await Permission.camera.isGranted &&
+        await Permission.microphone.isGranted)) {
       await Future.delayed(const Duration(milliseconds: 200));
     }
     print("ADB permissions granted");
@@ -130,14 +127,16 @@ void main() async {
     // Create two projects
     await tester.tap(find.text("Create New"));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProjectTwo");
+    await tester.enterText(
+        find.byKey(newProjectTextFieldKey), "testProjectTwo");
     await tester.pumpAndSettle();
     await tester.tap(find.text("Create"));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text("Create New"));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProjectThree");
+    await tester.enterText(
+        find.byKey(newProjectTextFieldKey), "testProjectThree");
     await tester.pumpAndSettle();
     await tester.tap(find.text("Create"));
     await tester.pumpAndSettle();
