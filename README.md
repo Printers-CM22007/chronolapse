@@ -89,14 +89,14 @@ To run all tests, merge their coverage reports, then show them run
 python test.py
 ```
 
-If you want to use a specific shell to run commands, e.g. fish, run
-```
-python test.py fish
-```
-
 To run an individual test run
 ```bash
-flutter test [path to test] --coverage
+python test.py path/to/test
+```
+
+If you want to use a specific shell to run commands, e.g. fish, run
+```bash
+python test.py [all|path/to/test] fish
 ```
 
 ... then to view the coverage report

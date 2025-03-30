@@ -5,9 +5,10 @@ import 'package:chronolapse/backend/settings_storage/settings_options.dart';
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+
+import 'package:chronolapse/util/shared_keys.dart';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -55,8 +56,8 @@ void main() async {
 
     final beforeVal = fpsSetting.withProject(testProjectName).getValue();
     await tester.drag(
-        find.byKey(Key(
-            "${fpsSetting.withProject(testProjectName).setting().key()}Slider")),
+        find.byKey(getSliderKey(
+            fpsSetting.withProject(testProjectName).setting().key())),
         const Offset(-1000, 0));
     await tester.pumpAndSettle();
     expect(fpsSetting.withProject(testProjectName).getValue(),

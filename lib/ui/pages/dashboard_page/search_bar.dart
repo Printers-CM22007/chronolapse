@@ -5,6 +5,7 @@ extension SearchBar on DashboardPageState {
     return Container(
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: TextField(
+        key: searchProjectsTextFieldKey,
         onChanged: _onSearchFieldChanged,
         style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         cursorColor: Theme.of(context).colorScheme.onPrimary,

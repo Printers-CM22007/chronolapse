@@ -156,7 +156,7 @@ class FeaturePointMarkerState extends State<FeaturePointMarker> {
         Positioned(
             left: positionScreen.x - 50,
             top: positionScreen.y - 30,
-            child: Container(
+            child: SizedBox(
                 width: 100,
                 height: 100,
                 child: Center(

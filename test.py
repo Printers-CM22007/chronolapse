@@ -3,17 +3,45 @@ import shutil
 import sys
 import subprocess
 
-shell = None if len(sys.argv) < 2 else sys.argv[1]
+shell = None
+single_test = None
+if len(sys.argv) == 2:
+    if sys.argv[1].lower() != 'all':
+        single_test = sys.argv[1]
+elif len(sys.argv) == 3:
+    shell = sys.argv[2]
+    if sys.argv[1].lower() != 'all':
+        single_test = sys.argv[1]
 
-def run_command(command, allow_failure=False):
+def run_command(command, allow_failure=False, run_between=None):
     global shell
     print(f"Running command `{command}`")
     shell_prefix = [] if shell is None else [shell, "-c"]
-    exit_code = subprocess.run(shell_prefix + [command]).returncode
+    process = subprocess.Popen(shell_prefix + [command])
+
+    if run_between is not None:
+        run_between_code = run_between()
+        if run_between_code != 0:
+            process.kill()
+            exit(run_between_code)
+
+    exit_code = process.wait()
     if not allow_failure and exit_code != 0:
         print(f"Exiting because `{command}` exited with code {exit_code}")
         exit(exit_code)
 
+def adb_grant_permissions():
+    global shell
+    shell_prefix = [] if shell is None else [shell, "-c"]
+    permissions = ["CAMERA", "RECORD_AUDIO"]
+    for p in permissions:
+        print(f"Granting permissions {p}")
+        command = f"adb shell pm grant com.example.chronolapse android.permission.{p}"
+        exit_code = subprocess.run(shell_prefix + [command]).returncode
+        if exit_code != 0:
+            print(f"Exiting because `{command}` exited with code {exit_code}")
+            return exit_code
+    return 0
 
 def open_file(file_path):
     try:
@@ -31,6 +59,13 @@ def is_part_of(file_path):
     with open(f"lib/{file_path}", "r") as f:
         contents = f.read()
         return "\npart of" in contents or contents.startswith("part of")
+
+if single_test is not None:
+    run_command(
+        f"flutter test {single_test}",
+        run_between=adb_grant_permissions
+    )
+    exit(0)
 
 print("YOU MUST HAVE LCOV INSTALLED")
 print("INTEGRATION TESTS WILL FAIL WITHOUT A RUNNING EMULATOR / CONNECTED DEVICE")
@@ -61,10 +96,14 @@ integration_test_files = [os.path.join(root, file) for root, _, files in os.walk
 print(f"Unit tests: {', '.join(unit_test_files)}")
 print(f"Integration tests: {', '.join(integration_test_files)}")
 
-all_tests = unit_test_files + integration_test_files
+all_tests = [(t, 'unit') for t in unit_test_files] + [(t, 'int') for t in integration_test_files]
 
-for i, test in enumerate(all_tests):
-    run_command(f"flutter test {test} --coverage", allow_failure=test == f"test/{FILE_LOADER}")
+for i, (test, test_type) in enumerate(all_tests):
+    run_command(
+        f"flutter test {test} --coverage",
+        allow_failure=test == f"test/{FILE_LOADER}",
+        run_between=adb_grant_permissions if test_type == 'int' else None
+    )
     shutil.move("coverage/lcov.info", f"coverage/lcov-{i}.info")
 
 os.remove(f"test/{FILE_LOADER}")

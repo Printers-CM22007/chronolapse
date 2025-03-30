@@ -80,7 +80,7 @@ class _MultistepWidgetState extends State<MultistepWidget> {
                 widget._setting.setValue(widget._projectName, _value);
               });
             },
-            key: Key("${widget._setting._key}Slider"),
+            key: getSliderKey(widget._setting._key),
           ),
           Text(
               '${widget._setting._valuePrefix}${_value.toInt()}${widget._setting._valueSuffix}'),
