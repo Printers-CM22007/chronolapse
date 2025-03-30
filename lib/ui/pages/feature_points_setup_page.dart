@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/backend/image_transformer/frame_alignment.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
@@ -25,7 +26,7 @@ class FeaturePointsSetupPage extends StatefulWidget {
 
 class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   static const double _imageViewHeight = 600;
-  static const int _minimumFeaturePoints = 3;
+  static const int _minimumFeaturePoints = 4;
 
   late final List<FeaturePoint> _featurePoints;
   late final List<FeaturePoint> _referencePoints;
@@ -74,16 +75,16 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   }
 
   Future<void> _saveAndExit() async {
+    // Get frame alignment
+    final alignment = widget.isFirstFrame
+        ? FrameAlignment.baseFrame(_featurePoints)
+        : await FrameAlignment.manual(
+            widget._pendingFrame.projectName, _featurePoints);
+
     // Create frame
     final pendingFrame = widget._pendingFrame;
-    pendingFrame.featurePoints = _featurePoints;
-
-    if (widget.isFirstFrame) {
-      pendingFrame.frameTransform = FrameTransform.baseFrame();
-    } else {
-      pendingFrame.frameTransform = await FrameTransform.fromFeaturePoints(
-          _featurePoints, _referencePoints);
-    }
+    pendingFrame.frameTransform = alignment.frameTransform;
+    pendingFrame.featurePoints = alignment.featurePoints;
 
     final frame = await pendingFrame.saveInBackend();
 
@@ -131,7 +132,7 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
             padding: const EdgeInsets.all(10.0),
             child: Text(
               widget.isFirstFrame
-                  ? "Place at least 4 markers on the image"
+                  ? "Place at least $_minimumFeaturePoints markers on the image"
                   : "Move the markers to where they should appear on the image",
               style: const TextStyle(color: Colors.white, fontSize: 20),
               textAlign: TextAlign.center,
