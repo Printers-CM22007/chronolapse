@@ -2,6 +2,7 @@ import os
 import shutil
 import sys
 import subprocess
+import time
 
 shell = None
 single_test = None
@@ -16,14 +17,18 @@ elif len(sys.argv) == 3:
 def run_command(command, allow_failure=False, run_between=None):
     global shell
     print(f"Running command `{command}`")
-    shell_prefix = [] if shell is None else [shell, "-c"]
-    process = subprocess.Popen(shell_prefix + [command])
+    if shell is not None:
+        process = subprocess.Popen([shell, "-c", " ".join(command)])
+    else:
+        process = subprocess.Popen(command)
 
     if run_between is not None:
-        run_between_code = run_between()
-        if run_between_code != 0:
-            process.kill()
-            exit(run_between_code)
+        while process.poll() is None:
+            run_between_code = run_between()
+            if run_between_code != 0:
+                process.kill()
+                exit(run_between_code)
+            time.sleep(0.1)
 
     exit_code = process.wait()
     if not allow_failure and exit_code != 0:
@@ -32,12 +37,13 @@ def run_command(command, allow_failure=False, run_between=None):
 
 def adb_grant_permissions():
     global shell
-    shell_prefix = [] if shell is None else [shell, "-c"]
     permissions = ["CAMERA", "RECORD_AUDIO"]
     for p in permissions:
-        print(f"Granting permissions {p}")
-        command = f"adb shell pm grant com.example.chronolapse android.permission.{p}"
-        exit_code = subprocess.run(shell_prefix + [command]).returncode
+        command = ["adb", "shell", "pm", "grant", "com.example.chronolapse", f"android.permission.{p}"]
+        if shell is not None:
+            exit_code = subprocess.run([shell, "-c", " ".join(command)], stdout=subprocess.DEVNULL).returncode
+        else:
+            exit_code = subprocess.run(command, stdout=subprocess.DEVNULL).returncode
         if exit_code != 0:
             print(f"Exiting because `{command}` exited with code {exit_code}")
             return exit_code
@@ -62,7 +68,7 @@ def is_part_of(file_path):
 
 if single_test is not None:
     run_command(
-        f"flutter test {single_test}",
+        ["flutter", "test", single_test],
         run_between=adb_grant_permissions
     )
     exit(0)
@@ -100,7 +106,7 @@ all_tests = [(t, 'unit') for t in unit_test_files] + [(t, 'int') for t in integr
 
 for i, (test, test_type) in enumerate(all_tests):
     run_command(
-        f"flutter test {test} --coverage",
+        ["flutter", "test", test, "--coverage"],
         allow_failure=test == f"test/{FILE_LOADER}",
         run_between=adb_grant_permissions if test_type == 'int' else None
     )
@@ -110,10 +116,29 @@ os.remove(f"test/{FILE_LOADER}")
 if os.path.isdir("assets/test_assets"):
     shutil.rmtree("assets/test_assets")
 
-run_command(f"lcov --add-tracefile {' -a '.join(map(lambda x: 'coverage/lcov-' + str(x) + '.info', range(len(all_tests))))} -o coverage/lcov-combined.info --ignore-errors empty")
+combine_files = map(lambda x: 'coverage/lcov-' + str(x) + '.info', range(len(all_tests)))
+combine_files_command_section = []
+for i, f in enumerate(combine_files):
+    if i != 0:
+        combine_files_command_section.append("-a")
+    combine_files_command_section.append(f)
 
-run_command(f"lcov --remove coverage/lcov-combined.info -o coverage/lcov-filtered.info '*.g.dart'")
+run_command(
+    [
+        "lcov",
+        "--add-tracefile"
+    ] +
+    combine_files_command_section +
+    [
+        "-o",
+        "coverage/lcov-combined.info",
+        "--ignore-errors",
+        "empty"
+    ]
+)
 
-run_command("genhtml coverage/lcov-filtered.info -o coverage/html")
+run_command(["lcov", "--remove", "coverage/lcov-combined.info", "-o", "coverage/lcov-filtered.info", "'*.g.dart'"])
+
+run_command(["genhtml", "coverage/lcov-filtered.info", "-o", "coverage/html"])
 
 open_file("coverage/html/index.html")
