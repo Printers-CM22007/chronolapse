@@ -9,13 +9,16 @@ import 'package:opencv_dart/opencv.dart' as cv;
 /// points
 List<FeaturePoint> getFeaturePointsForAutomaticallyAlignedFrame(
     List<FeaturePoint> referenceFeaturePoints, FrameTransform frameTransform) {
+  // TODO(Benny) Ask for help from Rob on this I think it's broken
+  // Only affects display of feature points in editor page
+
   FeaturePoint transformPoint(cv.Mat homography, FeaturePoint point) {
     final src = cv.Mat.fromList(
-        1, 2, cv.MatType.CV_64FC1, [point.position.x, point.position.y]);
-    final p = cv.perspectiveTransform(src, homography);
+        1, 1, cv.MatType.CV_64FC2, [point.position.x, point.position.y]);
+    final cv.Vec2d p = cv.perspectiveTransform(src, homography).at(0, 0);
 
     return FeaturePoint(
-        point.label, point.color, FeaturePointPosition(p.at(0, 0), p.at(0, 1)));
+        point.label, point.color, FeaturePointPosition(p.val[0], p.val[1]));
   }
 
   final inverseMatrix = cv.invert(frameTransform.transform.getMatrix()).$2;

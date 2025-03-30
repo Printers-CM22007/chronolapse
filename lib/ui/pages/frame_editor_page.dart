@@ -320,99 +320,94 @@ class FrameEditorState extends State<FrameEditor>
       ),
     );
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(_pageTitle),
-          actions: [
-            IconButton(
-                onPressed: () => setState(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SettingsPage(widget._projectName)));
-                    }),
-                icon: const Icon(Icons.settings)),
-            IconButton(
-                icon:
-                    Icon(showMarkers ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() {
-                      showMarkers = !showMarkers;
-                    }))
-          ],
-        ),
-        body: Column(children: [
-          SizedBox(
-            height: 500,
-            child: showMarkers
-                ? FeaturePointsEditor(
-                    featurePoints: _featurePoints,
-                    allowDragging: !_useManualAlignment || _isFirstFrame,
-                    backgroundImage: frameBackground,
-                    backgroundImageKey: frameBackgroundKey,
-                    backgroundImageDimensions: _imageDimensions,
-                  )
-                : frameBackground,
-          ),
-          TabBar(
-            controller: tabController,
-            tabs: const [
-              Tab(text: 'Colour Grading'),
-              Tab(text: 'Alignment'),
-              // Tab(text: 'Frames',)
+    return Stack(children: [
+      DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text(_pageTitle),
+            actions: [
+              IconButton(
+                  onPressed: () => setState(() {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SettingsPage(widget._projectName)));
+                      }),
+                  icon: const Icon(Icons.settings)),
+              IconButton(
+                  icon: Icon(
+                      showMarkers ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () => setState(() {
+                        showMarkers = !showMarkers;
+                      }))
             ],
           ),
-          Expanded(
-              child: TabBarView(
-            controller: tabController,
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    buildAdjustmentSliders(),
-                  ],
-                ),
-              ),
-              _buildAlignmentTab(),
-            ],
-          )),
-        ]),
-        bottomNavigationBar: Container(
-          color: Colors.transparent,
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onPressed: () async {
-                print("Save button pressed");
-
-                await _saveChanges();
-
-                if (mounted) {
-                  Navigator.of(context).pushReplacement(InstantPageRoute(
-                      builder: (context) =>
-                          ProjectEditorPage(widget._projectName)));
-                }
-              },
-              child: const Text(
-                'Save and exit',
-                style: TextStyle(fontSize: 18.0),
-              ),
+          body: Column(children: [
+            SizedBox(
+              height: 500,
+              child: showMarkers
+                  ? FeaturePointsEditor(
+                      featurePoints: _featurePoints,
+                      allowDragging: _useManualAlignment || _isFirstFrame,
+                      backgroundImage: frameBackground,
+                      backgroundImageKey: frameBackgroundKey,
+                      backgroundImageDimensions: _imageDimensions,
+                    )
+                  : frameBackground,
             ),
-          ),
+            TabBar(
+              controller: tabController,
+              tabs: const [
+                Tab(text: 'Colour Grading'),
+                Tab(text: 'Alignment'),
+                // Tab(text: 'Frames',)
+              ],
+            ),
+            Expanded(
+                child: TabBarView(
+              controller: tabController,
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      buildAdjustmentSliders(),
+                    ],
+                  ),
+                ),
+                _buildAlignmentTab(),
+              ],
+            )),
+          ]),
         ),
       ),
-    );
+      // Fade into black
+      Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: Container(
+          height: 200,
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 0.75])),
+        ),
+      ),
+      Container(
+          alignment: Alignment.bottomCenter,
+          padding: const EdgeInsets.all(25.0),
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Theme.of(context).colorScheme.onSurface),
+            child: const Text("Save and exit"),
+          ))
+    ]);
   }
 
   Widget _buildAlignmentTab() {
