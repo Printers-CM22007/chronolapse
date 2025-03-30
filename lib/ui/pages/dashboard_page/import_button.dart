@@ -8,7 +8,8 @@ extension ImportButton on DashboardPageState {
       child: TextButton(
         style: TextButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.inverseSurface),
-        onPressed: () {},
+        // TODO: Ignored because intentionally disabled - WIP
+        onPressed: () {}, // coverage:ignore-line
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
