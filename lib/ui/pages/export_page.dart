@@ -139,7 +139,7 @@ class _ExportPageState extends State<ExportPage> {
   }
 
   Future<void> _checkForFrames() async {
-    _hasEnoughFrames = (await TimelapseStore.getProject(widget._projectName)).data.metaData.frames.length > 1;
+    _hasEnoughFrames = (await TimelapseStore.getProject(widget._projectName)).data.metaData.frames.length > 2;
   }
 
   @override
@@ -234,7 +234,7 @@ class _ExportPageState extends State<ExportPage> {
 }
 
 Future<bool> saveVideoToGallery(String videoPath) async {
-  if (await Permission.storage.request().isGranted) {
+  if (await Permission.storage.request().isGranted && await Permission.photos.request().isGranted && await Permission.videos.request().isGranted) {
     return await GallerySaver.saveVideo(videoPath) ?? false;
   } else {
     print("Permissions failed");
