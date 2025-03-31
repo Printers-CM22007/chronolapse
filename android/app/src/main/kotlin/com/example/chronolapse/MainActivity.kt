@@ -1,21 +1,13 @@
 package com.example.chronolapse
 
 
-import android.content.Context
-import android.media.MediaScannerConnection
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
-import android.media.MediaCodec
-import android.media.MediaFormat
-import android.media.MediaMuxer
+import com.example.chronolapse.sixo.TimeLapseEncoder
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
-
-import com.example.chronolapse.sixo.TimeLapseEncoder
-import com.example.chronolapse.sixo.TextureRenderer
 
 class MainActivity: FlutterActivity() {
     private val channel = "com.example.chronolapse/channel"

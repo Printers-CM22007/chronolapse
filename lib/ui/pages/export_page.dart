@@ -24,6 +24,7 @@ class _ExportPageState extends State<ExportPage> {
   bool _generatingVideo = false;
   bool _isSaving = false;
   String? _generationProgress;
+  VideoPlayerWidget? _videoPlayer;
 
   void _startVideoGeneration() async {
     if (_generatingVideo) {
@@ -31,6 +32,7 @@ class _ExportPageState extends State<ExportPage> {
     }
     setState(() {
       _generatingVideo = true;
+      _videoPlayer = null;
       _videoPath = null;
       _generationProgress = null;
     });
@@ -44,12 +46,14 @@ class _ExportPageState extends State<ExportPage> {
     if (result.path != null) {
       setState(() {
         _videoPath = result.path;
+        _videoPlayer = VideoPlayerWidget(VideoPlayerController.file(File(_videoPath!)));
         _generatingVideo = false;
         _generationProgress = null;
       });
     } else {
       setState(() {
         _videoPath = null;
+        _videoPlayer = null;
         _generatingVideo = false;
         _generationProgress = null;
       });
@@ -74,8 +78,8 @@ class _ExportPageState extends State<ExportPage> {
   }
 
   Widget _videoTile() {
-    if (_videoPath != null) {
-      return VideoPlayerWidget(VideoPlayerController.file(File(_videoPath!)));
+    if (_videoPlayer != null) {
+      return _videoPlayer!;
     } else {
       return Container(
         color: Theme.of(context).primaryColorLight,

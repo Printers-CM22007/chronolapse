@@ -43,6 +43,11 @@ class Homography {
     return cv.Mat.from2DList(vals, cv.MatType.CV_64FC1);
   }
 
+  /// Inverts the homography
+  cv.Mat inverse() {
+    return cv.invert(getMatrix()).$2;
+  }
+
   factory Homography.fromJson(Map<String, dynamic> json) =>
       _$HomographyFromJson(json);
   Map<String, dynamic> toJson() => _$HomographyToJson(this);
