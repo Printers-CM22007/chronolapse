@@ -13,5 +13,6 @@ const projectNavigationBarPhotoTakingKey =
 const projectNavigationBarEditKey = Key("projectNavigationBarEdit");
 const projectNavigationBarExportKey = Key("projectNavigationBarExport");
 const photoTakingShutterButtonKey = Key("photoTakingShutterButton");
+const featurePointsEditorKey = Key("featurePointsEditorKey");
 
 Key getSliderKey(String key) => Key("${key}Slider");
