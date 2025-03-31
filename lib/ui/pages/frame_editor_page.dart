@@ -54,6 +54,7 @@ class FrameEditorState extends State<FrameEditor>
   late TabController tabController;
 
   late Image _frameImage;
+  late GlobalKey _frameImageKey;
   late String _frameImagePath;
   late FrameTransform _frameTransform;
   late List<FeaturePoint> _featurePoints;
@@ -76,8 +77,8 @@ class FrameEditorState extends State<FrameEditor>
 
     // Get image and its dimensions
     _frameImagePath = frame.getFramePng().path;
-
-    _frameImage = Image.file(File(_frameImagePath));
+    _frameImageKey = GlobalKey();
+    _frameImage = Image.file(File(_frameImagePath), key: _frameImageKey);
     _imageDimensions = await getImageDimensions(_frameImagePath);
 
     // Get frame transform feature points
@@ -241,9 +242,7 @@ class FrameEditorState extends State<FrameEditor>
       return const Center(child: CircularProgressIndicator());
     }
 
-    final frameBackgroundKey = GlobalKey();
     final frameBackground = Opacity(
-      key: frameBackgroundKey,
       opacity: 1,
       child: ColorFiltered(
         colorFilter: ColorFilter.matrix([
@@ -355,7 +354,7 @@ class FrameEditorState extends State<FrameEditor>
                       featurePoints: _featurePoints,
                       allowDragging: _useManualAlignment || _isFirstFrame,
                       backgroundImage: frameBackground,
-                      backgroundImageKey: frameBackgroundKey,
+                      backgroundImageKey: _frameImageKey,
                       backgroundImageDimensions: _imageDimensions,
                     )
                   : frameBackground,
