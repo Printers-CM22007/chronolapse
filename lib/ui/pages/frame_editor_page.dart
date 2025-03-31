@@ -4,7 +4,11 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/backend/image_transformer/frame_alignment.dart';
+import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/pages/export_page.dart';
+import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:chronolapse/util/util.dart';
@@ -14,6 +18,7 @@ import 'package:chronolapse/ui/pages/settings_page.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../backend/timelapse_storage/frame/timelapse_frame.dart';
 
@@ -37,6 +42,9 @@ class FrameEditorState extends State<FrameEditor>
   double saturation = 1.0;
   double balanceFactor = 0.0;
 
+  bool _useManualAlignment = false;
+  bool _isFirstFrame = false;
+
   int? selectedMarkerIndex;
   bool showMarkers = true;
   bool isDragging = false;
@@ -46,6 +54,9 @@ class FrameEditorState extends State<FrameEditor>
   late TabController tabController;
 
   late Image _frameImage;
+  late GlobalKey _frameImageKey;
+  late String _frameImagePath;
+  late FrameTransform _frameTransform;
   late List<FeaturePoint> _featurePoints;
   late (int, int) _imageDimensions;
   bool _loaded = false;
@@ -60,17 +71,24 @@ class FrameEditorState extends State<FrameEditor>
   }
 
   Future<void> _loadImageAndFeaturePoints() async {
+    final project = await TimelapseStore.getProject(widget._projectName);
     final frame =
         await TimelapseFrame.fromExisting(widget._projectName, widget._uuid);
 
     // Get image and its dimensions
-    final imagePath = frame.getFramePng().path;
+    _frameImagePath = frame.getFramePng().path;
+    _frameImageKey = GlobalKey();
+    _frameImage = Image.file(File(_frameImagePath), key: _frameImageKey);
+    _imageDimensions = await getImageDimensions(_frameImagePath);
 
-    _frameImage = Image.file(File(imagePath));
-    _imageDimensions = await getImageDimensions(imagePath);
-
-    // Get feature points
+    // Get frame transform feature points
+    _frameTransform = frame.data.frameTransform;
     _featurePoints = List.from(frame.data.featurePoints);
+
+    _useManualAlignment = frame.data.frameTransform.isKnown;
+    _isFirstFrame = project.data.metaData.frames.indexOf(frame.uuid()!) == 0;
+
+    // Work out if this is the first frame
 
     if (mounted) {
       setState(() {
@@ -80,10 +98,21 @@ class FrameEditorState extends State<FrameEditor>
   }
 
   Future<void> _saveChanges() async {
+    // If using manual alignment, calculate frame transform
+    if (_useManualAlignment) {
+      _frameTransform =
+          (await FrameAlignment.manual(widget._projectName, _featurePoints))
+              .frameTransform;
+    }
+
     final frame =
         await TimelapseFrame.fromExisting(widget._projectName, widget._uuid);
 
+    // Update frame data
+    frame.data.frameTransform = _frameTransform;
     frame.data.featurePoints = _featurePoints;
+
+    // Save frame data
     frame.saveFrameDataOnly();
   }
 
@@ -213,9 +242,7 @@ class FrameEditorState extends State<FrameEditor>
       return const Center(child: CircularProgressIndicator());
     }
 
-    final frameBackgroundKey = GlobalKey();
     final frameBackground = Opacity(
-      key: frameBackgroundKey,
       opacity: 1,
       child: ColorFiltered(
         colorFilter: ColorFilter.matrix([
@@ -292,225 +319,199 @@ class FrameEditorState extends State<FrameEditor>
       ),
     );
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(_pageTitle),
-          actions: [
-            IconButton(
-                onPressed: () => setState(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SettingsPage(widget._projectName)));
-                    }),
-                icon: const Icon(Icons.settings)),
-            IconButton(
-                icon:
-                    Icon(showMarkers ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() {
-                      showMarkers = !showMarkers;
-                    }))
-          ],
-        ),
-        body: Column(children: [
-          SizedBox(
-            height: 500,
-            child: FeaturePointsEditor(
-              featurePoints: _featurePoints,
-              backgroundImage: frameBackground,
-              backgroundImageKey: frameBackgroundKey,
-              backgroundImageDimensions: _imageDimensions,
-            ),
-          ),
-          TabBar(
-            controller: tabController,
-            tabs: const [
-              Tab(text: 'Sliders'),
-              Tab(text: 'Markers'),
-              // Tab(text: 'Frames',)
+    return Stack(children: [
+      DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text(_pageTitle),
+            actions: [
+              IconButton(
+                  onPressed: () => setState(() {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SettingsPage(widget._projectName)));
+                      }),
+                  icon: const Icon(Icons.settings)),
+              IconButton(
+                  icon: Icon(
+                      showMarkers ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () => setState(() {
+                        showMarkers = !showMarkers;
+                      }))
             ],
           ),
-          Expanded(
-              child: TabBarView(
-            controller: tabController,
+          body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            SizedBox(
+              // box shouldn't be needed but it throws without an explicit height
+              height: MediaQuery.of(context).size.width *
+                  (_imageDimensions.$2.toDouble() /
+                      _imageDimensions.$1.toDouble()),
+              child: showMarkers
+                  ? FeaturePointsEditor(
+                      featurePoints: _featurePoints,
+                      allowDragging: _useManualAlignment || _isFirstFrame,
+                      backgroundImage: frameBackground,
+                      backgroundImageKey: _frameImageKey,
+                      backgroundImageDimensions: _imageDimensions,
+                    )
+                  : frameBackground,
+            ),
+            TabBar(
+              controller: tabController,
+              tabs: const [
+                Tab(text: 'Colour Grading'),
+                Tab(text: 'Alignment'),
+                // Tab(text: 'Frames',)
+              ],
+            ),
+            Expanded(
+                child: TabBarView(
+              controller: tabController,
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      buildAdjustmentSliders(),
+                    ],
+                  ),
+                ),
+                _buildAlignmentTab(),
+              ],
+            )),
+          ]),
+        ),
+      ),
+      // Fade into black
+      Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Container(
+              height: 200,
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Colors.transparent, Colors.black],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.0, 0.75])),
+            ),
+          )),
+      Container(
+          alignment: Alignment.bottomCenter,
+          padding: const EdgeInsets.all(25.0),
+          child: ElevatedButton(
+            onPressed: () async {
+              print("Save button pressed");
+
+              await _saveChanges();
+
+              if (mounted) {
+                Navigator.of(context).pushReplacement(InstantPageRoute(
+                    builder: (context) =>
+                        ProjectEditorPage(widget._projectName)));
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Theme.of(context).colorScheme.onSurface),
+            child: const Text("Save and exit"),
+          ))
+    ]);
+  }
+
+  Widget _buildAlignmentTab() {
+    return Column(
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildAdjustmentSliders(),
+                    if (!_isFirstFrame)
+                      Row(children: [
+                        const Text("Use manual alignment"),
+                        const Spacer(),
+                        Switch(
+                            value: _useManualAlignment,
+                            onChanged: (_) {
+                              _toggleManualAlignment();
+                            })
+                      ]),
+                    const Text(
+                      'Markers',
+                      textAlign: TextAlign.left,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      _isFirstFrame
+                          ? "As this is the first frame, these markers will be used as reference for future images"
+                          : "Adjust the markers to match the reference image",
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.normal),
+                    ),
                   ],
                 ),
               ),
-              Column(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Markers',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                'Adjust the markers to match the reference image',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: Colors.grey,
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _featurePoints.length,
-                            itemBuilder: (context, index) {
-                              final featurePoint = _featurePoints[index];
-                              return ListTile(
-                                title: Text(featurePoint
-                                    .label), //_respectiveName == null ? Text(_respectiveName) : Text('Sam'),
-                                tileColor: selectedMarkerIndex == index
-                                    ? Colors.grey
-                                    : null,
-                                onTap: () {
-                                  setState(() {
-                                    selectedMarkerIndex = index;
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              const Divider(
+                height: 1,
+                thickness: 1,
+                color: Colors.grey,
               ),
-            ],
-          )),
-        ]),
-        bottomNavigationBar: Container(
-          color: Colors.transparent,
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _featurePoints.length,
+                  itemBuilder: (context, index) {
+                    final featurePoint = _featurePoints[index];
+                    return ListTile(
+                      title: Text(featurePoint
+                          .label), //_respectiveName == null ? Text(_respectiveName) : Text('Sam'),
+                      tileColor:
+                          selectedMarkerIndex == index ? Colors.grey : null,
+                      onTap: () {
+                        setState(() {
+                          selectedMarkerIndex = index;
+                        });
+                      },
+                    );
+                  },
                 ),
               ),
-              onPressed: () async {
-                print("Save button pressed");
-
-                await _saveChanges();
-
-                Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => const DashboardPage()));
-              },
-              child: const Text(
-                'Save and exit',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
+            ],
           ),
         ),
-      ),
+      ],
     );
   }
-}
 
-class VideoEditorNavigationBar extends StatelessWidget {
-  final int selectedIndex;
+  void _toggleManualAlignment() async {
+    if (_useManualAlignment) {
+      // Switch to automatic alignment
+      final automaticAlignment =
+          await FrameAlignment.automatic(widget._projectName, _frameImagePath);
 
-  final dynamic _projectName;
+      if (automaticAlignment == null) {
+        Fluttertoast.showToast(msg: "Automatic alignment failed");
+        return;
+      }
 
-  const VideoEditorNavigationBar(this.selectedIndex, this._projectName,
-      {super.key});
+      _frameTransform = automaticAlignment.frameTransform;
+      _featurePoints = automaticAlignment.featurePoints;
+    }
+    _useManualAlignment = !_useManualAlignment;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-      clipBehavior: Clip.hardEdge,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(40)),
-        // borderRadius: BorderRadius.only(
-        //   topLeft: Radius.circular(35),
-        //   topRight: Radius.circular(35)
-        // ),
-        // boxShadow: [BoxShadow(color: Colors.grey.shade600, blurRadius: 1)]
-      ),
-      child: NavigationBar(
-          shadowColor: Theme.of(context).colorScheme.onInverseSurface,
-          height: 60,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          elevation: 0,
-          selectedIndex: selectedIndex,
-          indicatorColor: Theme.of(context).colorScheme.secondary,
-          onDestinationSelected: (index) {
-            switch (index) {
-              case 0:
-                Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => const DashboardPage()));
-                break;
-
-              case 1:
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ExportPage(_projectName)));
-                break;
-
-              case 2:
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => PhotoTakingPage(widget._projectName)));
-                Navigator.of(context).pushReplacement(InstantPageRoute(
-                    builder: (context) => PhotoTakingPage(_projectName)));
-                break;
-            }
-          },
-          destinations: [
-            NavigationDestination(
-              icon: Icon(
-                Icons.dashboard,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Dashboard",
-            ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.share,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Export",
-            ),
-            NavigationDestination(
-              icon: Icon(
-                Icons.camera_alt,
-                color: Theme.of(context).colorScheme.inverseSurface,
-              ),
-              label: "Take Photo",
-            ),
-          ]),
-    );
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

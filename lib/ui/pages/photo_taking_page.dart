@@ -184,15 +184,15 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
         await _cameraController.resumePreview();
 
         // Transition to PicturePreviewPage
+        final project = await TimelapseStore.getProject(widget._projectName);
+        final frameIndex = project.data.metaData.frames.length;
+
+        final pendingFrame = PendingFrame(
+            projectName: widget._projectName,
+            frameIndex: frameIndex,
+            temporaryImagePath: imagePath);
+
         if (mounted) {
-          final project = await TimelapseStore.getProject(widget._projectName);
-          final frameIndex = project.data.metaData.frames.length;
-
-          final pendingFrame = PendingFrame(
-              projectName: widget._projectName,
-              frameIndex: frameIndex,
-              temporaryImagePath: imagePath);
-
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => PhotoPreviewPage(pendingFrame)));
         }
@@ -213,8 +213,8 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
       background,
       FeaturePointsEditor(
         featurePoints: _referenceFrameFeaturePoints,
-        backgroundImage: Opacity(
-            opacity: _referenceOverlayOpacity, child: _referenceFrameImage),
+        backgroundImage: RotatedBox(quarterTurns: 1, child: Opacity(
+            opacity: _referenceOverlayOpacity, child: _referenceFrameImage)),
         backgroundImageKey: _referenceFrameImageKey,
         backgroundImageDimensions: _referenceFrameDimensions,
         allowDragging: false,
@@ -244,7 +244,8 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
       // Rotate image
       final rotatedImage = img.copyRotate(decodedImage,
-          angle: cameraController.description.sensorOrientation);
+          angle: (cameraController.description.sensorOrientation + 270) % 360);
+
 
       // Save image to temporary file
       final data = img.encodePng(rotatedImage).toList();

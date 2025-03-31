@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/settings_storage/project_requirements.dart';
 import 'package:chronolapse/backend/settings_storage/settings_options.dart';
+import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_metadata.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -60,6 +61,24 @@ class ProjectTimelapseData {
     final jsonData = jsonDecode(jsonString);
 
     data = TimelapseData.fromJson(jsonData);
+  }
+
+  /// Delete the frame with the given index, removing it from the project
+  /// data and on disk
+  /// Important: saveChanges() must be called after this
+  Future<void> deleteFrame(int index) async {
+    // Delete frame
+    final frame = await getFrameWithIndex(index);
+    await frame.deleteFrame();
+
+    // Remove from storage
+    data.metaData.frames.removeAt(index);
+  }
+
+  /// Returns the `TimelapseFrame` with the given index
+  Future<TimelapseFrame> getFrameWithIndex(int index) async {
+    return await TimelapseFrame.fromExisting(
+        projectName(), data.metaData.frames[index]);
   }
 
   // TimelapseFrame createNewFrame() => TimelapseFrame.createNew(_projectName);

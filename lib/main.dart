@@ -15,6 +15,8 @@ late List<CameraDescription> cameras;
 
 late NotificationService notificationService;
 
+const landscapePhotos = true;
+
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,16 +34,19 @@ Future<void> setup() async {
   try {
     cameras = await availableCameras();
   } on CameraException catch (e) {
-    // TODO: work out how to best report error
-    debugPrint("Error listing available cameras: ${e.toString()}");
+    // Just-in-case code, should never run
+    debugPrint("Error listing available cameras: ${e.toString()}"); // coverage:ignore-line
   }
 }
 
+// Main function to run app
+// coverage:ignore-start
 void main() async {
   await setup();
 
   runApp(const AppRoot(DashboardPage()));
 }
+// coverage:ignore-start
 
 class AppRoot extends StatelessWidget {
   final Widget _homePage;

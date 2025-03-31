@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/backend/image_transformer/frame_alignment.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
@@ -26,7 +27,7 @@ class FeaturePointsSetupPage extends StatefulWidget {
 
 class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   static const double _imageViewHeight = 600;
-  static const int _minimumFeaturePoints = 3;
+  static const int _minimumFeaturePoints = 4;
 
   late final List<FeaturePoint> _featurePoints;
   late final List<FeaturePoint> _referencePoints;
@@ -75,16 +76,16 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
   }
 
   Future<void> _saveAndExit() async {
+    // Get frame alignment
+    final alignment = widget.isFirstFrame
+        ? FrameAlignment.baseFrame(_featurePoints)
+        : await FrameAlignment.manual(
+            widget._pendingFrame.projectName, _featurePoints);
+
     // Create frame
     final pendingFrame = widget._pendingFrame;
-    pendingFrame.featurePoints = _featurePoints;
-
-    if (widget.isFirstFrame) {
-      pendingFrame.frameTransform = FrameTransform.baseFrame();
-    } else {
-      pendingFrame.frameTransform = await FrameTransform.fromFeaturePoints(
-          _featurePoints, _referencePoints);
-    }
+    pendingFrame.frameTransform = alignment.frameTransform;
+    pendingFrame.featurePoints = alignment.featurePoints;
 
     final frame = await pendingFrame.saveInBackend();
 
@@ -111,43 +112,47 @@ class FeaturePointsSetupPageState extends State<FeaturePointsSetupPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body:
-          Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        SizedBox(
-            // box shouldn't be needed but it throws without an explicit height
-            height: MediaQuery.of(context).size.width *
-                (_frameImageDimensions.$2.toDouble() /
-                    _frameImageDimensions.$1.toDouble()),
-            child: FeaturePointsEditor(
-              key: featurePointsEditorKey,
-              featurePoints: _featurePoints,
-              backgroundImage: _frameImage,
-              backgroundImageKey: _frameImageKey,
-              backgroundImageDimensions: _frameImageDimensions,
-              allowAdding: widget.isFirstFrame,
-              onPointAdded: () {
-                setState(() {});
-              },
-            )),
-        Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              widget.isFirstFrame
-                  ? "Place at least 4 markers on the image"
-                  : "Move the markers to where they should appear on the image",
-              style: const TextStyle(color: Colors.white, fontSize: 20),
-              textAlign: TextAlign.center,
-            )),
-        Container(
+      body: Stack(children: [
+        Center(
+            child: SizedBox(
+                // box shouldn't be needed but it throws without an explicit height
+                height: MediaQuery.of(context).size.width *
+                    (_frameImageDimensions.$2.toDouble() /
+                        _frameImageDimensions.$1.toDouble()),
+                child: FeaturePointsEditor(
+                  key: featurePointsEditorKey,
+                  featurePoints: _featurePoints,
+                  backgroundImage: _frameImage,
+                  backgroundImageKey: _frameImageKey,
+                  backgroundImageDimensions: _frameImageDimensions,
+                  allowAdding: widget.isFirstFrame,
+                  onPointAdded: () {
+                    setState(() {});
+                  },
+                ))),
+        Align(
             alignment: Alignment.bottomCenter,
-            padding: const EdgeInsets.all(25.0),
-            child: ElevatedButton(
-              onPressed: allowSaveAndExit ? _saveAndExit : null,
-              style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Theme.of(context).colorScheme.onSurface),
-              child: const Text("Save and continue"),
-            ))
+            child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    widget.isFirstFrame
+                        ? "Place at least $_minimumFeaturePoints markers on the image"
+                        : "Move the markers to where they should appear on the image",
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                    textAlign: TextAlign.center,
+                  )),
+              Container(
+                  padding: const EdgeInsets.all(25.0),
+                  child: ElevatedButton(
+                    onPressed: allowSaveAndExit ? _saveAndExit : null,
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onSurface),
+                    child: const Text("Save and continue"),
+                  ))
+            ]))
       ]),
     );
   }
