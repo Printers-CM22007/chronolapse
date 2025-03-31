@@ -36,7 +36,10 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
   @override
   void initState() {
     super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       // Get constraints of background image
       RenderBox box = widget.backgroundImageKey.currentContext!
@@ -48,10 +51,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
         _hasBackgroundConstraints = true;
       });
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     // Create feature point marker widgets
     final List<FeaturePointMarker> featurePointMarkers =
         _hasBackgroundConstraints
@@ -101,12 +101,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
     final scaleY =
         widget.backgroundImageDimensions.$2.toDouble() / _backgroundSize.height;
 
-    final offsetX = _backgroundOffset.dx;
-    //final offsetY = _backgroundOffset.dy;
-    const offsetY = 0;
-
-    return FeaturePointPosition(
-        (pos.x - offsetX) * scaleX, (pos.y - offsetY) * scaleY);
+    return FeaturePointPosition(pos.x * scaleX, pos.y * scaleY);
   }
 
   /// Transform feature point position from image-space to screen-space
@@ -116,12 +111,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
     final scaleY =
         widget.backgroundImageDimensions.$2.toDouble() / _backgroundSize.height;
 
-    final offsetX = _backgroundOffset.dx;
-    //final offsetY = _backgroundOffset.dy;
-    const offsetY = 0;
-
-    return FeaturePointPosition(
-        pos.x / scaleX + offsetX, pos.y / scaleY + offsetY);
+    return FeaturePointPosition(pos.x / scaleX, pos.y / scaleY);
   }
 }
 
