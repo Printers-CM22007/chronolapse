@@ -147,7 +147,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
                   )))
             ]))
       ]),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: 120,
         child: RotatedBox(
             quarterTurns: 1,
@@ -235,17 +235,16 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
     return Stack(children: [
       background,
-      FeaturePointsEditor(
-        featurePoints: _referenceFrameFeaturePoints,
-        backgroundImage: RotatedBox(
-            quarterTurns: 1,
-            child: Opacity(
-                opacity: _referenceOverlayOpacity,
-                child: _referenceFrameImage)),
-        backgroundImageKey: _referenceFrameImageKey,
-        backgroundImageDimensions: _referenceFrameDimensions,
-        allowDragging: false,
-      ),
+      RotatedBox(
+          quarterTurns: 1,
+          child: FeaturePointsEditor(
+            featurePoints: _referenceFrameFeaturePoints,
+            backgroundImage: Opacity(
+                opacity: _referenceOverlayOpacity, child: _referenceFrameImage),
+            backgroundImageKey: _referenceFrameImageKey,
+            backgroundImageDimensions: _referenceFrameDimensions,
+            allowDragging: false,
+          )),
     ]);
   }
 
