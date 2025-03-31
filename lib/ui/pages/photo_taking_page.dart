@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
+import '../../backend/settings_storage/settings_options.dart';
 import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
 
@@ -34,10 +35,10 @@ class PhotoTakingPage extends StatefulWidget {
 }
 
 class PhotoTakingPageState extends State<PhotoTakingPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, RouteAware {
   static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
   static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
-  static const double _referenceOverlayOpacity = 0.33;
+  static double _referenceOverlayOpacity = 0.33;
 
   late CameraController _cameraController;
 
@@ -55,10 +56,26 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     // Create camera controller using first available camera
     _cameraController = CameraController(cameras.first, _resolutionPreset);
 
+    _referenceOverlayOpacity =
+        referenceOverlayOpacity.getValue().toDouble() / 100;
+
     _initializeCameraController();
 
     // Get reference frame
     _getReferenceFrame();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    _referenceOverlayOpacity =
+        referenceOverlayOpacity.getValue().toDouble() / 100;
   }
 
   @override
