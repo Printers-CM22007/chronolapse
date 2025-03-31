@@ -13,6 +13,10 @@ final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
 
 late List<CameraDescription> cameras;
 
+late NotificationService notificationService;
+
+const landscapePhotos = true;
+
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
 

@@ -103,7 +103,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
 
     final offsetX = _backgroundOffset.dx;
     //final offsetY = _backgroundOffset.dy;
-    const offsetY = 0.0;
+    const offsetY = 0;
 
     return FeaturePointPosition(
         (pos.x - offsetX) * scaleX, (pos.y - offsetY) * scaleY);
@@ -118,7 +118,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
 
     final offsetX = _backgroundOffset.dx;
     //final offsetY = _backgroundOffset.dy;
-    const offsetY = 0.0;
+    const offsetY = 0;
 
     return FeaturePointPosition(
         pos.x / scaleX + offsetX, pos.y / scaleY + offsetY);

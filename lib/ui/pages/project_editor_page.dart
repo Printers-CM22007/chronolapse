@@ -3,6 +3,7 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/pages/frame_editor_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../shared/settings_cog.dart';
 
@@ -82,8 +83,7 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return ReorderableListView(
-      onReorder: _onReorderFrames,
+    return ListView(
       children: [
         for (final (frameIndex, frame) in _frames.indexed)
           _createFrameCard(frameIndex, frame)
@@ -126,30 +126,23 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
                           ),
                           IconButton(
                             onPressed: () {
-                              _onDeletePressed(index);
+                              if (index != 0) {
+                                _onDeletePressed(index);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Cannot delete first frame");
+                              }
                             },
                             icon: const Icon(Icons.delete, size: 40.0),
                             style: IconButton.styleFrom(
                               foregroundColor: Theme.of(context)
                                   .colorScheme
                                   .onInverseSurface,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.onSurface,
+                              backgroundColor: index != 0
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : Colors.grey,
                             ),
                           ),
-                          ReorderableDragStartListener(
-                            index: index,
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.reorder, size: 40.0),
-                                style: IconButton.styleFrom(
-                                  foregroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .onInverseSurface,
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.onSurface,
-                                )),
-                          )
                         ])),
               ],
             )
@@ -191,7 +184,12 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
         });
   }
 
-  void _onDeleteConfirmed(int frameIndex) {}
+  void _onDeleteConfirmed(int frameIndex) async {
+    final project = await TimelapseStore.getProject(widget._projectName);
 
-  void _onReorderFrames(int previousFrameIndex, int newFrameIndex) {}
+    await project.deleteFrame(frameIndex);
+    await project.saveChanges();
+
+    _loadFrames();
+  }
 }
