@@ -13,8 +13,6 @@ final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver();
 
 late List<CameraDescription> cameras;
 
-late NotificationService notificationService;
-
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -37,11 +35,14 @@ Future<void> setup() async {
   }
 }
 
+// Main function to run app
+// coverage:ignore-start
 void main() async {
   await setup();
 
   runApp(const AppRoot(DashboardPage()));
 }
+// coverage:ignore-start
 
 class AppRoot extends StatelessWidget {
   final Widget _homePage;
