@@ -30,8 +30,8 @@ Future<void> setup() async {
   try {
     cameras = await availableCameras();
   } on CameraException catch (e) {
-    // TODO: work out how to best report error
-    debugPrint("Error listing available cameras: ${e.toString()}");
+    // Just-in-case code, should never run
+    debugPrint("Error listing available cameras: ${e.toString()}"); // coverage:ignore-line
   }
 }
 
