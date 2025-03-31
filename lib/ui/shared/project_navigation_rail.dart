@@ -25,12 +25,12 @@ class ProjectNavigationRail extends StatelessWidget {
       ),
       child: NavigationRail(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          selectedIndex: _selectedIndex,
+          selectedIndex: 2 - _selectedIndex,
           indicatorColor: Theme.of(context).colorScheme.secondary,
           labelType: NavigationRailLabelType.all,
           groupAlignment: 0.5,
           onDestinationSelected: (index) {
-            if (index == _selectedIndex) {
+            if (index == 2 - _selectedIndex) {
               return;
             }
             switch (index) {

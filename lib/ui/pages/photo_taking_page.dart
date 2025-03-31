@@ -148,7 +148,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
             ]))
       ]),
       bottomNavigationBar: SizedBox(
-        height: 120,
+        height: 100,
         child: RotatedBox(
             quarterTurns: 1,
             child: ProjectNavigationRail(widget._projectName, 0)),
