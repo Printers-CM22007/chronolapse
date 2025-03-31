@@ -344,9 +344,12 @@ class FrameEditorState extends State<FrameEditor>
                       }))
             ],
           ),
-          body: Column(children: [
+          body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             SizedBox(
-              height: 500,
+              // box shouldn't be needed but it throws without an explicit height
+              height: MediaQuery.of(context).size.width *
+                  (_imageDimensions.$2.toDouble() /
+                      _imageDimensions.$1.toDouble()),
               child: showMarkers
                   ? FeaturePointsEditor(
                       featurePoints: _featurePoints,

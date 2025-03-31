@@ -15,6 +15,8 @@ late List<CameraDescription> cameras;
 
 late NotificationService notificationService;
 
+const landscapePhotos = true;
+
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
 

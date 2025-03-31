@@ -75,7 +75,10 @@ class PhotoPreviewPageState extends State<PhotoPreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Image(image: FileImage(File(widget._pendingFrame.temporaryImagePath))),
+      Center(
+        child: Image(
+            image: FileImage(File(widget._pendingFrame.temporaryImagePath))),
+      ),
       Container(
         alignment: Alignment.bottomCenter,
         padding: const EdgeInsets.all(25.0),
