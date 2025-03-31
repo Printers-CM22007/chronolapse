@@ -11,6 +11,7 @@ import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/photo_preview_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
+import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
@@ -128,6 +129,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
                       border: Border.all(color: Colors.white, width: 5)),
                   child: Center(
                       child: ElevatedButton(
+                    key: photoTakingShutterButtonKey,
                     onPressed: () {
                       _onShutterButtonPressed();
                     },

@@ -2,6 +2,7 @@ import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
+import 'package:chronolapse/util/shared_keys.dart';
 import 'package:flutter/material.dart';
 
 class ProjectNavigationBar extends StatelessWidget {
@@ -56,6 +57,7 @@ class ProjectNavigationBar extends StatelessWidget {
               ),
               label: "Take photo",
               enabled: !disabled,
+              key: projectNavigationBarPhotoTakingKey,
             ),
             NavigationDestination(
               icon: const Icon(
@@ -63,6 +65,7 @@ class ProjectNavigationBar extends StatelessWidget {
               ),
               label: "Edit frames",
               enabled: !disabled,
+              key: projectNavigationBarEditKey,
             ),
             NavigationDestination(
               icon: const Icon(
@@ -70,6 +73,7 @@ class ProjectNavigationBar extends StatelessWidget {
               ),
               label: "Export",
               enabled: !disabled,
+              key: projectNavigationBarExportKey,
             ),
           ]),
     );
