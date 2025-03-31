@@ -401,7 +401,17 @@ class FrameEditorState extends State<FrameEditor>
           alignment: Alignment.bottomCenter,
           padding: const EdgeInsets.all(25.0),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              print("Save button pressed");
+
+              await _saveChanges();
+
+              if (mounted) {
+                Navigator.of(context).pushReplacement(InstantPageRoute(
+                    builder: (context) =>
+                        ProjectEditorPage(widget._projectName)));
+              }
+            },
             style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
                 backgroundColor: Theme.of(context).colorScheme.onSurface),
