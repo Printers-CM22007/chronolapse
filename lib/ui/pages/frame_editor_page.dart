@@ -384,19 +384,20 @@ class FrameEditorState extends State<FrameEditor>
       ),
       // Fade into black
       Positioned(
-        bottom: 0,
-        left: 0,
-        right: 0,
-        child: Container(
-          height: 200,
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.transparent, Colors.black],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.0, 0.75])),
-        ),
-      ),
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Container(
+              height: 200,
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Colors.transparent, Colors.black],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.0, 0.75])),
+            ),
+          )),
       Container(
           alignment: Alignment.bottomCenter,
           padding: const EdgeInsets.all(25.0),
