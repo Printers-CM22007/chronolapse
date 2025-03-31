@@ -35,7 +35,8 @@ Future<void> setup() async {
     cameras = await availableCameras();
   } on CameraException catch (e) {
     // Just-in-case code, should never run
-    debugPrint("Error listing available cameras: ${e.toString()}"); // coverage:ignore-line
+    debugPrint(
+        "Error listing available cameras: ${e.toString()}"); // coverage:ignore-line
   }
 }
 
@@ -46,7 +47,7 @@ void main() async {
 
   runApp(const AppRoot(DashboardPage()));
 }
-// coverage:ignore-start
+// coverage:ignore-end
 
 class AppRoot extends StatelessWidget {
   final Widget _homePage;

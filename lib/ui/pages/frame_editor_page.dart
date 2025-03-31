@@ -7,15 +7,12 @@ import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_alignment.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
-import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:chronolapse/ui/pages/dashboard_page/dashboard_page.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -36,7 +33,7 @@ class FrameEditorState extends State<FrameEditor>
     with SingleTickerProviderStateMixin {
   static const String _pageTitle = 'Edit frame';
 
-  double opacity = 0.3;
+  // double opacity = 0.3;
   double brightness = 0.0;
   double contrast = 1.0;
   double saturation = 1.0;
@@ -123,7 +120,8 @@ class FrameEditorState extends State<FrameEditor>
   }
 
   Widget buildAdjustmentSliders() {
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: [
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -182,22 +180,22 @@ class FrameEditorState extends State<FrameEditor>
             divisions: 200,
             label: ((saturation * 100) - 100).round().toString(),
             onChanged: (v) => setState(() => saturation = v)),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            'Overlay Opacity Control',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-        ),
-        Slider(
-            value: opacity,
-            min: 0.0,
-            max: 1.0,
-            divisions: 100,
-            label: (opacity * 100).round().toString(),
-            onChanged: (v) => setState(() => opacity = v)),
+        // const Padding(
+        //   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        //   child: Text(
+        //     'Overlay Opacity Control',
+        //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        //   ),
+        // ),
+        // Slider(
+        //     value: opacity,
+        //     min: 0.0,
+        //     max: 1.0,
+        //     divisions: 100,
+        //     label: (opacity * 100).round().toString(),
+        //     onChanged: (v) => setState(() => opacity = v)),
       ],
-    );
+    ));
   }
 
   // void deleteImage(int index) {

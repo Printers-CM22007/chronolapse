@@ -5,6 +5,7 @@ import 'package:chronolapse/backend/settings_storage/setting_types/project_setti
 // page
 List<WidgetSettingGlobal> availableGlobalSettings = [
   const WidgetSettingGlobal(TitleNoSetting("Global Settings")),
+  referenceOverlayOpacity.asWidgetOnly(),
 ];
 
 // List of project settings (as well as decorations) available in the settings
@@ -19,6 +20,14 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
 // ! Use only alphanumeric characters in setting keys!
 
 // Global Settings **************
+
+const referenceOverlayOpacity = Global(MultistepSetting(
+    "referenceOverlayOpacity",
+    3,
+    [0, 10, 20, 30, 40, 50, 60, 70, 80],
+    "Alignment Overlay Opacity",
+    "",
+    "% selected"));
 
 // Project Settings **************
 

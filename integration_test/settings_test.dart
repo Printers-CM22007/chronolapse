@@ -14,11 +14,15 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Global-only Settings Test', (WidgetTester tester) async {
+    await setup();
+    await SettingsStore.deleteAllSettings();
+
     await tester.pumpWidget(const AppRoot(SettingsPage(null)));
     await tester.pumpAndSettle();
 
     expect(find.text("Global Settings"), findsOneWidget);
     expect(find.text("Project Settings"), findsNothing);
+    expect(find.textContaining("30"), findsOne);
   });
   testWidgets('Active Settings Test', (WidgetTester tester) async {
     await SettingsStore.initialise();
@@ -32,6 +36,7 @@ void main() async {
         null);
     expect(fpsSetting.withProject(testProjectName).getValue(), 30);
     expect(bitRateSetting.withProject(testProjectName).getValue(), 8192);
+    expect(referenceOverlayOpacity.getValue(), 30);
 
     await tester.pumpWidget(AppRoot(SettingsPage(testProjectName.name())));
     await tester.pumpAndSettle();
@@ -40,7 +45,7 @@ void main() async {
     expect(find.text("Project Settings"), findsOneWidget);
 
     // Defaults shown
-    expect(find.textContaining("30"), findsOne);
+    expect(find.textContaining("30"), findsExactly(2));
     expect(find.textContaining("8192"), findsOne);
     expect(find.text(neverEntry), findsOne);
 
