@@ -8,9 +8,10 @@ class ProjectNavigationBar extends StatelessWidget {
   final String _projectName;
   final int _selectedIndex;
   final bool disabled;
+  final bool rotated;
 
   const ProjectNavigationBar(this._projectName, this._selectedIndex,
-      {this.disabled = false, super.key});
+      {this.disabled = false, this.rotated = true, super.key});
 
   @override
   Widget build(BuildContext context) {

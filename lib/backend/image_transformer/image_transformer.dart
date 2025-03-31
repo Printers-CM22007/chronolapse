@@ -157,11 +157,16 @@ class ImageTransformer {
   /// Applies a homography to an image
   static Future<cv.Mat> applyHomography(
       File initial, Homography homography) async {
+    return await applyHomographyMat(initial, homography.getMatrix());
+  }
+
+  /// Applies a homography to an image
+  static Future<cv.Mat> applyHomographyMat(
+      File initial, cv.Mat homography) async {
     final image = await cv.imreadAsync(initial.path);
-    final homographyMat = homography.getMatrix();
 
     final aligned = await cv.warpPerspectiveAsync(
-        image, homographyMat, (image.shape[0], image.shape[1]));
+        image, homography, (image.shape[1], image.shape[0]));
 
     return aligned;
   }
