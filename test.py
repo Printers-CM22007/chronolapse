@@ -69,6 +69,7 @@ def is_part_of(file_path):
 if single_test is not None:
     run_command(
         ["flutter", "test", single_test],
+        run_between=adb_grant_permissions
     )
     exit(0)
 
