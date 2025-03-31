@@ -233,14 +233,13 @@ class _ExportPageState extends State<ExportPage> {
 }
 
 Future<String?> saveVideoToGallery(String videoPath) async {
-  final a = await Permission.accessMediaLocation.request().isGranted;
   final b = await Permission.storage.request().isGranted;
   final c = await Permission.photos.request().isGranted;
   final d = await Permission.videos.request().isGranted;
 
   final result = await GallerySaver.saveVideo(videoPath);
   if (result == true) {
-    return "GOOD: $a $b $c $d";
+    return null;
   }
-  return "BAD: $a $b $c $d";
+  return "Video failed to save";
 }
