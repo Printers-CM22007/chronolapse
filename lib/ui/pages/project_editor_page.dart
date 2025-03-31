@@ -82,8 +82,7 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return ReorderableListView(
-      onReorder: _onReorderFrames,
+    return ListView(
       children: [
         for (final (frameIndex, frame) in _frames.indexed)
           _createFrameCard(frameIndex, frame)
@@ -137,19 +136,6 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
                                   Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
-                          ReorderableDragStartListener(
-                            index: index,
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.reorder, size: 40.0),
-                                style: IconButton.styleFrom(
-                                  foregroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .onInverseSurface,
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.onSurface,
-                                )),
-                          )
                         ])),
               ],
             )
