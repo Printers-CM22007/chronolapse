@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
@@ -32,22 +34,34 @@ void main() async {
     await TimelapseStore.deleteAllProjects();
     await SettingsStore.deleteAllSettings();
 
-    // Create a project
-    const uuid = Uuid();
-    final projectName = uuid.v4();
-    await TimelapseStore.createProject(projectName);
-
-    await tester.pumpWidget(AppRoot(PhotoTakingPage(projectName)));
+    // Create project in Dashboard page
+    await tester.pumpWidget(const AppRoot(DashboardPage()));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text("Create New"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("New Project"), findsOne);
+
+    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProject");
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Create"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("testProject"), findsOne);
+    expect(find.text("Tap to take photo"), findsOne);
+    expect(find.textContaining("Edited a moment ago"), findsOne);
+
+    // Enter photo taking page
+    await tester.tap(find.textContaining("take photo").first);
+    await tester.pumpAndSettle();
+    expect(find.byType(PhotoTakingPage), findsOne);
     // Find and press shutter button
     await tester.tap(find.byKey(photoTakingShutterButtonKey).first);
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(seconds: 3));
 
     // Assert that we proceeded to the photo preview page
     expect(find.byType(PhotoPreviewPage), findsOne);
-
-    await tester.pumpAndSettle();
   });
   testWidgets('Photo Taking Page - Navigate to Edit Frames Page',
       (WidgetTester tester) async {
@@ -56,15 +70,30 @@ void main() async {
     await TimelapseStore.deleteAllProjects();
     await SettingsStore.deleteAllSettings();
 
-    // Create a project
-    const uuid = Uuid();
-    final projectName = uuid.v4();
-    await TimelapseStore.createProject(projectName);
-
-    await tester.pumpWidget(AppRoot(PhotoTakingPage(projectName)));
+    // Create project in Dashboard page
+    await tester.pumpWidget(const AppRoot(DashboardPage()));
     await tester.pumpAndSettle();
 
-    // Tap photo
+    await tester.tap(find.text("Create New"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("New Project"), findsOne);
+
+    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProject");
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Create"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("testProject"), findsOne);
+    expect(find.text("Tap to take photo"), findsOne);
+    expect(find.textContaining("Edited a moment ago"), findsOne);
+
+    // Enter photo taking page
+    await tester.tap(find.textContaining("take photo").first);
+    await tester.pumpAndSettle();
+    expect(find.byType(PhotoTakingPage), findsOne);
+
+    // Tap navigation option
     await tester.tap(find.byKey(projectNavigationBarEditKey));
     await tester.pumpAndSettle();
 
@@ -78,19 +107,34 @@ void main() async {
     await TimelapseStore.deleteAllProjects();
     await SettingsStore.deleteAllSettings();
 
-    // Create a project
-    const uuid = Uuid();
-    final projectName = uuid.v4();
-    await TimelapseStore.createProject(projectName);
-
-    await tester.pumpWidget(AppRoot(PhotoTakingPage(projectName)));
+    // Create project in Dashboard page
+    await tester.pumpWidget(const AppRoot(DashboardPage()));
     await tester.pumpAndSettle();
 
-    // Tap photo
+    await tester.tap(find.text("Create New"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("New Project"), findsOne);
+
+    await tester.enterText(find.byKey(newProjectTextFieldKey), "testProject");
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("Create"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("testProject"), findsOne);
+    expect(find.text("Tap to take photo"), findsOne);
+    expect(find.textContaining("Edited a moment ago"), findsOne);
+
+    // Enter photo taking page
+    await tester.tap(find.textContaining("take photo").first);
+    await tester.pumpAndSettle();
+    expect(find.byType(PhotoTakingPage), findsOne);
+
+    // Tap navigation option
     await tester.tap(find.byKey(projectNavigationBarExportKey));
     await tester.pumpAndSettle();
 
-    // Expect to end up in edit page
-    expect(find.byType(ProjectEditorPage), findsOne);
+    // Expect to end up in export page
+    expect(find.byType(ExportPage), findsOne);
   });
 }
