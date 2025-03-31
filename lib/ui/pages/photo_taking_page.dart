@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
+import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
 
 const String cameraCacheDirectory = "camera";
