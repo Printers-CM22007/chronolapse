@@ -23,11 +23,11 @@ class MainActivity: FlutterActivity() {
             } else if (call.method == "compileVideo") {
                 val frameDir = call.argument<String>("frameDir")!!
                 val frameCount = call.argument<Int>("frameCount")!!
-                val projectName = call.argument<String>("projectName")!!
+                val outputPath = call.argument<String>("outputPath")!!
                 val frameRate = call.argument<Int>("frameRate")!!
                 val bitRate = call.argument<Int>("bitRate")!!
                 try {
-                    var outputPath = compileVideo(frameDir, frameCount, projectName, frameRate, bitRate)
+                    compileVideo(frameDir, frameCount, outputPath, frameRate, bitRate)
                     result.success(outputPath)
                 } catch (e: Exception) {
                     Log.e("Chronolapse: VideoCompilation", "compileVideo encountered an exception", e)
@@ -40,7 +40,7 @@ class MainActivity: FlutterActivity() {
         }
     }
 
-    private fun compileVideo(dirPath: String, frameCount: Int, projectName: String, frameRate: Int, bitRate: Int): String {
+    private fun compileVideo(dirPath: String, frameCount: Int, outputPath: String, frameRate: Int, bitRate: Int): String {
         val uriList: MutableList<Uri> = ArrayList()
         for (i in 0..frameCount) {
             val file = File("$dirPath/$i.png")
@@ -48,8 +48,8 @@ class MainActivity: FlutterActivity() {
             val uri = Uri.fromFile(file);
             uriList.add(uri)
         }
-        var outputPath = "${cacheDir.path}/$projectName.mp4"
-        TimeLapseEncoder(frameRate, bitRate).encode(outputPath, uriList, contentResolver);
+        val encoder = TimeLapseEncoder(frameRate, bitRate)
+        encoder.encode(outputPath, uriList, contentResolver)
         return outputPath
     }
 

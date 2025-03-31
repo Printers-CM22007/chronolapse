@@ -1,5 +1,6 @@
 package com.example.chronolapse.sixo
-
+// Changes made:
+// format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 15) -> format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
 /**
  * Copyright (c) 2019 by Roman Sisik. All rights reserved.
  */
@@ -105,7 +106,7 @@ class TimeLapseEncoder(private var frameRate: Int, private var bitRate: Int) {
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
         format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
         format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate)
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 15)
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
 
         return format
     }

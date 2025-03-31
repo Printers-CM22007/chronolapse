@@ -3,7 +3,9 @@
 ## License
 
 The code under `android/app/src/main/kotlin/com/example/chronolapse/sixo` is licensed under Apache 2.0
-from https://github.com/sixo/vid-proc and is unmodified. See `android/app/src/main/kotlin/com/example/chronolapse/sixo/LICENSE.txt`
+from https://github.com/sixo/vid-proc. 
+Any modifications made are listed at the top of the relevant file. 
+See `android/app/src/main/kotlin/com/example/chronolapse/sixo/LICENSE.txt`
 for the code's license.
 
 ## Getting Started
