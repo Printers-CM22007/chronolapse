@@ -29,9 +29,10 @@ class FeaturePointsEditor extends StatefulWidget {
 }
 
 class FeaturePointsEditorState extends State<FeaturePointsEditor> {
-  late Offset _backgroundOffset;
   late Size _backgroundSize;
   bool _hasBackgroundConstraints = false;
+
+  final _newMarkerNameController = TextEditingController();
 
   @override
   void initState() {
@@ -46,7 +47,6 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
           .findRenderObject() as RenderBox;
 
       setState(() {
-        _backgroundOffset = box.localToGlobal(Offset.zero);
         _backgroundSize = box.size;
         _hasBackgroundConstraints = true;
       });
@@ -72,18 +72,62 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
   void _onTapCanvas(TapUpDetails tapUpDetails) {
     if (widget.allowAdding) {
       final pointIndex = widget.featurePoints.length;
+      final defaultName = "Marker ${pointIndex + 1}";
 
-      widget.featurePoints.add(FeaturePoint(
-          "Marker ${pointIndex + 1}",
-          randomPastelColor(),
-          _transformScreenToImage(FeaturePointPosition(
-              tapUpDetails.localPosition.dx, tapUpDetails.localPosition.dy))));
+      _newMarkerNameController.clear();
 
-      if (widget.onPointAdded != null) {
-        widget.onPointAdded!();
-      }
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              title: const Text("Create marker"),
+              actionsAlignment: MainAxisAlignment.spaceBetween,
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel"),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
 
-      setState(() {});
+                    setState(() {
+                      widget.featurePoints.add(FeaturePoint(
+                          _newMarkerNameController.text.trim().isNotEmpty
+                              ? _newMarkerNameController.text.trim()
+                              : defaultName,
+                          randomPastelColor(),
+                          _transformScreenToImage(FeaturePointPosition(
+                              tapUpDetails.localPosition.dx,
+                              tapUpDetails.localPosition.dy))));
+
+                      if (widget.onPointAdded != null) {
+                        widget.onPointAdded!();
+                      }
+
+                      setState(() {});
+                    });
+                  },
+                  child: const Text("Create"),
+                )
+              ],
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //User input for project name
+                  TextField(
+                    controller: _newMarkerNameController,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    decoration: InputDecoration(
+                        hintText: defaultName,
+                        hintStyle: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white38)),
+                  )
+                ],
+              )));
     }
   }
 
