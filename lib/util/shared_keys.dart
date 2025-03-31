@@ -8,5 +8,7 @@ const searchProjectsTextFieldKey = Key("searchProjectsTextField");
 const popupMenuSettingsIconKey = Key("popupMenuSettingsIcon");
 const dashboardConfirmDeleteKey = Key("dashboardConfirmDelete");
 const dashboardNavigationSettingsKey = Key("dashboardNavigationSettings");
+const photoTakingShutterButtonKey = Key("photoTakingShutterButtonKey");
+const featurePointsEditorKey = Key("featurePointsEditorKey");
 
 Key getSliderKey(String key) => Key("${key}Slider");

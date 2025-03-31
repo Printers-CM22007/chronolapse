@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
+import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
 
 const String cameraCacheDirectory = "camera";
@@ -111,6 +112,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
                       border: Border.all(color: Colors.white, width: 5)),
                   child: Center(
                       child: ElevatedButton(
+                        key: photoTakingShutterButtonKey,
                     onPressed: () {
                       _onShutterButtonPressed();
                     },
