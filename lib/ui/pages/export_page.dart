@@ -194,8 +194,7 @@ class _ExportPageState extends State<ExportPage> {
                       _isSaving = false;
                     });
                     _showToast(result
-                        ? "Video saved successfully"
-                        : "Video failed to save");
+                        ?? "Video saved successfully");
                   },
                   enabled: _videoPath != null && !_isSaving,
                 ),
@@ -233,11 +232,15 @@ class _ExportPageState extends State<ExportPage> {
   }
 }
 
-Future<bool> saveVideoToGallery(String videoPath) async {
-  if (await Permission.storage.request().isGranted && await Permission.photos.request().isGranted && await Permission.videos.request().isGranted) {
-    return await GallerySaver.saveVideo(videoPath) ?? false;
-  } else {
-    print("Permissions failed");
-    return false;
+Future<String?> saveVideoToGallery(String videoPath) async {
+  final a = await Permission.accessMediaLocation.request().isGranted;
+  final b = await Permission.storage.request().isGranted;
+  final c = await Permission.photos.request().isGranted;
+  final d = await Permission.videos.request().isGranted;
+
+  final result = await GallerySaver.saveVideo(videoPath);
+  if (result == true) {
+    return "GOOD: $a $b $c $d";
   }
+  return "BAD: $a $b $c $d";
 }
