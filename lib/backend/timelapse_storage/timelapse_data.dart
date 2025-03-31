@@ -63,6 +63,18 @@ class ProjectTimelapseData {
     data = TimelapseData.fromJson(jsonData);
   }
 
+  /// Delete the frame with the given index, removing it from the project
+  /// data and on disk
+  /// Important: saveChanges() must be called after this
+  Future<void> deleteFrame(int index) async {
+    // Delete frame
+    final frame = await getFrameWithIndex(index);
+    await frame.deleteFrame();
+
+    // Remove from storage
+    data.metaData.frames.removeAt(index);
+  }
+
   /// Returns the `TimelapseFrame` with the given index
   Future<TimelapseFrame> getFrameWithIndex(int index) async {
     return await TimelapseFrame.fromExisting(

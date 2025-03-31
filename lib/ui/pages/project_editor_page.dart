@@ -184,7 +184,12 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
         });
   }
 
-  void _onDeleteConfirmed(int frameIndex) {}
+  void _onDeleteConfirmed(int frameIndex) async {
+    final project = await TimelapseStore.getProject(widget._projectName);
 
-  void _onReorderFrames(int previousFrameIndex, int newFrameIndex) {}
+    await project.deleteFrame(frameIndex);
+    await project.saveChanges();
+
+    _loadFrames();
+  }
 }
