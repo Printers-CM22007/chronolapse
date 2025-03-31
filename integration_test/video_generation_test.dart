@@ -6,6 +6,7 @@ import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
+import 'dart:math';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -46,10 +47,13 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.text("Place at least 4 markers on the image"), findsOne);
-    await tester.tap(find.byKey(featurePointsEditorKey));
-    await tester.tap(find.byKey(featurePointsEditorKey));
-    await tester.tap(find.byKey(featurePointsEditorKey));
-    await tester.tap(find.byKey(featurePointsEditorKey));
+
+    final random = Random();
+    final editorRect = tester.getRect(find.byKey(featurePointsEditorKey));
+    await tester.tapAt(Offset(editorRect.left, editorRect.top));
+    await tester.tapAt(Offset(editorRect.left, editorRect.bottom));
+    await tester.tapAt(Offset(editorRect.right, editorRect.top));
+    await tester.tapAt(Offset(editorRect.right, editorRect.bottom));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text("Save and continue"));
@@ -58,9 +62,6 @@ void main() async {
     await tester.pumpAndSettle();
 
     // Take second photo
-
-    await tester.tap(find.text("Edit"));
-    await tester.pumpAndSettle();
 
     await tester.tap(find.text("Take photo"));
     await tester.pumpAndSettle();
