@@ -214,8 +214,11 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
       background,
       FeaturePointsEditor(
         featurePoints: _referenceFrameFeaturePoints,
-        backgroundImage: RotatedBox(quarterTurns: 1, child: Opacity(
-            opacity: _referenceOverlayOpacity, child: _referenceFrameImage)),
+        backgroundImage: RotatedBox(
+            quarterTurns: 1,
+            child: Opacity(
+                opacity: _referenceOverlayOpacity,
+                child: _referenceFrameImage)),
         backgroundImageKey: _referenceFrameImageKey,
         backgroundImageDimensions: _referenceFrameDimensions,
         allowDragging: false,
@@ -246,7 +249,6 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
       // Rotate image
       final rotatedImage = img.copyRotate(decodedImage,
           angle: (cameraController.description.sensorOrientation + 270) % 360);
-
 
       // Save image to temporary file
       final data = img.encodePng(rotatedImage).toList();
