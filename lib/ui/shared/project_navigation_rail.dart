@@ -35,6 +35,8 @@ class ProjectNavigationRail extends StatelessWidget {
             }
             switch (index) {
               case 2:
+                // Not going to be covered by testing as nav rail is only used
+                // on photo-taking page, where this is inactive
                 Navigator.of(context).pushReplacement(InstantPageRoute(
                     builder: (context) => PhotoTakingPage(_projectName)));
                 break;

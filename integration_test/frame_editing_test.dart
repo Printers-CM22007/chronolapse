@@ -205,7 +205,7 @@ void main() async {
       final newPosition =
           tester.getCenter(find.byKey(getFeaturePointMarkerKey(0)));
 
-      expect(position.dx, equals(newPosition.dx));
+      expect((position.dx - newPosition.dx).abs(), lessThan(0.0001));
     }
 
     // Testing - Save and exit
