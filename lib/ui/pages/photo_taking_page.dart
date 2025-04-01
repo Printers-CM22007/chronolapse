@@ -10,7 +10,6 @@ import 'package:chronolapse/main.dart';
 import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/photo_preview_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
-import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:chronolapse/ui/shared/project_navigation_rail.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
@@ -19,7 +18,6 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
 import '../../backend/settings_storage/settings_options.dart';
-import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
 
 const String cameraCacheDirectory = "camera";
@@ -112,6 +110,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
               onPressed: () {
                 Navigator.pop(context);
               },
+              tooltip: 'Back',
               icon: const Icon(Icons.arrow_upward))),
       body: Stack(children: [
         // Camera preview

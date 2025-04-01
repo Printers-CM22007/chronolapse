@@ -66,13 +66,6 @@ def is_part_of(file_path):
         contents = f.read()
         return "\npart of" in contents or contents.startswith("part of")
 
-if single_test is not None:
-    run_command(
-        ["flutter", "test", single_test],
-        run_between=adb_grant_permissions
-    )
-    exit(0)
-
 print("YOU MUST HAVE LCOV INSTALLED")
 print("INTEGRATION TESTS WILL FAIL WITHOUT A RUNNING EMULATOR / CONNECTED DEVICE")
 
@@ -86,8 +79,9 @@ if os.path.isdir("test_assets"):
     shutil.copytree("test_assets", "assets/test_assets")
 
 FILE_LOADER = "file_loader_5zwgxh9q6a8y_test.dart"
-if os.path.isfile(f"test/{FILE_LOADER}"): os.remove(f"test/{FILE_LOADER}")
-with open(f"test/{FILE_LOADER}", "w+") as f:
+FILE_LOADER_PATH = f"test/{FILE_LOADER}"
+if os.path.isfile(FILE_LOADER_PATH): os.remove(FILE_LOADER_PATH)
+with open(FILE_LOADER_PATH, "w+") as f:
     contents = "// ignore_for_file: unused_import\n"
     dart_files = [os.path.join(root[4:], file) for root, _, files in os.walk("lib") for file in files if file.endswith(".dart") and not file.endswith(".g.dart")]
     dart_files = filter(lambda p: not is_part_of(p), dart_files)
@@ -103,22 +97,29 @@ print(f"Unit tests: {', '.join(unit_test_files)}")
 print(f"Integration tests: {', '.join(integration_test_files)}")
 
 all_tests = [(t, 'unit') for t in unit_test_files] + [(t, 'int') for t in integration_test_files]
+tested = []
 
 for i, (test, test_type) in enumerate(all_tests):
+    if single_test is not None and os.path.abspath(test) != os.path.abspath(single_test) and test != FILE_LOADER_PATH:
+        continue
+    tested.append(i)
+
     run_command(
         ["flutter", "test", test, "--coverage"],
-        allow_failure=test == f"test/{FILE_LOADER}",
+        allow_failure=test == FILE_LOADER_PATH,
         run_between=adb_grant_permissions if test_type == 'int' else None
     )
     shutil.move("coverage/lcov.info", f"coverage/lcov-{i}.info")
 
-os.remove(f"test/{FILE_LOADER}")
+os.remove(FILE_LOADER_PATH)
 if os.path.isdir("assets/test_assets"):
     shutil.rmtree("assets/test_assets")
 
 combine_files = map(lambda x: 'coverage/lcov-' + str(x) + '.info', range(len(all_tests)))
 combine_files_command_section = []
 for i, f in enumerate(combine_files):
+    if i not in tested:
+        continue
     if i != 0:
         combine_files_command_section.append("-a")
     combine_files_command_section.append(f)

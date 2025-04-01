@@ -37,5 +37,8 @@ const frameEditorFeaturePointsVisibilityToggleKey =
 const frameEditorManualAlignmentToggleKey =
     Key("frameEditorManualAlignmentToggle");
 
+// Project editor
+const projectEditorFrameEditButton = Key("projectEditorFrameEditButton");
+
 Key getSliderKey(String key) => Key("${key}Slider");
 Key getFeaturePointMarkerKey(int index) => Key("featurePointMarker$index");
