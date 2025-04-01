@@ -54,7 +54,7 @@ Future<void> createFakeProject(String name, int frameCount) async {
   if (frameCount > 0) {
     pendingFrame.featurePoints = randomFeaturePoints;
     pendingFrame.frameTransform = FrameTransform.baseFrame();
-    await pendingFrame.saveInBackend();
+    await pendingFrame.saveInBackend(cleanupTemporaryImage: false);
   }
 
   // Subsequent frames
@@ -62,6 +62,6 @@ Future<void> createFakeProject(String name, int frameCount) async {
       transform: Homography.fromMatrix(Mat.eye(3, 3, MatType.CV_64FC1)),
       isKnown: false);
   for (var i = 1; i < frameCount; i++) {
-    await pendingFrame.saveInBackend();
+    await pendingFrame.saveInBackend(cleanupTemporaryImage: false);
   }
 }
