@@ -109,7 +109,7 @@ class TimelapseStore {
     final data =
         ProjectTimelapseData(TimelapseData.initial(projectName), projectName);
 
-    data.saveChanges();
+    await data.saveChanges();
 
     return data;
   }

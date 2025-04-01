@@ -5,6 +5,7 @@ import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
 
 class _Frame {
@@ -14,6 +15,8 @@ class _Frame {
 
   const _Frame(this.uuid, this.image, this.imageKey);
 }
+
+const cannotDeleteFirstFrameText = "Cannot delete first frame";
 
 class ProjectEditorPage extends StatefulWidget {
   final String _projectName;
@@ -116,6 +119,7 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
                               _onEditPressed(index);
                             },
                             icon: const Icon(Icons.edit, size: 40.0),
+                            key: projectEditorFrameEditButton,
                             style: IconButton.styleFrom(
                               foregroundColor: Theme.of(context)
                                   .colorScheme
@@ -129,8 +133,7 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
                               if (index != 0) {
                                 _onDeletePressed(index);
                               } else {
-                                Fluttertoast.showToast(
-                                    msg: "Cannot delete first frame");
+                                _showToast(cannotDeleteFirstFrameText);
                               }
                             },
                             icon: const Icon(Icons.delete, size: 40.0),
@@ -151,7 +154,7 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
   }
 
   void _onEditPressed(int frameIndex) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
+    Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             FrameEditor(widget._projectName, _frames[frameIndex].uuid)));
   }
@@ -161,26 +164,32 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              content: Text("Delete frame ${frameIndex + 1}?"),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.surface,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onSurface),
-                    child: const Text("Cancel")),
-                TextButton(
-                    onPressed: () {
-                      _onDeleteConfirmed(frameIndex);
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.surface,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onSurface),
-                    child: const Text("Okay")),
-              ]);
+            title: Text("Deleting Frame ${frameIndex + 1}"),
+            content: Text(
+                "Are you sure you want to delete Frame ${frameIndex + 1}"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Cancel',
+                  style:
+                  TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  _onDeleteConfirmed(frameIndex);
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Delete',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ),
+            ],
+          );
         });
   }
 
@@ -191,5 +200,18 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
     await project.saveChanges();
 
     _loadFrames();
+  }
+
+  void _showToast(String message) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.black54,
+        ),
+      );
+    }
   }
 }

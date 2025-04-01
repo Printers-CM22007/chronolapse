@@ -112,6 +112,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
               onPressed: () {
                 Navigator.pop(context);
               },
+              tooltip: 'Back',
               icon: const Icon(Icons.arrow_upward))),
       body: Stack(children: [
         // Camera preview
