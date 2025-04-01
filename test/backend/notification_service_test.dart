@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:chronolapse/backend/notification_service.dart';
+import 'package:chronolapse/main.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,8 +14,7 @@ void main() async {
   late MockFlutterLocalNotificationsPlugin mockFlutterLocalNotificationsPlugin;
 
   List<PendingNotificationRequest> scheduledNotifications = [];
-  // List<PendingNotificationRequest> pendingNotificationsStore = [];
-  // List<String> activeNotificationsStore = [];
+  List<ActiveNotification> activeNotifications = [];
   var random = Random();
   setUp(() async {
     // Mock flutter_timezone since it is a platform plugin
@@ -32,9 +32,12 @@ void main() async {
     // Mock pendingNotificationRequests to return stored notifications
     when(mockFlutterLocalNotificationsPlugin.pendingNotificationRequests())
         .thenAnswer((_) async {
-      print(
-          "Mocked pendingNotificationRequests() called: Returning ${scheduledNotifications.length} notifications");
       return scheduledNotifications;
+    });
+
+    when(mockFlutterLocalNotificationsPlugin.getActiveNotifications())
+        .thenAnswer((_) async {
+      return activeNotifications;
     });
 
     // Mock zonedSchedule to simulate successful scheduling
@@ -58,6 +61,28 @@ void main() async {
           "Scheduled notification added: ID = $id, Title = $title, Total = ${scheduledNotifications.length}");
     });
 
+    // Mock the show method to simulate successful notification showing
+    when(mockFlutterLocalNotificationsPlugin.show(
+      any,
+      any,
+      any,
+      any,
+      payload: anyNamed('payload'),
+    )).thenAnswer((invocation) async {
+      int id = invocation.positionalArguments[0];
+      String? title = invocation.positionalArguments[1];
+      String? body = invocation.positionalArguments[2];
+      NotificationDetails details = invocation.positionalArguments[3];
+
+      activeNotifications.add(ActiveNotification(id: id, title: title, body: body));
+    });
+
+    when(mockFlutterLocalNotificationsPlugin.cancel(any)).thenAnswer((invocation) async {
+      int notificationId = invocation.positionalArguments[0];
+      // Remove the notification with this ID from the scheduled notifications list
+      scheduledNotifications.removeWhere((notification) => notification.id == notificationId);
+    });
+
     when(mockFlutterLocalNotificationsPlugin.cancelAll())
         .thenAnswer((invocation) async {
       print("Cancelling all notifications");
@@ -71,6 +96,7 @@ void main() async {
   });
 
   group('Notification Service', () {
+    setUp(() {scheduledNotifications.clear(); activeNotifications.clear();});
     test('Should have 0 notifications scheduled', () async {
       List<PendingNotificationRequest> pendingNotifications =
           await NotificationService.getPendingNotifications();
@@ -92,6 +118,26 @@ void main() async {
 
       expect(pendingNotifications.length, 2);
     });
+    test('When 2 notifications are pending, cancelling one of them should set pendingNotifications to 1', () async{
+      await NotificationService.scheduleNotification(
+          id: 0,
+          title: "n1",
+          body: "test noti_1",
+          notificationFrequency: NotificationFrequency.daily);
+      await NotificationService.scheduleNotification(
+          id: 1,
+          title: "n2",
+          body: "test noti_2",
+          notificationFrequency: NotificationFrequency.weekly);
+
+      await NotificationService.cancelNotification(0);
+
+      List<PendingNotificationRequest> pendingNotifications =
+      await NotificationService.getPendingNotifications();
+
+      expect(pendingNotifications.length, 1);
+
+    });
     test('Cancelling notifications should set pendingNotifications to 0',
         () async {
       await NotificationService.scheduleNotification(
@@ -110,5 +156,16 @@ void main() async {
 
       expect(pendingNotifications.length, 0);
     });
+    test('showNotification() method should immediately show a notification',
+            () async {
+          await NotificationService.showNotification(
+              title: "n1",
+              body: "test noti_1",
+          );
+          List<ActiveNotification> activeNotifs =
+          await NotificationService.getActiveNotifications();
+
+          expect(activeNotifs.length, 1);
+        });
   });
 }

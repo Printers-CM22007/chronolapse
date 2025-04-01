@@ -153,6 +153,10 @@ class NotificationService {
         .pendingNotificationRequests();
   }
 
+  static Future<List<ActiveNotification>> getActiveNotifications() async {
+    return await _getInstance()._notificationsPlugin.getActiveNotifications();
+  }
+
   static Future<void> cancelNotification(int id) async {
     await _getInstance()._notificationsPlugin.cancel(id);
   }
