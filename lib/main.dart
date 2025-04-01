@@ -44,7 +44,6 @@ Future<void> setup() async {
 // coverage:ignore-start
 void main() async {
   await setup();
-
   runApp(const AppRoot(DashboardPage()));
 }
 // coverage:ignore-end

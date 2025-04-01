@@ -13,6 +13,8 @@ import 'package:integration_test/integration_test.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../test_utils/fake_data.dart';
+
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -86,8 +88,13 @@ void main() async {
     await tester.pumpAndSettle();
     expect(find.text("testProject"), findsOne);
 
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    await Future.delayed(const Duration(seconds: 1));
+
     // Open settings page
     await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(popupMenuSettingsIconKey));
     await tester.pumpAndSettle();
@@ -159,5 +166,19 @@ void main() async {
     await tester.tap(find.byKey(dashboardNavigationSettingsKey));
     await tester.pumpAndSettle();
     expect(find.byType(SettingsPage), findsOne);
+  });
+  testWidgets('Dashboard Page Test', (WidgetTester tester) async {
+    await setup();
+
+    await TimelapseStore.deleteAllProjects();
+    await SettingsStore.deleteAllSettings();
+
+    await createFakeProject("testProject", 3);
+
+    await tester.pumpWidget(const AppRoot(DashboardPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Tap to take photo"), findsNothing);
+    expect(find.text("testProject"), findsOne);
   });
 }

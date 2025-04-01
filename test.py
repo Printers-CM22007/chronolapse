@@ -44,9 +44,10 @@ def adb_grant_permissions():
             exit_code = subprocess.run([shell, "-c", " ".join(command)], stdout=subprocess.DEVNULL).returncode
         else:
             exit_code = subprocess.run(command, stdout=subprocess.DEVNULL).returncode
-        #if exit_code != 0:
-            #print(f"Exiting because `{command}` exited with code {exit_code}")
-            #return exit_code
+        if exit_code != 0:
+            print(f"ADB failed with exit code {exit_code}")
+        #     print(f"Exiting because `{command}` exited with code {exit_code}")
+        #     return exit_code
     return 0
 
 def open_file(file_path):

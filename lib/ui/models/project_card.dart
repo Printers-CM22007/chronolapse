@@ -6,11 +6,11 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter/material.dart';
 
 Color blackColour = const Color(0xff08070B);
-Color greyColour = const Color(0xff131316);
-Color whiteColour = const Color(0xffCCCCCC);
-Color blueColour1 = const Color(0xff11373B);
-Color blueColour2 = const Color(0xff384547);
-Color redColour = const Color(0xff3A0101);
+// Color greyColour = const Color(0xff131316);
+// Color whiteColour = const Color(0xffCCCCCC);
+// Color blueColour1 = const Color(0xff11373B);
+// Color blueColour2 = const Color(0xff384547);
+// Color redColour = const Color(0xff3A0101);
 
 class ProjectCard {
   String projectName;
