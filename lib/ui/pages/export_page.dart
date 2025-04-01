@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:chewie/chewie.dart';
+import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/backend/video_generator/video_generator.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:chronolapse/ui/shared/settings_cog.dart';
@@ -24,15 +26,28 @@ class _ExportPageState extends State<ExportPage> {
   bool _generatingVideo = false;
   bool _isSaving = false;
   String? _generationProgress;
-  VideoPlayerWidget? _videoPlayer;
+  VideoPlayerController? _videoPlayerController;
+  ChewieController? _chewieController;
+  bool _hasEnoughFrames = false;
+
+  Future<void> _disposeVideo() async {
+    if (_videoPlayerController != null) {
+      await _videoPlayerController!.dispose();
+    }
+    if (_chewieController != null) {
+      _chewieController!.dispose();
+    }
+  }
 
   void _startVideoGeneration() async {
     if (_generatingVideo) {
       return;
     }
+    await cleanupGeneratedVideo();
+
+    await _disposeVideo();
     setState(() {
       _generatingVideo = true;
-      _videoPlayer = null;
       _videoPath = null;
       _generationProgress = null;
     });
@@ -44,22 +59,40 @@ class _ExportPageState extends State<ExportPage> {
     });
 
     if (result.path != null) {
+      // final videoPlayerController = VideoPlayerController.networkUrl(
+      //     Uri.parse(
+      //         'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4'
+      //     )
+      // );
+      await Future.delayed(const Duration(seconds: 1));
+      final videoPlayerController = VideoPlayerController.file(File(result.path!));
+      // final videoPlayerController = VideoPlayerController.contentUri(Uri.file(result.path!));
+      // final videoPlayerController = VideoPlayerController.asset("cat_video.mp4");
+      await videoPlayerController.initialize();
+      final chewieController = ChewieController(videoPlayerController: videoPlayerController);
       setState(() {
         _videoPath = result.path;
-        _videoPlayer =
-            VideoPlayerWidget(VideoPlayerController.file(File(_videoPath!)));
+        _videoPlayerController = videoPlayerController;
+        _chewieController = chewieController;
         _generatingVideo = false;
         _generationProgress = null;
       });
     } else {
+      await _disposeVideo();
       setState(() {
         _videoPath = null;
-        _videoPlayer = null;
+        _videoPlayerController = null;
         _generatingVideo = false;
         _generationProgress = null;
       });
       _showToast(result.error!);
     }
+  }
+
+  @override
+  void dispose() {
+    _disposeVideo();
+    super.dispose();
   }
 
   Widget _generationIndicator() {
@@ -79,8 +112,8 @@ class _ExportPageState extends State<ExportPage> {
   }
 
   Widget _videoTile() {
-    if (_videoPlayer != null) {
-      return _videoPlayer!;
+    if (_chewieController != null) {
+      return VideoPlayerWidget(_chewieController!);
     } else {
       return Container(
         color: Theme.of(context).primaryColorLight,
@@ -97,6 +130,16 @@ class _ExportPageState extends State<ExportPage> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkForFrames();
+  }
+
+  Future<void> _checkForFrames() async {
+    _hasEnoughFrames = (await TimelapseStore.getProject(widget._projectName)).data.metaData.frames.length > 2;
   }
 
   @override
@@ -124,7 +167,12 @@ class _ExportPageState extends State<ExportPage> {
                   title: const Text('Generate Timelapse'),
                   subtitle: const Text('Saves timelapse to camera roll'),
                   onTap: () {
-                    _startVideoGeneration();
+                    if (_hasEnoughFrames) {
+                      _startVideoGeneration();
+                    }
+                    else {
+                      _showToast("You need to take more images to make a timelapse");
+                    }
                   },
                   enabled: !_generatingVideo,
                 ),
@@ -146,8 +194,7 @@ class _ExportPageState extends State<ExportPage> {
                       _isSaving = false;
                     });
                     _showToast(result
-                        ? "Video saved successfully"
-                        : "Video failed to save");
+                        ?? "Video saved successfully");
                   },
                   enabled: _videoPath != null && !_isSaving,
                 ),
@@ -185,11 +232,14 @@ class _ExportPageState extends State<ExportPage> {
   }
 }
 
-Future<bool> saveVideoToGallery(String videoPath) async {
-  if (await Permission.storage.request().isGranted) {
-    return await GallerySaver.saveVideo(videoPath) ?? false;
-  } else {
-    print("Permissions failed");
-    return false;
+Future<String?> saveVideoToGallery(String videoPath) async {
+  final b = await Permission.storage.request().isGranted;
+  final c = await Permission.photos.request().isGranted;
+  final d = await Permission.videos.request().isGranted;
+
+  final result = await GallerySaver.saveVideo(videoPath);
+  if (result == true) {
+    return null;
   }
+  return "Video failed to save";
 }
