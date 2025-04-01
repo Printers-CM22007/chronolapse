@@ -1,4 +1,5 @@
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
+import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -244,6 +245,8 @@ class FeaturePointMarkerState extends State<FeaturePointMarker> {
                             Icons.circle,
                             color: Color.fromRGBO(r, g, b, 1.0),
                             size: iconSize,
+                            key: getFeaturePointMarkerKey(
+                                widget._featurePointIndex),
                           )),
                     ])))),
       ],

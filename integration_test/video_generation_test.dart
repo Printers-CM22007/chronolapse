@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
-import 'package:flutter/material.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'dart:math';
 

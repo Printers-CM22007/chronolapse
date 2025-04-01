@@ -65,11 +65,13 @@ class _ExportPageState extends State<ExportPage> {
       //     )
       // );
       await Future.delayed(const Duration(seconds: 1));
-      final videoPlayerController = VideoPlayerController.file(File(result.path!));
+      final videoPlayerController =
+          VideoPlayerController.file(File(result.path!));
       // final videoPlayerController = VideoPlayerController.contentUri(Uri.file(result.path!));
       // final videoPlayerController = VideoPlayerController.asset("cat_video.mp4");
       await videoPlayerController.initialize();
-      final chewieController = ChewieController(videoPlayerController: videoPlayerController);
+      final chewieController =
+          ChewieController(videoPlayerController: videoPlayerController);
       setState(() {
         _videoPath = result.path;
         _videoPlayerController = videoPlayerController;
@@ -139,7 +141,12 @@ class _ExportPageState extends State<ExportPage> {
   }
 
   Future<void> _checkForFrames() async {
-    _hasEnoughFrames = (await TimelapseStore.getProject(widget._projectName)).data.metaData.frames.length > 2;
+    _hasEnoughFrames = (await TimelapseStore.getProject(widget._projectName))
+            .data
+            .metaData
+            .frames
+            .length >
+        2;
   }
 
   @override
@@ -169,9 +176,9 @@ class _ExportPageState extends State<ExportPage> {
                   onTap: () {
                     if (_hasEnoughFrames) {
                       _startVideoGeneration();
-                    }
-                    else {
-                      _showToast("You need to take more images to make a timelapse");
+                    } else {
+                      _showToast(
+                          "You need to take more images to make a timelapse");
                     }
                   },
                   enabled: !_generatingVideo,
@@ -193,8 +200,7 @@ class _ExportPageState extends State<ExportPage> {
                     setState(() {
                       _isSaving = false;
                     });
-                    _showToast(result
-                        ?? "Video saved successfully");
+                    _showToast(result ?? "Video saved successfully");
                   },
                   enabled: _videoPath != null && !_isSaving,
                 ),

@@ -42,7 +42,7 @@ class MainActivity: FlutterActivity() {
 
     private fun compileVideo(dirPath: String, frameCount: Int, outputPath: String, frameRate: Int, bitRate: Int): String {
         val uriList: MutableList<Uri> = ArrayList()
-        for (i in 0..frameCount - 1) {
+        for (i in 0 until frameCount) {
             val file = File("$dirPath/$i.png")
 
             val uri = Uri.fromFile(file);

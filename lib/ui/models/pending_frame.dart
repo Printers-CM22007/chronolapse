@@ -19,7 +19,8 @@ class PendingFrame {
       required this.temporaryImagePath,
       this.featurePoints});
 
-  Future<TimelapseFrame> saveInBackend() async {
+  Future<TimelapseFrame> saveInBackend(
+      {bool cleanupTemporaryImage = true}) async {
     assert(frameTransform != null);
     assert(featurePoints != null);
 
@@ -33,7 +34,9 @@ class PendingFrame {
     await frame.saveFrameFromPngFile(File(temporaryImagePath));
 
     // Cleanup temporary image
-    File(temporaryImagePath).delete();
+    if (cleanupTemporaryImage) {
+      File(temporaryImagePath).delete();
+    }
 
     return frame;
   }
