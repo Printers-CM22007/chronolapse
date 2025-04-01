@@ -41,16 +41,18 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
 
   @override
   Widget build(BuildContext context) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      // Get constraints of background image
-      RenderBox box = widget.backgroundImageKey.currentContext!
-          .findRenderObject() as RenderBox;
+    if (!_hasBackgroundConstraints) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Get constraints of background image
+        RenderBox box = widget.backgroundImageKey.currentContext!
+            .findRenderObject() as RenderBox;
 
-      setState(() {
-        _backgroundSize = box.size;
-        _hasBackgroundConstraints = true;
+        setState(() {
+          _backgroundSize = box.size;
+          _hasBackgroundConstraints = true;
+        });
       });
-    });
+    }
 
     // Create feature point marker widgets
     final List<FeaturePointMarker> featurePointMarkers =
