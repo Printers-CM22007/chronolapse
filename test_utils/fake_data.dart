@@ -3,11 +3,9 @@ import 'dart:math';
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_transforms.dart';
-import 'package:chronolapse/backend/timelapse_storage/frame/timelapse_frame.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_data.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/models/pending_frame.dart';
-import 'package:flutter/material.dart';
 import 'package:opencv_dart/opencv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as img;
@@ -37,13 +35,14 @@ List<FeaturePoint> getRandomFeaturePoints(int count) {
 }
 
 /// Create a fake project named `name` with `frameCount` dummy frames
-Future<void> createFakeProject(String name, int frameCount) async {
+Future<ProjectTimelapseData> createFakeProject(
+    String name, int frameCount) async {
   final blankImageFile = await saveBlankImage(
       "${(await getTemporaryDirectory()).path}/blank.jpg", 1920, 1080, 3);
   assert(await blankImageFile.exists());
   final randomFeaturePoints = getRandomFeaturePoints(4);
 
-  await TimelapseStore.createProject(name);
+  final project = (await TimelapseStore.createProject(name))!;
 
   final pendingFrame = PendingFrame(
       projectName: name,
@@ -64,4 +63,6 @@ Future<void> createFakeProject(String name, int frameCount) async {
   for (var i = 1; i < frameCount; i++) {
     await pendingFrame.saveInBackend(cleanupTemporaryImage: false);
   }
+  await project.reloadFromDisk();
+  return project;
 }
