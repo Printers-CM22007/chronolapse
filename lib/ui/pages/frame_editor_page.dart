@@ -10,6 +10,7 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/pages/project_editor_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/ui/shared/instant_page_route.dart';
+import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
@@ -131,6 +132,7 @@ class FrameEditorState extends State<FrameEditor>
           ),
         ),
         Slider(
+            key: frameEditorBrightnessSliderKey,
             value: brightness,
             min: -1.0,
             max: 1.0,
@@ -146,6 +148,7 @@ class FrameEditorState extends State<FrameEditor>
           ),
         ),
         Slider(
+            key: frameEditorContrastSliderKey,
             value: contrast,
             min: 0.0,
             max: 2.0,
@@ -160,6 +163,7 @@ class FrameEditorState extends State<FrameEditor>
           ),
         ),
         Slider(
+            key: frameEditorWhiteBalanceSliderKey,
             value: balanceFactor,
             min: -0.4,
             max: 0.4,
@@ -174,6 +178,7 @@ class FrameEditorState extends State<FrameEditor>
           ),
         ),
         Slider(
+            key: frameEditorSaturationSliderKey,
             value: saturation,
             min: 0.0,
             max: 2.0,
@@ -334,6 +339,7 @@ class FrameEditorState extends State<FrameEditor>
                       }),
                   icon: const Icon(Icons.settings)),
               IconButton(
+                  key: frameEditorFeaturePointsVisibilityToggleKey,
                   icon: Icon(
                       showMarkers ? Icons.visibility : Icons.visibility_off),
                   onPressed: () => setState(() {
@@ -360,8 +366,10 @@ class FrameEditorState extends State<FrameEditor>
             TabBar(
               controller: tabController,
               tabs: const [
-                Tab(text: 'Colour Grading'),
-                Tab(text: 'Alignment'),
+                Tab(
+                    text: 'Colour Grading',
+                    key: frameEditorColourGradingTabKey),
+                Tab(text: 'Alignment', key: frameEditorAlignmentTabKey),
                 // Tab(text: 'Frames',)
               ],
             ),
@@ -402,6 +410,7 @@ class FrameEditorState extends State<FrameEditor>
           alignment: Alignment.bottomCenter,
           padding: const EdgeInsets.all(25.0),
           child: ElevatedButton(
+            key: frameEditorSaveAndExitButtonKey,
             onPressed: () async {
               print("Save button pressed");
 
@@ -440,6 +449,7 @@ class FrameEditorState extends State<FrameEditor>
                         const Text("Use manual alignment"),
                         const Spacer(),
                         Switch(
+                            key: frameEditorManualAlignmentToggleKey,
                             value: _useManualAlignment,
                             onChanged: (_) {
                               _toggleManualAlignment();
