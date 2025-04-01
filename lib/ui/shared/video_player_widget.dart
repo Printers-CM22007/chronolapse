@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   /// Accepts an *uninitialised* `VideoPlayerController` which is shown as the
@@ -24,10 +23,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         child: Container(
           color: Colors.black26,
           child: Center(
-            child: Chewie(
-                    controller: widget._chewieController,
-                  )
-          ),
+              child: Chewie(
+            controller: widget._chewieController,
+          )),
         ));
   }
 }

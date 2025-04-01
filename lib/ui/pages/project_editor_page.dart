@@ -3,7 +3,6 @@ import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/ui/pages/frame_editor_page.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
@@ -165,8 +164,8 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
         builder: (context) {
           return AlertDialog(
             title: Text("Deleting Frame ${frameIndex + 1}"),
-            content: Text(
-                "Are you sure you want to delete Frame ${frameIndex + 1}"),
+            content:
+                Text("Are you sure you want to delete Frame ${frameIndex + 1}"),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -175,7 +174,7 @@ class ProjectEditorPageState extends State<ProjectEditorPage> {
                 child: Text(
                   'Cancel',
                   style:
-                  TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ),
               TextButton(

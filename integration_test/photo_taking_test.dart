@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:chronolapse/backend/settings_storage/settings_store.dart';
 import 'package:chronolapse/backend/timelapse_storage/timelapse_store.dart';
 import 'package:chronolapse/main.dart';
@@ -8,11 +6,8 @@ import 'package:chronolapse/ui/pages/export_page.dart';
 import 'package:chronolapse/ui/pages/photo_preview_page.dart';
 import 'package:chronolapse/ui/pages/photo_taking_page.dart';
 import 'package:chronolapse/ui/pages/project_editor_page.dart';
-import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:uuid/uuid.dart';
 
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:permission_handler/permission_handler.dart';

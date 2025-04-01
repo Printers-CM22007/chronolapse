@@ -14,7 +14,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../test_utils/fake_data.dart';
 
-
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -41,16 +40,19 @@ void main() async {
     await Future.delayed(const Duration(seconds: 2));
 
     // Find delete buttons and sort by y-position
-    final List<MapEntry<Element, double>> deleteButtons = find.byIcon(Icons.delete)
+    final List<MapEntry<Element, double>> deleteButtons = find
+        .byIcon(Icons.delete)
         .evaluate()
-        .map((e) => MapEntry(e, tester.getTopLeft(find.byElementPredicate((el) => el == e)).dy))
+        .map((e) => MapEntry(
+            e, tester.getTopLeft(find.byElementPredicate((el) => el == e)).dy))
         .toList();
     deleteButtons.sort((a, b) => a.value.compareTo(b.value));
 
     expect(deleteButtons.length, 3);
 
     // Test first frame deletion protection
-    await tester.tap(find.byElementPredicate((el) => el == deleteButtons[0].key));
+    await tester
+        .tap(find.byElementPredicate((el) => el == deleteButtons[0].key));
     await tester.pumpAndSettle();
     expect(find.text(cannotDeleteFirstFrameText), findsOne);
 
@@ -58,7 +60,8 @@ void main() async {
 
     // Test delete button
     expect(find.text("Deleting Frame 2"), findsNothing);
-    await tester.tap(find.byElementPredicate((el) => el == deleteButtons[1].key));
+    await tester
+        .tap(find.byElementPredicate((el) => el == deleteButtons[1].key));
     await tester.pumpAndSettle();
     expect(find.text("Deleting Frame 2"), findsOne);
 
@@ -70,7 +73,8 @@ void main() async {
     expect(find.text("Deleting Frame 2"), findsNothing);
 
     // Test deleting
-    await tester.tap(find.byElementPredicate((el) => el == deleteButtons[1].key));
+    await tester
+        .tap(find.byElementPredicate((el) => el == deleteButtons[1].key));
     await tester.pumpAndSettle();
     await tester.tap(find.text("Delete"));
     await tester.pumpAndSettle();
