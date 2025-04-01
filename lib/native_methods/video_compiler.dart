@@ -11,7 +11,6 @@ Future<String?> compileVideo(String frameDir, int frameCount, String outputPath,
     "frameDir": frameDir,
     "frameCount": frameCount,
     "outputPath": outputPath,
-    "projectName": projectName,
     "frameRate": fpsSetting.withProject(ProjectName(projectName)).getValue(),
     "bitRate": bitRateSetting.withProject(ProjectName(projectName)).getValue(),
   });

@@ -47,9 +47,10 @@ Future<VideoGenerationResult> generateVideo(
   }
   await frameDir.create(recursive: true);
 
-  const int minId = 10 ^ 8;
-  const int maxId = 10 ^ 9;
+  final int minId = pow(10, 8).toInt();
+  final int maxId = pow(10, 9).toInt();
   final int outputId = minId + Random().nextInt(maxId - minId);
+  print(outputId);
   final outputDir = Directory(
       "${(await getApplicationCacheDirectory()).path}/$outputsFolderName/$outputId");
   if (await outputDir.exists()) {
