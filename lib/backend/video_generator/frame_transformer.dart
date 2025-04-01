@@ -16,7 +16,8 @@ Future<bool> transformFrames(String projectName, List<String> frames,
 
     final frameData = await TimelapseFrame.fromExisting(projectName, frame);
     final transformed = await ImageTransformer.applyHomographyMat(
-        frameData.getFramePng(), frameData.data.frameTransform.transform.getMatrix());
+        frameData.getFramePng(),
+        frameData.data.frameTransform.transform.getMatrix());
     await cv.imwriteAsync("$frameDir/$i.png", transformed);
 
     i += 1;

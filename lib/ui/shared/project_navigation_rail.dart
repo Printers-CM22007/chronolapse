@@ -5,35 +5,36 @@ import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:flutter/material.dart';
 
-class ProjectNavigationBar extends StatelessWidget {
+class ProjectNavigationRail extends StatelessWidget {
   final String _projectName;
   final int _selectedIndex;
   final bool disabled;
 
-  const ProjectNavigationBar(this._projectName, this._selectedIndex,
+  const ProjectNavigationRail(this._projectName, this._selectedIndex,
       {this.disabled = false, super.key});
 
   @override
   Widget build(BuildContext context) {
+    const itemPadding = 25.0;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(40)),
       ),
-      child: NavigationBar(
-          shadowColor: Theme.of(context).colorScheme.onInverseSurface,
-          height: 60,
+      child: NavigationRail(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          elevation: 0,
-          selectedIndex: _selectedIndex,
+          selectedIndex: 2 - _selectedIndex,
           indicatorColor: Theme.of(context).colorScheme.secondary,
+          labelType: NavigationRailLabelType.all,
+          groupAlignment: 0.5,
           onDestinationSelected: (index) {
-            if (index == _selectedIndex) {
+            if (index == 2 - _selectedIndex) {
               return;
             }
             switch (index) {
-              case 0:
+              case 2:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
                     builder: (context) => PhotoTakingPage(_projectName)));
                 break;
@@ -43,37 +44,34 @@ class ProjectNavigationBar extends StatelessWidget {
                     builder: (context) => ProjectEditorPage(_projectName)));
                 break;
 
-              case 2:
+              case 0:
                 Navigator.of(context).pushReplacement(InstantPageRoute(
                     builder: (context) => ExportPage(_projectName)));
                 break;
             }
           },
-          destinations: [
-            NavigationDestination(
-              icon: const Icon(
-                Icons.camera_alt,
-              ),
-              label: "Take photo",
-              enabled: !disabled,
-              key: projectNavigationBarPhotoTakingKey,
-            ),
-            NavigationDestination(
-              icon: const Icon(
-                Icons.edit,
-              ),
-              label: "Edit frames",
-              enabled: !disabled,
-              key: projectNavigationBarEditKey,
-            ),
-            NavigationDestination(
-              icon: const Icon(
-                Icons.arrow_upward,
-              ),
-              label: "Export",
-              enabled: !disabled,
-              key: projectNavigationBarExportKey,
-            ),
+          destinations: const [
+            NavigationRailDestination(
+                icon: Icon(
+                  Icons.arrow_upward,
+                  key: projectNavigationBarExportKey,
+                ),
+                label: Text("Export", textAlign: TextAlign.center),
+                padding: EdgeInsets.fromLTRB(0, itemPadding, 0, itemPadding)),
+            NavigationRailDestination(
+                icon: Icon(
+                  Icons.edit,
+                  key: projectNavigationBarEditKey,
+                ),
+                label: Text("Edit frames", textAlign: TextAlign.center),
+                padding: EdgeInsets.fromLTRB(0, itemPadding, 0, itemPadding)),
+            NavigationRailDestination(
+                icon: Icon(
+                  Icons.camera_alt,
+                  key: projectNavigationBarPhotoTakingKey,
+                ),
+                label: Text("Take photo", textAlign: TextAlign.center),
+                padding: EdgeInsets.fromLTRB(0, itemPadding, 0, itemPadding)),
           ]),
     );
   }

@@ -11,11 +11,14 @@ import 'package:chronolapse/ui/models/pending_frame.dart';
 import 'package:chronolapse/ui/pages/photo_preview_page.dart';
 import 'package:chronolapse/ui/shared/feature_points_editor.dart';
 import 'package:chronolapse/ui/shared/project_navigation_bar.dart';
+import 'package:chronolapse/ui/shared/project_navigation_rail.dart';
+import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
+import '../../backend/settings_storage/settings_options.dart';
 import '../../util/shared_keys.dart';
 import '../shared/settings_cog.dart';
 
@@ -33,10 +36,10 @@ class PhotoTakingPage extends StatefulWidget {
 }
 
 class PhotoTakingPageState extends State<PhotoTakingPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, RouteAware {
   static const ResolutionPreset _resolutionPreset = ResolutionPreset.max;
   static const Duration _pictureTakingTimeoutDuration = Duration(seconds: 30);
-  static const double _referenceOverlayOpacity = 0.33;
+  static double _referenceOverlayOpacity = 0.33;
 
   late CameraController _cameraController;
 
@@ -54,10 +57,26 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     // Create camera controller using first available camera
     _cameraController = CameraController(cameras.first, _resolutionPreset);
 
+    _referenceOverlayOpacity =
+        referenceOverlayOpacity.getValue().toDouble() / 100;
+
     _initializeCameraController();
 
     // Get reference frame
     _getReferenceFrame();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    _referenceOverlayOpacity =
+        referenceOverlayOpacity.getValue().toDouble() / 100;
   }
 
   @override
@@ -87,13 +106,13 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        title: Text(
-          "Take photo - ${widget._projectName}",
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: <Widget>[settingsCog(context, widget._projectName)],
-      ),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          actions: <Widget>[settingsCog(context, widget._projectName)],
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_upward))),
       body: Stack(children: [
         // Camera preview
         Center(
@@ -112,7 +131,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
                       border: Border.all(color: Colors.white, width: 5)),
                   child: Center(
                       child: ElevatedButton(
-                        key: photoTakingShutterButtonKey,
+                    key: photoTakingShutterButtonKey,
                     onPressed: () {
                       _onShutterButtonPressed();
                     },
@@ -128,7 +147,12 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
                   )))
             ]))
       ]),
-      bottomNavigationBar: ProjectNavigationBar(widget._projectName, 0),
+      bottomNavigationBar: SizedBox(
+        height: 100,
+        child: RotatedBox(
+            quarterTurns: 1,
+            child: ProjectNavigationRail(widget._projectName, 0)),
+      ),
     );
   }
 
@@ -211,14 +235,16 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
     return Stack(children: [
       background,
-      FeaturePointsEditor(
-        featurePoints: _referenceFrameFeaturePoints,
-        backgroundImage: RotatedBox(quarterTurns: 1, child: Opacity(
-            opacity: _referenceOverlayOpacity, child: _referenceFrameImage)),
-        backgroundImageKey: _referenceFrameImageKey,
-        backgroundImageDimensions: _referenceFrameDimensions,
-        allowDragging: false,
-      ),
+      RotatedBox(
+          quarterTurns: 1,
+          child: FeaturePointsEditor(
+            featurePoints: _referenceFrameFeaturePoints,
+            backgroundImage: Opacity(
+                opacity: _referenceOverlayOpacity, child: _referenceFrameImage),
+            backgroundImageKey: _referenceFrameImageKey,
+            backgroundImageDimensions: _referenceFrameDimensions,
+            allowDragging: false,
+          )),
     ]);
   }
 
@@ -245,7 +271,6 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
       // Rotate image
       final rotatedImage = img.copyRotate(decodedImage,
           angle: (cameraController.description.sensorOrientation + 270) % 360);
-
 
       // Save image to temporary file
       final data = img.encodePng(rotatedImage).toList();
@@ -302,6 +327,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
     return imgRgb;
   }
 
+  // coverage:ignore-start
   static img.Image _nv21ToRgb(CameraImage image) {
     final int width = image.width;
     final int height = image.height;
@@ -332,6 +358,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
 
     return imgRgb;
   }
+  // coverage:ignore-end
 }
 
 Future<void> cleanUpTakenImages() async {

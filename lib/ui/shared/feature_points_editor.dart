@@ -29,29 +29,29 @@ class FeaturePointsEditor extends StatefulWidget {
 }
 
 class FeaturePointsEditorState extends State<FeaturePointsEditor> {
-  late Offset _backgroundOffset;
   late Size _backgroundSize;
   bool _hasBackgroundConstraints = false;
+
+  final _newMarkerNameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       // Get constraints of background image
       RenderBox box = widget.backgroundImageKey.currentContext!
           .findRenderObject() as RenderBox;
 
       setState(() {
-        _backgroundOffset = box.localToGlobal(Offset.zero);
         _backgroundSize = box.size;
         _hasBackgroundConstraints = true;
       });
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     // Create feature point marker widgets
     final List<FeaturePointMarker> featurePointMarkers =
         _hasBackgroundConstraints
@@ -72,18 +72,62 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
   void _onTapCanvas(TapUpDetails tapUpDetails) {
     if (widget.allowAdding) {
       final pointIndex = widget.featurePoints.length;
+      final defaultName = "Marker ${pointIndex + 1}";
 
-      widget.featurePoints.add(FeaturePoint(
-          "Marker ${pointIndex + 1}",
-          randomPastelColor(),
-          _transformScreenToImage(FeaturePointPosition(
-              tapUpDetails.localPosition.dx, tapUpDetails.localPosition.dy))));
+      _newMarkerNameController.clear();
 
-      if (widget.onPointAdded != null) {
-        widget.onPointAdded!();
-      }
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              title: const Text("Create marker"),
+              actionsAlignment: MainAxisAlignment.spaceBetween,
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Cancel"),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
 
-      setState(() {});
+                    setState(() {
+                      widget.featurePoints.add(FeaturePoint(
+                          _newMarkerNameController.text.trim().isNotEmpty
+                              ? _newMarkerNameController.text.trim()
+                              : defaultName,
+                          randomPastelColor(),
+                          _transformScreenToImage(FeaturePointPosition(
+                              tapUpDetails.localPosition.dx,
+                              tapUpDetails.localPosition.dy))));
+
+                      if (widget.onPointAdded != null) {
+                        widget.onPointAdded!();
+                      }
+
+                      setState(() {});
+                    });
+                  },
+                  child: const Text("Create"),
+                )
+              ],
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //User input for project name
+                  TextField(
+                    controller: _newMarkerNameController,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    decoration: InputDecoration(
+                        hintText: defaultName,
+                        hintStyle: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white38)),
+                  )
+                ],
+              )));
     }
   }
 
@@ -101,12 +145,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
     final scaleY =
         widget.backgroundImageDimensions.$2.toDouble() / _backgroundSize.height;
 
-    final offsetX = _backgroundOffset.dx;
-    //final offsetY = _backgroundOffset.dy;
-    const offsetY = 0;
-
-    return FeaturePointPosition(
-        (pos.x - offsetX) * scaleX, (pos.y - offsetY) * scaleY);
+    return FeaturePointPosition(pos.x * scaleX, pos.y * scaleY);
   }
 
   /// Transform feature point position from image-space to screen-space
@@ -116,12 +155,7 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
     final scaleY =
         widget.backgroundImageDimensions.$2.toDouble() / _backgroundSize.height;
 
-    final offsetX = _backgroundOffset.dx;
-    //final offsetY = _backgroundOffset.dy;
-    const offsetY = 0;
-
-    return FeaturePointPosition(
-        pos.x / scaleX + offsetX, pos.y / scaleY + offsetY);
+    return FeaturePointPosition(pos.x / scaleX, pos.y / scaleY);
   }
 }
 

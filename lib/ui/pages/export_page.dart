@@ -46,7 +46,8 @@ class _ExportPageState extends State<ExportPage> {
     if (result.path != null) {
       setState(() {
         _videoPath = result.path;
-        _videoPlayer = VideoPlayerWidget(VideoPlayerController.file(File(_videoPath!)));
+        _videoPlayer =
+            VideoPlayerWidget(VideoPlayerController.file(File(_videoPath!)));
         _generatingVideo = false;
         _generationProgress = null;
       });
