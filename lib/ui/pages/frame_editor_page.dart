@@ -213,6 +213,8 @@ class FrameEditorState extends State<FrameEditor>
   //   });
   // }
 
+  /*
+  Not used
   Future<Uint8List?> captureEditedImage() async {
     try {
       if (_boundaryKey.currentContext == null) {
@@ -238,6 +240,7 @@ class FrameEditorState extends State<FrameEditor>
       return null;
     }
   }
+   */
 
   @override
   Widget build(BuildContext context) {

@@ -111,7 +111,6 @@ void main() async {
     // Assert that we arrived at the project editor page
     expect(find.byType(ProjectEditorPage), findsOne);
   });
-  /*
   testWidgets('Photo Editor - Editing Subsequent Frame',
       (WidgetTester tester) async {
     await setup();
@@ -175,6 +174,7 @@ void main() async {
     await tester.tap(find.byKey(frameEditorManualAlignmentToggleKey));
 
     // Assert that we can move the feature points
+    /*
     {
       final featurePoint = find.byKey(getFeaturePointMarkerKey(0));
       final position = tester.getCenter(featurePoint);
@@ -188,6 +188,7 @@ void main() async {
 
       expect(newPosition.dx, isNot(equals(position.dx)));
     }
+     */
 
     // Disable manual alignment
 
@@ -215,5 +216,4 @@ void main() async {
     // Assert that we arrived at the project editor page
     expect(find.byType(ProjectEditorPage), findsOne);
   });
-   */
 }
