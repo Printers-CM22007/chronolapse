@@ -15,7 +15,10 @@ part 'timelapse_data.g.dart';
 /// Holds data about a timelapse. !! Only modify the data you added - e.g. don't
 /// modify `TimelapseMetaData` from outside `timelapse_storage` code !!
 class TimelapseData {
+  /// Data used by TimelapseStore code
   TimelapseMetaData metaData;
+
+  /// List of frames with user-verified transforms
   KnownFrameTransforms knownFrameTransforms;
 
   TimelapseData({required this.metaData, required this.knownFrameTransforms});

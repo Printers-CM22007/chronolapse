@@ -51,6 +51,6 @@ const bitRateSetting = RequiresProject(MultistepSetting(
     " bits/s selected"));
 
 // ! Do not show these in the settings page
-// Hidden Setting **************
+// Hidden Settings **************
 const lastModifiedProject =
     RequiresProject(LastModifiedNoWidget("lastModified"));

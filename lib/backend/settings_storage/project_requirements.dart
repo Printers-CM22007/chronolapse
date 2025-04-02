@@ -1,6 +1,7 @@
 import 'package:chronolapse/backend/settings_storage/setting_types/project_setting.dart';
 import 'package:flutter/material.dart';
 
+/// Either the name of a project or global
 class ProjectName {
   final String? _projectName;
 
@@ -10,6 +11,8 @@ class ProjectName {
 
   // Ignored because it is a getter
   String? name() => _projectName; // coverage:ignore-line
+
+  /// Prefix in SharedPreferences before the setting key
   String settingPrefix() =>
       _projectName == null ? "global/" : "project/$_projectName/";
 }
@@ -56,6 +59,7 @@ class Global<T> extends PersistentSettingWithProject<T> {
       // LCOV incorrectly believes the next line is separate from the previous
       : super(const ProjectName.global(), setting); // coverage:ignore-line
 
+  /// Restricts usage to only being able to get the widget
   @override
   WidgetSettingGlobal<T> asWidgetOnly() {
     return WidgetSettingGlobal(_setting);

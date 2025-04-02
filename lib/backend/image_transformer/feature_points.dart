@@ -9,6 +9,7 @@ class FeaturePointPosition {
 
   const FeaturePointPosition(this.x, this.y);
 
+  /// Move `FeaturePointPosition` by dx, dy
   FeaturePointPosition move(double dx, double dy) {
     return FeaturePointPosition(
       x + dx,

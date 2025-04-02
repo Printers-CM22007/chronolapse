@@ -88,6 +88,7 @@ void main() async {
     await tester.pumpAndSettle();
     expect(find.text("testProject"), findsOne);
 
+    // Unfocus to hide keyboard
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(seconds: 1));
@@ -167,7 +168,7 @@ void main() async {
     await tester.pumpAndSettle();
     expect(find.byType(SettingsPage), findsOne);
   });
-  testWidgets('Dashboard Page Test', (WidgetTester tester) async {
+  testWidgets('Dashboard Page Test With Frame', (WidgetTester tester) async {
     await setup();
 
     await TimelapseStore.deleteAllProjects();
@@ -178,6 +179,7 @@ void main() async {
     await tester.pumpWidget(const AppRoot(DashboardPage()));
     await tester.pumpAndSettle();
 
+    // Expect the take photo text to be hidden
     expect(find.text("Tap to take photo"), findsNothing);
     expect(find.text("testProject"), findsOne);
   });

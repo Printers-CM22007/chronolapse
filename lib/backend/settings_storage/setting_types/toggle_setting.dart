@@ -1,5 +1,6 @@
 part of 'project_setting.dart';
 
+/// A toggle setting
 class ToggleSetting extends PersistentSetting<bool> {
   final String _title;
   final String _subtitle;

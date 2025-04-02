@@ -91,6 +91,7 @@ class _ExportPageState extends State<ExportPage> {
     }
   }
 
+  /// Correctly disposes of video player
   @override
   void dispose() {
     _disposeVideo();

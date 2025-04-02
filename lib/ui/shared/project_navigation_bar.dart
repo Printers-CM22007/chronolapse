@@ -5,6 +5,7 @@ import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:flutter/material.dart';
 
+/// Navigation bar for photo taking, project editing, and exporting
 class ProjectNavigationBar extends StatelessWidget {
   final String _projectName;
   final int _selectedIndex;

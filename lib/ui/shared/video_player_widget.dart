@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 
+/// Video player
 class VideoPlayerWidget extends StatefulWidget {
-  /// Accepts an *uninitialised* `VideoPlayerController` which is shown as the
-  /// content of the widget.
   const VideoPlayerWidget(this._chewieController,
       {super.key, this.forcedAspectRatio});
 

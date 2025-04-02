@@ -6,7 +6,7 @@ class None {
   const None();
 }
 
-/// Slow (loads whole image)
+/// Gets the dimensions of an image - slow (loads whole image)
 Future<(int, int)> getImageDimensions(String imagePath) async {
   final file = File(imagePath);
   final bytes = await file.readAsBytes();

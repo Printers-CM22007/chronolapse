@@ -360,6 +360,7 @@ class PhotoTakingPageState extends State<PhotoTakingPage>
   // coverage:ignore-end
 }
 
+/// Deletes any remaining temporary images from photo taking
 Future<void> cleanUpTakenImages() async {
   final temporaryDir = await getApplicationCacheDirectory();
   final cameraDir = Directory("${temporaryDir.path}/$cameraCacheDirectory");
