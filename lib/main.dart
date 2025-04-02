@@ -62,6 +62,7 @@ class AppRoot extends StatelessWidget {
     ]);
     return MaterialApp(
       title: 'Chronolapse',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: const ColorScheme(
           primary: Color(0xff3e3655),

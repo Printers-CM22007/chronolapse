@@ -8,6 +8,7 @@ class FeaturePointsEditor extends StatefulWidget {
   final Widget backgroundImage;
   final GlobalKey backgroundImageKey;
   final (int, int) backgroundImageDimensions;
+  final (double, double)? backgroundImageSizeOnScreen;
   final bool allowAdding;
   final bool allowDragging;
   final void Function()? onPointAdded;
@@ -17,6 +18,7 @@ class FeaturePointsEditor extends StatefulWidget {
       required this.backgroundImage,
       required this.backgroundImageKey,
       required this.backgroundImageDimensions,
+      this.backgroundImageSizeOnScreen,
       this.allowAdding = false,
       this.allowDragging = true,
       this.onPointAdded,
@@ -37,6 +39,12 @@ class FeaturePointsEditorState extends State<FeaturePointsEditor> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.backgroundImageSizeOnScreen != null) {
+      _hasBackgroundConstraints = true;
+      _backgroundSize = Size(widget.backgroundImageSizeOnScreen!.$1,
+          widget.backgroundImageSizeOnScreen!.$2);
+    }
   }
 
   @override

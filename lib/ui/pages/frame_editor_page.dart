@@ -322,6 +322,11 @@ class FrameEditorState extends State<FrameEditor>
       ),
     );
 
+    // Width and height of frame image on screen
+    final imageWidthOnScreen = MediaQuery.of(context).size.width;
+    final imageHeightOnScreen = imageWidthOnScreen *
+        (_imageDimensions.$2.toDouble() / _imageDimensions.$1.toDouble());
+
     return Stack(children: [
       DefaultTabController(
         length: 3,
@@ -350,9 +355,7 @@ class FrameEditorState extends State<FrameEditor>
           body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             SizedBox(
               // box shouldn't be needed but it throws without an explicit height
-              height: MediaQuery.of(context).size.width *
-                  (_imageDimensions.$2.toDouble() /
-                      _imageDimensions.$1.toDouble()),
+              height: imageHeightOnScreen,
               child: showMarkers
                   ? FeaturePointsEditor(
                       featurePoints: _featurePoints,
@@ -360,6 +363,10 @@ class FrameEditorState extends State<FrameEditor>
                       backgroundImage: frameBackground,
                       backgroundImageKey: _frameImageKey,
                       backgroundImageDimensions: _imageDimensions,
+                      backgroundImageSizeOnScreen: (
+                        imageWidthOnScreen,
+                        imageHeightOnScreen
+                      ),
                     )
                   : frameBackground,
             ),
