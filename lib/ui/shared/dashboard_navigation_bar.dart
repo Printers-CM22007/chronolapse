@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../pages/dashboard_page/dashboard_icons.dart';
 
+/// Navigation bar for the dashboard
 class DashboardNavigationBar extends StatelessWidget {
   final int selectedIndex;
 

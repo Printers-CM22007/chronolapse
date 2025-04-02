@@ -20,7 +20,8 @@ void main() async {
     await tester.pumpWidget(const AppRoot(SettingsPage(null)));
     await tester.pumpAndSettle();
 
-    expect(find.text("Global Settings"), findsOneWidget);
+    // Check global settings are shown
+    expect(find.text("Global Settings"), findsOne);
     expect(find.text("Project Settings"), findsNothing);
     expect(find.textContaining("30"), findsOne);
   });
@@ -38,6 +39,7 @@ void main() async {
     expect(bitRateSetting.withProject(testProjectName).getValue(), 8192);
     expect(referenceOverlayOpacity.getValue(), 30);
 
+    // Create settings page
     await tester.pumpWidget(AppRoot(SettingsPage(testProjectName.name())));
     await tester.pumpAndSettle();
 
@@ -49,6 +51,7 @@ void main() async {
     expect(find.textContaining("8192"), findsOne);
     expect(find.text(neverEntry), findsOne);
 
+    // Change notification frequency
     await tester.tap(find.text(neverEntry));
     await tester.pumpAndSettle();
 
@@ -56,15 +59,19 @@ void main() async {
         .tap(find.text(NotificationFrequency.daily.stringRepresentation()));
     await tester.pumpAndSettle();
 
+    // Check notification frequency has changed
     expect(notificationFrequencySetting.withProject(testProjectName).getValue(),
         NotificationFrequency.daily);
 
+    // Drag fps slider
     final beforeVal = fpsSetting.withProject(testProjectName).getValue();
     await tester.drag(
         find.byKey(getSliderKey(
             fpsSetting.withProject(testProjectName).setting().key())),
         const Offset(-1000, 0));
     await tester.pumpAndSettle();
+
+    // Check fps slider has changed value
     expect(fpsSetting.withProject(testProjectName).getValue(),
         isNot(equals(beforeVal)));
   });
@@ -72,6 +79,7 @@ void main() async {
     await SettingsStore.initialise();
     await SettingsStore.deleteAllSettings();
 
+    // Create unused settings
     const exampleToggleSetting = Global(ToggleSetting(
         "exampleToggle", false, "Example Toggle One", "Does nothing"));
     const exampleToggleSettingTwo = RequiresProject(ToggleSetting(
@@ -82,6 +90,7 @@ void main() async {
         projectSettings: [exampleToggleSettingTwo.asWidgetOnly()])));
     await tester.pumpAndSettle();
 
+    // Test defaults
     expect(exampleToggleSetting.getValue(), false);
     expect(
         exampleToggleSettingTwo
@@ -89,6 +98,7 @@ void main() async {
             .getValue(),
         true);
 
+    // Tap toggles
     final toggleOneFinder = find.text("Example Toggle One");
     final toggleTwoFinder = find.text("Example Toggle Two");
 
@@ -99,6 +109,7 @@ void main() async {
     await tester.pumpAndSettle();
     expect(exampleToggleSetting.getValue(), true);
 
+    // Check that toggles have changes
     await tester.tap(toggleTwoFinder);
     await tester.pumpAndSettle();
     expect(

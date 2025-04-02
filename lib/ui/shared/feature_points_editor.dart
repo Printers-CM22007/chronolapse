@@ -2,7 +2,6 @@ import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class FeaturePointsEditor extends StatefulWidget {
   final List<FeaturePoint> featurePoints;

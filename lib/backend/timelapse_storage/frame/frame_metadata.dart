@@ -2,12 +2,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'frame_metadata.g.dart';
 
+/// Data used by TimelapseFrame code
 @JsonSerializable()
 class FrameMetaData {
-  FrameMetaData();
+  const FrameMetaData();
 
   factory FrameMetaData.initial(String projectName) {
-    return FrameMetaData();
+    return const FrameMetaData();
   }
 
   factory FrameMetaData.fromJson(Map<String, dynamic> json) =>

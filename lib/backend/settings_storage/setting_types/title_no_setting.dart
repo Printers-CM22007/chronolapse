@@ -1,5 +1,6 @@
 part of 'project_setting.dart';
 
+/// Text title with no setting
 class TitleNoSetting extends SettingWidget<None> {
   final String _title;
   const TitleNoSetting(this._title) : super("", const None());

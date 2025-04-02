@@ -1,5 +1,6 @@
 part of 'project_setting.dart';
 
+/// Setting for changing notification frequency in the NotificationSystem
 class NotificationFrequencySetting
     extends PersistentSetting<NotificationFrequency?> {
   const NotificationFrequencySetting(super._key, super._defaultValue);

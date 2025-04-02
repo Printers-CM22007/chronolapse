@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'timelapse_metadata.g.dart';
 
+/// Data used by TimelapseStore code
 @JsonSerializable()
 class TimelapseMetaData {
   final String projectName;

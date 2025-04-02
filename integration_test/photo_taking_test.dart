@@ -29,10 +29,10 @@ void main() async {
     await TimelapseStore.deleteAllProjects();
     await SettingsStore.deleteAllSettings();
 
-    // Create project in Dashboard page
     await tester.pumpWidget(const AppRoot(DashboardPage()));
     await tester.pumpAndSettle();
 
+    // Create project in Dashboard page
     await tester.tap(find.text("Create New"));
     await tester.pumpAndSettle();
 

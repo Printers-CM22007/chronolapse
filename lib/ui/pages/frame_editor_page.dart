@@ -1,7 +1,6 @@
 // import 'dart:ui';
 
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:chronolapse/backend/image_transformer/feature_points.dart';
 import 'package:chronolapse/backend/image_transformer/frame_alignment.dart';
@@ -14,8 +13,6 @@ import 'package:chronolapse/util/shared_keys.dart';
 import 'package:chronolapse/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:chronolapse/ui/pages/settings_page.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../backend/timelapse_storage/frame/timelapse_frame.dart';

@@ -1,5 +1,6 @@
 part of 'project_setting.dart';
 
+/// Stores a last modified ms since epoch. No widget.
 class LastModifiedNoWidget extends PersistentSetting<int> {
   const LastModifiedNoWidget(key) : super(key, 0);
 

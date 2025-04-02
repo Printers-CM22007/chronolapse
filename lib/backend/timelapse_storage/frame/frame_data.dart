@@ -11,9 +11,13 @@ part 'frame_data.g.dart';
 /// Holds data about a frame. !! Only modify the data you added - e.g. don't
 /// modify `FrameMetaData` from outside `timelapse_storage/frame` code !!
 class FrameData {
+  /// Data used by TimelapseFrame code
   FrameMetaData metaData;
 
+  /// Feature points for image alignment
   List<FeaturePoint> featurePoints;
+
+  /// Calculated image transformation for alignment
   FrameTransform frameTransform;
 
   FrameData(

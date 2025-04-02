@@ -7,9 +7,11 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../util/uninitialised_exception.dart';
 
+/// Frequency at which notifications are sent
 enum NotificationFrequency { daily, weekly }
 
 extension NotificationFrequencyExt on NotificationFrequency {
+  /// Get a unique string representation of the variant
   String stringRepresentation() {
     switch (this) {
       case NotificationFrequency.daily:
@@ -19,6 +21,8 @@ extension NotificationFrequencyExt on NotificationFrequency {
     }
   }
 
+  /// Get the enum variant from the string representation. Inverse to
+  /// `stringRepresentation`
   static NotificationFrequency? getOptionFromString(String option) {
     if (option.isEmpty) {
       return null;
@@ -32,6 +36,7 @@ extension NotificationFrequencyExt on NotificationFrequency {
   }
 }
 
+/// Manages scheduling notifications
 class NotificationService {
   static NotificationService? _instance;
   final FlutterLocalNotificationsPlugin _notificationsPlugin;
@@ -46,7 +51,6 @@ class NotificationService {
     return _instance!;
   }
 
-  //INITIALIZE
   static Future<void> initialise(
       {FlutterLocalNotificationsPlugin? notificationPlugin}) async {
     if (_instance != null) {
@@ -76,8 +80,7 @@ class NotificationService {
     _instance = instance;
   }
 
-  //NOTIFICATION DETAILS
-  static NotificationDetails notificationDetails() {
+  static NotificationDetails _notificationDetails() {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
           'daily_channel_id', "Daily Notifications",
@@ -88,7 +91,7 @@ class NotificationService {
     );
   }
 
-  //SHOW NOTIFICATION
+  /// Shows a notification immediately
   static Future<void> showNotification(
       {int? id, String? title, String? body}) async {
     var random = Random();
@@ -97,11 +100,11 @@ class NotificationService {
           id ?? randomId,
           title,
           body,
-          notificationDetails(),
+          _notificationDetails(),
         );
   }
 
-  //SCHEDULE NOTIFICATIONS
+  /// Schedules a notification to be show regularly
   static Future<void> scheduleNotification(
       {int? id,
       required String title,
@@ -118,7 +121,7 @@ class NotificationService {
         title,
         body,
         scheduledDate,
-        notificationDetails(),
+        _notificationDetails(),
         /*
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
@@ -145,22 +148,25 @@ class NotificationService {
     }
   }
 
+  /// Lists all the currently pending notifications
   static Future<List<PendingNotificationRequest>>
       getPendingNotifications() async {
-    print("Inside getPendingNotifications()"); // Debugging print
     return await _getInstance()
         ._notificationsPlugin
         .pendingNotificationRequests();
   }
 
+  /// Lists the currently active notifications
   static Future<List<ActiveNotification>> getActiveNotifications() async {
     return await _getInstance()._notificationsPlugin.getActiveNotifications();
   }
 
+  /// Cancels a notification
   static Future<void> cancelNotification(int id) async {
     await _getInstance()._notificationsPlugin.cancel(id);
   }
 
+  /// Cancels all notifications
   static Future<void> cancelAllNotifications() async {
     await _getInstance()._notificationsPlugin.cancelAll();
   }

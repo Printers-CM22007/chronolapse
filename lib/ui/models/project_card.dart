@@ -12,6 +12,7 @@ Color blackColour = const Color(0xff08070B);
 // Color blueColour2 = const Color(0xff384547);
 // Color redColour = const Color(0xff3A0101);
 
+/// A project card on the dashboard
 class ProjectCard {
   String projectName;
   String? previewPicturePath;
@@ -25,6 +26,7 @@ class ProjectCard {
       required this.lastEditedText,
       required this.lastEdited});
 
+  /// Gets all project cards
   static Future<List<ProjectCard>> getProjects() async {
     final projectNames = TimelapseStore.getProjectList();
 

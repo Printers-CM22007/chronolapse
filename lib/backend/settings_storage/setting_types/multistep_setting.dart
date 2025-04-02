@@ -1,10 +1,12 @@
 part of 'project_setting.dart';
 
+/// A slider setting with multiple settings
 class MultistepSetting extends PersistentSetting<int> {
   final List<int> _allowedValues;
   final String _title;
   final String _valuePrefix;
   final String _valueSuffix;
+
   const MultistepSetting(super._key, super._defaultValue, allowedValues, title,
       valuePrefix, valueSuffix)
       : _allowedValues = allowedValues,

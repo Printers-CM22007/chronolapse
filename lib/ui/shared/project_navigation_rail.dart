@@ -5,6 +5,7 @@ import 'package:chronolapse/ui/shared/instant_page_route.dart';
 import 'package:chronolapse/util/shared_keys.dart';
 import 'package:flutter/material.dart';
 
+/// Rotated version of `ProjectNavigationBar`
 class ProjectNavigationRail extends StatelessWidget {
   final String _projectName;
   final int _selectedIndex;
