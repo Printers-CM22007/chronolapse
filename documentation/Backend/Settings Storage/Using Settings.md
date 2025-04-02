@@ -2,7 +2,7 @@
 
 # Using Settings
 
-Once a setting is defined (see [[Creating Settings]]) you can get its value:
+Once a setting is defined (see [[Creating Settings](Creating%20Settings.md)]) you can get its value:
 ```dart
 exampleToggleSetting.getValue();
 ```

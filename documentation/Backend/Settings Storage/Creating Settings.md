@@ -39,4 +39,4 @@ List<WidgetSettingRequiresProject> availableProjectSettings = [
 > These lists require the widget-only version which hides the value setters and getters. This also allows the use widgets with no settings for formatting.
 
 This creates a settings page like so:
-![[Pasted image 20250220191551.png]]
+![image](../../attachments/Pasted%20image%2020250220191551.png)

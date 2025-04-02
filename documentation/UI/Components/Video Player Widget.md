@@ -1,3 +1,7 @@
+[Back](Video%20Player%20Widget.md)
+
+# Video Player Widget
+
 ## Usage
 Use the player with:
 ```dart
@@ -33,12 +37,12 @@ VideoPlayerWidget(
 ```
 ## Appearance
 The widget will appear at `forcedAspectRatio` while loading or playing regardless of the video ratio (if set):
-![[Pasted image 20250220182613.png]]
+![image](../../attachments/Pasted%20image%2020250220182613.png)
 
 Otherwise - 
 
 The widget appears as a 16:9 rectangle while loading:
-![[Pasted image 20250220182218.png]]
+![image](../../attachments/Pasted%20image%2020250220182218.png)
 
 This is replaced with a video player matching the aspect ratio of the video when it loads:
-![[Pasted image 20250220182332.png]]
+![image](../../attachments/Pasted%20image%2020250220182332.png)

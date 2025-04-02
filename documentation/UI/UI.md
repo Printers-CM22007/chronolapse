@@ -2,4 +2,5 @@
 
 # UI
 
+- [Components](Components/Components.md)
 - [Pages](Pages/Pages.md)
